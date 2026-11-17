@@ -1,0 +1,1113 @@
+import React, { useState } from 'react';
+import { 
+  ArrowLeft, Eye, Save, User, Zap, DollarSign, Clock, 
+  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles 
+} from 'lucide-react';
+import { 
+  TELANGANA_DISTRICTS, ANDHRA_DISTRICTS, STATES_LIST, 
+  CAPACITY_PRESETS, MODULE_BRANDS, INVERTER_BRANDS, STRUCTURE_OPTIONS 
+} from '../data/defaultData';
+import { 
+  formatINR, formatINRDecimal, calculateSubsidy, calculateEnergyMetrics, 
+  calculateArea, calculatePayback, calculateGSTBreakdown, generateRefNo, formatDateToPDFStyle 
+} from '../utils/calculations';
+
+export const QuotationFormView = ({ 
+  quotation, 
+  onSave, 
+  onBack, 
+  onLivePreview 
+}) => {
+  const [formData, setFormData] = useState(quotation);
+  const [activeTab, setActiveTab] = useState('client'); // 'client', 'system', 'pricing', 'milestones'
+  const [savedSuccessMsg, setSavedSuccessMsg] = useState(false);
+
+  // Field updater
+  const updateField = (section, field, value) => {
+    if (section) {
+      setFormData(prev => ({
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [field]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  // Quick capacity preset handler
+  const handleApplyPreset = (preset) => {
+    const kw = preset.kw;
+    const energy = calculateEnergyMetrics(kw);
+    const area = calculateArea(kw);
+    const subsidy = preset.subsidy;
+    const totalCost = preset.cost;
+    const netCost = totalCost - subsidy;
+    const payback = calculatePayback(netCost, energy.energyPerYear, formData.pricing.electricityTariff);
+
+    // Update BOM descriptions with new capacity
+    const updatedBom = formData.bom.map(item => {
+      let desc = item.description;
+      desc = desc.replace(/\b\d+(\.\d+)?\s*KW\b/gi, `${kw}KW`);
+      desc = desc.replace(/\b\d+(\.\d+)?\s*kWp\b/gi, `${kw}kWp`);
+      return { ...item, description: desc };
+    });
+
+    setFormData(prev => ({
+      ...prev,
+      system: {
+        ...prev.system,
+        capacityKw: kw,
+        panelsCount: preset.panels || (kw * 2),
+        phase: preset.phase,
+        energyPerDay: energy.energyPerDay,
+        energyPerMonth: energy.energyPerMonth,
+        energyPerYear: energy.energyPerYear,
+        areaRequired: area,
+        areaSystemKw: `${kw}kW`
+      },
+      pricing: {
+        ...prev.pricing,
+        totalCost,
+        subsidyAmount: subsidy,
+        afterSubsidyCost: netCost,
+        annualSavings: payback.annualSavings,
+        paybackYears: payback.paybackYears
+      },
+      proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${kw}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`,
+      bom: updatedBom
+    }));
+  };
+
+  // Price changes with recalculations
+  const handlePriceChange = (field, val) => {
+    const num = Number(val) || 0;
+    const newPricing = { ...formData.pricing, [field]: num };
+    
+    if (field === 'totalCost' || field === 'subsidyAmount') {
+      newPricing.afterSubsidyCost = Math.max(0, (newPricing.totalCost || 0) - (newPricing.subsidyAmount || 0));
+    }
+    
+    const annualUnits = Number(formData.system.energyPerYear) || (formData.system.capacityKw * 1200);
+    const payback = calculatePayback(newPricing.afterSubsidyCost, annualUnits, newPricing.electricityTariff);
+    newPricing.annualSavings = payback.annualSavings;
+    newPricing.paybackYears = payback.paybackYears;
+
+    setFormData(prev => ({
+      ...prev,
+      pricing: newPricing
+    }));
+  };
+
+  // BOM handlers
+  const handleAddBomItem = () => {
+    const newItem = {
+      id: Date.now(),
+      sr: formData.bom.length + 1,
+      description: "Balance of System Equipment / Cable / Accessories",
+      qty: "1"
+    };
+    setFormData(prev => ({
+      ...prev,
+      bom: [...prev.bom, newItem]
+    }));
+  };
+
+  const handleDeleteBomItem = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      bom: prev.bom.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleUpdateBomItem = (index, field, val) => {
+    const updated = [...formData.bom];
+    updated[index] = { ...updated[index], [field]: val };
+    setFormData(prev => ({
+      ...prev,
+      bom: updated
+    }));
+  };
+
+  // Save handler
+  const handleSaveAndGenerate = () => {
+    onSave(formData);
+    setSavedSuccessMsg(true);
+    setTimeout(() => {
+      setSavedSuccessMsg(false);
+      onLivePreview(formData);
+    }, 400);
+  };
+
+  const capacity = formData.system.capacityKw;
+  const panels = formData.system.panelsCount || (capacity * 2);
+  const gst = formData.pricing.gstBreakdown || calculateGSTBreakdown(formData.pricing.totalCost);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-fadeIn">
+      
+      {/* Top Breadcrumb & Action Bar */}
+      <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={onBack}
+            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
+            title="Back to Dashboard"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900">
+                {formData.id ? 'Edit Solar Quotation' : 'Create New Solar Quotation'}
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-100 text-slate-700 border border-slate-300">
+                {formData.refNo}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Fill in client requirements and technical specifications to generate the 7-page proposal.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-3 shrink-0">
+          <button
+            onClick={() => onLivePreview(formData)}
+            className="flex items-center space-x-2 px-4 py-2 border border-slate-300 hover:border-slate-400 bg-white text-slate-700 font-semibold text-xs rounded-lg shadow-xs hover:bg-slate-50 transition"
+          >
+            <Eye size={15} className="text-slate-500" />
+            <span>Live 7-Page Preview</span>
+          </button>
+
+          <button
+            onClick={handleSaveAndGenerate}
+            className="flex items-center space-x-2 px-4 py-2 bg-[#0b132b] hover:bg-slate-800 text-white font-semibold text-xs rounded-lg shadow transition active:scale-95"
+          >
+            <Save size={15} />
+            <span>{savedSuccessMsg ? 'Saved! Opening...' : 'Save & Generate Proposal'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main 2-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Left Column: Multi-Step Form (8 Cols) */}
+        <div className="lg:col-span-8 space-y-6">
+          
+          {/* Step Pill Navigation */}
+          <div className="flex overflow-x-auto no-scrollbar gap-2 p-1.5 bg-slate-100/90 rounded-xl border border-slate-200">
+            <button
+              onClick={() => setActiveTab('client')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                activeTab === 'client'
+                  ? 'bg-[#0b132b] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <User size={14} />
+              <span>1. Client &amp; Site Details</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('system')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                activeTab === 'system'
+                  ? 'bg-[#0b132b] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <Zap size={14} />
+              <span>2. Solar System Specs (P2/P4)</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('pricing')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                activeTab === 'pricing'
+                  ? 'bg-[#0b132b] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <DollarSign size={14} />
+              <span>3. Pricing &amp; Subsidy (P5/P6)</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('milestones')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                activeTab === 'milestones'
+                  ? 'bg-[#0b132b] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <Clock size={14} />
+              <span>4. Milestones &amp; Notes (P7)</span>
+            </button>
+          </div>
+
+          {/* TAB 1: CLIENT & SITE DETAILS */}
+          {activeTab === 'client' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-5">
+              <div className="border-b border-slate-100 pb-3">
+                <div className="flex items-center space-x-2">
+                  <User size={18} className="text-slate-600" />
+                  <h2 className="text-sm font-bold text-slate-900">Customer &amp; Installation Site Details</h2>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  This information appears on Page 1 (Cover) and official DISCOM documentation.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Customer Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.name}
+                    onChange={(e) => updateField('customer', 'name', e.target.value)}
+                    placeholder="e.g. Mr. Rajesh Varma"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Company / Organization Name (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.company}
+                    onChange={(e) => updateField('customer', 'company', e.target.value)}
+                    placeholder="e.g. Varma Agro Industries / Residential"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Mobile / WhatsApp Number <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.phone}
+                    onChange={(e) => updateField('customer', 'phone', e.target.value)}
+                    placeholder="e.g. +91 98490 12345"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.customer.email}
+                    onChange={(e) => updateField('customer', 'email', e.target.value)}
+                    placeholder="e.g. client@example.com"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Full Installation Site Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.addressLine1}
+                    onChange={(e) => updateField('customer', 'addressLine1', e.target.value)}
+                    placeholder="e.g. Plot #112, Road #4, Gachibowli Hills, Hyderabad, Telangana - 500032"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Include Plot/Door No., Street, Area, City, and PIN code for DISCOM net-metering feasibility.
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Electricity Consumer Service No.
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.consumerNo}
+                    onChange={(e) => updateField('customer', 'consumerNo', e.target.value)}
+                    placeholder="e.g. TSSPDCL-04829104"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Sanctioned Connected Load
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.connectedLoad}
+                    onChange={(e) => updateField('customer', 'connectedLoad', e.target.value)}
+                    placeholder="e.g. 5 kW"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Grid Connection Phase
+                  </label>
+                  <select
+                    value={formData.customer.phase}
+                    onChange={(e) => {
+                      updateField('customer', 'phase', e.target.value);
+                      updateField('system', 'phase', e.target.value);
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    <option value="Single Phase (1-Phase 230V)">Single Phase (1-Phase 230V)</option>
+                    <option value="Three Phase (3-Phase 415V)">Three Phase (3-Phase 415V)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Terrace / Rooftop Type
+                  </label>
+                  <select
+                    value={formData.customer.rooftopType}
+                    onChange={(e) => {
+                      updateField('customer', 'rooftopType', e.target.value);
+                      updateField('system', 'rooftopType', e.target.value);
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    <option value="RCC Flat Concrete Terrace">RCC Flat Concrete Terrace</option>
+                    <option value="Tin / Metal Sheet Roof">Tin / Metal Sheet Roof</option>
+                    <option value="Elevated GI Super Structure">Elevated GI Super Structure</option>
+                    <option value="Tile / Slanted Rooftop">Tile / Slanted Rooftop</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    District
+                  </label>
+                  <select
+                    value={formData.customer.district}
+                    onChange={(e) => updateField('customer', 'district', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    <optgroup label="Telangana Districts">
+                      {TELANGANA_DISTRICTS.map(d => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Andhra Pradesh Districts">
+                      {ANDHRA_DISTRICTS.map(d => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    State
+                  </label>
+                  <select
+                    value={formData.customer.state}
+                    onChange={(e) => updateField('customer', 'state', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    {STATES_LIST.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    PIN Code
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.customer.pinCode}
+                    onChange={(e) => updateField('customer', 'pinCode', e.target.value)}
+                    placeholder="e.g. 503185"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Tariff Category
+                  </label>
+                  <select
+                    value={formData.customer.category}
+                    onChange={(e) => updateField('customer', 'category', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    <option value="Domestic Category">Domestic Category (Eligible for Govt Subsidy)</option>
+                    <option value="Commercial Category">Commercial Category (Non-Subsidized)</option>
+                    <option value="Industrial Category">Industrial Category</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: SOLAR SYSTEM SPECS */}
+          {activeTab === 'system' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-5">
+              <div className="border-b border-slate-100 pb-3">
+                <div className="flex items-center space-x-2">
+                  <Zap size={18} className="text-amber-500" />
+                  <h2 className="text-sm font-bold text-slate-900">Solar System Specifications &amp; Engineering</h2>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Configures the capacity, module technology, inverter, and mounting structure for Pages 2 &amp; 4.
+                </p>
+              </div>
+
+              {/* Quick Capacity Preset Chips */}
+              <div>
+                <label className="block font-semibold text-slate-700 text-xs mb-2">
+                  Select Standard Capacity Presets:
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {CAPACITY_PRESETS.map((preset) => (
+                    <button
+                      key={preset.kw}
+                      type="button"
+                      onClick={() => handleApplyPreset(preset)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        formData.system.capacityKw === preset.kw
+                          ? 'bg-[#0b132b] text-white shadow'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {preset.kw} kWp
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    System Capacity (kWp)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="1"
+                    value={formData.system.capacityKw}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 1;
+                      const energy = calculateEnergyMetrics(val);
+                      const area = calculateArea(val);
+                      const subsidy = calculateSubsidy(val);
+                      setFormData(prev => ({
+                        ...prev,
+                        system: {
+                          ...prev.system,
+                          capacityKw: val,
+                          panelsCount: Math.round(val * 2),
+                          energyPerDay: energy.energyPerDay,
+                          energyPerMonth: energy.energyPerMonth,
+                          energyPerYear: energy.energyPerYear,
+                          areaRequired: area,
+                          areaSystemKw: `${val}kW`
+                        },
+                        pricing: {
+                          ...prev.pricing,
+                          subsidyAmount: subsidy,
+                          afterSubsidyCost: Math.max(0, prev.pricing.totalCost - subsidy)
+                        },
+                        proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${val}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`
+                      }));
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Number of Solar Modules
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.system.panelsCount}
+                    onChange={(e) => updateField('system', 'panelsCount', parseInt(e.target.value) || 1)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Solar PV Module Brand / Technology
+                  </label>
+                  <select
+                    value={formData.system.moduleBrand}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      updateField('system', 'moduleBrand', val);
+                      // Update BOM Item 1
+                      const updatedBom = [...formData.bom];
+                      if (updatedBom[0]) {
+                        updatedBom[0].description = val;
+                        setFormData(prev => ({ ...prev, bom: updatedBom, system: { ...prev.system, moduleBrand: val } }));
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    {MODULE_BRANDS.map(b => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Solar Inverter Brand / Make
+                  </label>
+                  <select
+                    value={formData.system.inverterBrand}
+                    onChange={(e) => {
+                      const val = e.target.value.replace('{capacity}', formData.system.capacityKw);
+                      updateField('system', 'inverterBrand', val);
+                      // Update BOM Item 5
+                      const updatedBom = [...formData.bom];
+                      if (updatedBom[4]) {
+                        updatedBom[4].description = val;
+                        setFormData(prev => ({ ...prev, bom: updatedBom, system: { ...prev.system, inverterBrand: val } }));
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    {INVERTER_BRANDS.map(b => {
+                      const formatted = b.replace('{capacity}', formData.system.capacityKw);
+                      return <option key={b} value={formatted}>{formatted}</option>;
+                    })}
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Mounting Structure Type (Basic vs Height)
+                  </label>
+                  <select
+                    value={formData.system.structureType}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      updateField('system', 'structureType', val);
+                      // Update BOM Item 2
+                      const updatedBom = [...formData.bom];
+                      if (updatedBom[1]) {
+                        updatedBom[1].description = val;
+                        setFormData(prev => ({ ...prev, bom: updatedBom, system: { ...prev.system, structureType: val } }));
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    {STRUCTURE_OPTIONS.map(st => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Shade-Free Roof Area Required (Page 4)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.system.areaRequired}
+                    onChange={(e) => updateField('system', 'areaRequired', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+              </div>
+
+              {/* Energy Calculation Preview Box */}
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <span className="text-[11px] text-slate-500 block">Daily Generation</span>
+                  <span className="text-sm font-bold text-slate-900">~{formData.system.energyPerDay} Units</span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 block">Monthly Generation</span>
+                  <span className="text-sm font-bold text-slate-900">~{formData.system.energyPerMonth} Units</span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 block">Annual Generation</span>
+                  <span className="text-sm font-bold text-slate-900">~{formData.system.energyPerYear} Units</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: PRICING & SUBSIDY */}
+          {activeTab === 'pricing' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-6">
+              <div className="border-b border-slate-100 pb-3">
+                <div className="flex items-center space-x-2">
+                  <DollarSign size={18} className="text-emerald-600" />
+                  <h2 className="text-sm font-bold text-slate-900">Commercials, PM Surya Ghar Subsidy &amp; BOM</h2>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Adjust project pricing, government subsidy, and manage the 12-item Bill of Materials for Page 5.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Gross Project Cost (₹)
+                  </label>
+                  <input
+                    type="number"
+                    step="1000"
+                    value={formData.pricing.totalCost}
+                    onChange={(e) => handlePriceChange('totalCost', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    ₹{formatINR(formData.pricing.totalCost)} (Inclusive of GST)
+                  </span>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-semibold text-slate-700">
+                      Government Subsidy (₹)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => handlePriceChange('subsidyAmount', calculateSubsidy(formData.system.capacityKw))}
+                      className="text-[10px] text-amber-600 font-semibold hover:underline"
+                    >
+                      Apply PM Surya Ghar Rate
+                    </button>
+                  </div>
+                  <input
+                    type="number"
+                    step="1000"
+                    value={formData.pricing.subsidyAmount}
+                    onChange={(e) => handlePriceChange('subsidyAmount', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-emerald-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Directly credited to customer bank account
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    DISCOM Electricity Tariff (₹ / Unit)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={formData.pricing.electricityTariff}
+                    onChange={(e) => handlePriceChange('electricityTariff', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Capital Payback Period (Years)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.pricing.paybackYears}
+                    onChange={(e) => updateField('pricing', 'paybackYears', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+              </div>
+
+              {/* GST Statutory Calculation Breakdown (Page 6 Table) */}
+              <div className="space-y-3 pt-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <span>GST CALCULATION: Statutory EPC Breakdown</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        70% Goods (5%) • 30% Services (18%)
+                      </span>
+                    </h3>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Statutory bifurcation as per MNRE &amp; GST Council norms for Solar EPC contracts (Appears on Page 6).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border border-slate-300 rounded-lg overflow-hidden shadow-xs">
+                  <table className="w-full text-xs text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#B7D7A8] border-b border-slate-300 text-slate-900 font-bold text-[11px]">
+                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-10">S.No</th>
+                        <th className="py-2 px-3 border-r border-slate-300">Item Description</th>
+                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-28">Amount (INR)</th>
+                        <th className="py-2 px-2 text-center border-r border-slate-300 w-16">GST Rate</th>
+                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-24">GST (INR)</th>
+                        <th className="py-2 px-3 text-center w-32">Total Incl. GST (INR)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 text-slate-800">
+                      <tr>
+                        <td className="py-2 px-2.5 text-center font-bold border-r border-slate-200">1</td>
+                        <td className="py-2 px-3 border-r border-slate-200 font-semibold">
+                          Solar Modules (5%) &amp; solar inverter (1)
+                          <span className="block text-[10px] text-slate-400 font-normal">70% of system contract value deemed supply of goods</span>
+                        </td>
+                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
+                          {formatINRDecimal(gst.goodsBase)}
+                        </td>
+                        <td className="py-2 px-2 text-center font-bold border-r border-slate-200 text-emerald-700">
+                          {gst.goodsRate}
+                        </td>
+                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
+                          {formatINRDecimal(gst.goodsGst)}
+                        </td>
+                        <td className="py-2 px-3 text-center font-mono font-bold text-slate-900">
+                          {formatINRDecimal(gst.goodsTotal)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 px-2.5 text-center font-bold border-r border-slate-200">2</td>
+                        <td className="py-2 px-3 border-r border-slate-200 font-medium text-[11px] leading-snug">
+                          Galvanized structure, Polycab cables, ACDB/DCDB, junction boxes, earthing, plumbing, civil work, transport, installation &amp; commissioning
+                          <span className="block text-[10px] text-slate-400 font-normal">30% of system contract value deemed services &amp; BOS</span>
+                        </td>
+                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
+                          {formatINRDecimal(gst.servicesBase)}
+                        </td>
+                        <td className="py-2 px-2 text-center font-bold border-r border-slate-200 text-amber-700">
+                          {gst.servicesRate}
+                        </td>
+                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
+                          {formatINRDecimal(gst.servicesGst)}
+                        </td>
+                        <td className="py-2 px-3 text-center font-mono font-bold text-slate-900">
+                          {formatINRDecimal(gst.servicesTotal)}
+                        </td>
+                      </tr>
+                      <tr className="bg-slate-50 font-bold">
+                        <td colSpan={2} className="py-2 px-3 text-left border-r border-slate-200 font-bold">Sub Total</td>
+                        <td className="py-2 px-2.5 text-center font-mono border-r border-slate-200">{formatINRDecimal(gst.subTotalBase)}</td>
+                        <td className="border-r border-slate-200"></td>
+                        <td className="border-r border-slate-200"></td>
+                        <td className="py-2 px-3 text-center font-mono text-slate-900">{formatINRDecimal(gst.totalProjectCost)}</td>
+                      </tr>
+                      <tr className="bg-slate-50/60 font-bold">
+                        <td colSpan={4} className="py-2 px-3 text-left border-r border-slate-200 font-bold">Total GST (SGST + CGST)</td>
+                        <td className="py-2 px-2.5 text-center font-mono border-r border-slate-200 text-slate-900">{formatINRDecimal(gst.totalGst)}</td>
+                        <td></td>
+                      </tr>
+                      <tr className="bg-[#f0f9eb] font-extrabold text-slate-900">
+                        <td colSpan={5} className="py-2 px-3 text-left border-r border-slate-300 font-extrabold">TOTAL PROJECT COST</td>
+                        <td className="py-2 px-3 text-center font-mono font-extrabold text-slate-900">Rs. {formatINRDecimal(gst.totalProjectCost)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Bill of Materials (BOM) Editor */}
+              <div className="space-y-3 pt-3 border-t border-slate-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-900">Bill of Materials / BOQ (Page 5 Table)</h3>
+                    <p className="text-[11px] text-slate-400">Total {formData.bom.length} items configured</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddBomItem}
+                    className="flex items-center space-x-1 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition"
+                  >
+                    <Plus size={13} />
+                    <span>Add Item</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
+                  {formData.bom.map((item, idx) => (
+                    <div key={item.id || idx} className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg flex items-center gap-2 text-xs">
+                      <span className="w-5 text-center font-bold text-slate-400">{idx + 1}.</span>
+                      <input
+                        type="text"
+                        value={item.description}
+                        onChange={(e) => handleUpdateBomItem(idx, 'description', e.target.value)}
+                        className="flex-1 px-2.5 py-1 border border-slate-300 rounded text-slate-800 focus:outline-none focus:bg-white"
+                      />
+                      <input
+                        type="text"
+                        value={item.qty}
+                        onChange={(e) => handleUpdateBomItem(idx, 'qty', e.target.value)}
+                        className="w-20 px-2 py-1 text-center font-bold border border-slate-300 rounded text-slate-900 focus:outline-none focus:bg-white"
+                        placeholder="Qty"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteBomItem(idx)}
+                        className="p-1 text-slate-400 hover:text-red-500 rounded"
+                        title="Delete item"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: MILESTONES, BANK & NOTES */}
+          {activeTab === 'milestones' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-5">
+              <div className="border-b border-slate-100 pb-3">
+                <div className="flex items-center space-x-2">
+                  <Clock size={18} className="text-slate-600" />
+                  <h2 className="text-sm font-bold text-slate-900">Quotation Metadata, Company &amp; Bank Info</h2>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Information appears on Page 1, Page 6 (NEFT bank details), and Page 7 (Terms).
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Quotation Reference No.
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formData.refNo}
+                      onChange={(e) => updateField(null, 'refNo', e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateField(null, 'refNo', generateRefNo(Math.floor(Math.random() * 20) + 1, Math.floor(Math.random() * 10) + 1))}
+                      className="p-2 border border-slate-300 hover:bg-slate-50 rounded-lg text-slate-600"
+                      title="Generate new Ref No"
+                    >
+                      <RotateCcw size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Proposal Date
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formData.date}
+                      onChange={(e) => updateField(null, 'date', e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateField(null, 'date', formatDateToPDFStyle(new Date()))}
+                      className="px-3 py-2 border border-slate-300 hover:bg-slate-50 rounded-lg text-slate-600 font-medium text-[11px]"
+                    >
+                      Today
+                    </button>
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Proposal Title
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.proposalTitle}
+                    onChange={(e) => updateField(null, 'proposalTitle', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Bank Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank.bankName}
+                    onChange={(e) => updateField('bank', 'bankName', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Account Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank.accountName}
+                    onChange={(e) => updateField('bank', 'accountName', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank.accountNo}
+                    onChange={(e) => updateField('bank', 'accountNo', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    IFSC Code
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank.ifscCode}
+                    onChange={(e) => updateField('bank', 'ifscCode', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column: Live Proposal Metrics Sidebar (4 Cols) */}
+        <div className="lg:col-span-4 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-5">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                LIVE PROPOSAL METRICS
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Auto-Calculated
+              </span>
+            </div>
+
+            {/* System Size Box */}
+            <div className="text-center py-2 border-b border-slate-100">
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                SYSTEM SIZE
+              </div>
+              <div className="text-4xl font-extrabold text-slate-900 tracking-tight mt-1">
+                {capacity} <span className="text-2xl font-bold text-slate-600">kWp</span>
+              </div>
+              <div className="text-xs text-slate-500 mt-1">
+                {panels} Solar Modules • {formData.system.moduleBrand?.split('(')[0]?.trim() || "Mono PERC"}
+              </div>
+            </div>
+
+            {/* Commercial Breakdown */}
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between text-slate-600">
+                <span>Gross Project Cost:</span>
+                <span className="font-bold text-slate-900">₹{formatINR(formData.pricing.totalCost)}</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-2">
+                <span>• Base Project Value:</span>
+                <span>₹{formatINR(gst.subTotalBase)}</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-2">
+                <span>• Total GST (5% + 18%):</span>
+                <span className="font-semibold text-slate-700">₹{formatINR(gst.totalGst)}</span>
+              </div>
+              <div className="flex items-center justify-between text-slate-600 pt-1 border-t border-slate-100">
+                <span>Government Subsidy:</span>
+                <span className="font-bold text-emerald-600">- ₹{formatINR(formData.pricing.subsidyAmount)}</span>
+              </div>
+            </div>
+
+            {/* Net Investment Dark Box */}
+            <div className="bg-[#0b132b] rounded-xl p-4 text-white text-center shadow-md">
+              <div className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                NET INVESTMENT
+              </div>
+              <div className="text-3xl font-extrabold text-white mt-1">
+                ₹{formatINR(formData.pricing.afterSubsidyCost)}
+              </div>
+              <div className="text-[10px] text-slate-400 mt-0.5">
+                Client's actual out-of-pocket
+              </div>
+            </div>
+
+            {/* Payback & Savings Stats */}
+            <div className="grid grid-cols-2 gap-3 text-xs border-t border-slate-100 pt-3">
+              <div>
+                <span className="text-slate-400 block text-[10px]">Est. Annual Savings:</span>
+                <span className="font-bold text-emerald-600 text-sm">
+                  ₹{formatINR(formData.pricing.annualSavings)} <span className="text-[10px] font-normal text-slate-400">/yr</span>
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-400 block text-[10px]">Capital Payback Period:</span>
+                <span className="font-bold text-amber-600 text-sm">
+                  {formData.pricing.paybackYears} Years
+                </span>
+              </div>
+            </div>
+
+            {/* Proposal Document Structure Checklist */}
+            <div className="border-t border-slate-100 pt-4 space-y-2">
+              <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Proposal Document Structure:
+              </div>
+              <ul className="text-xs space-y-1.5 text-slate-600">
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 1 (Fixed): Cover &amp; Executive Intro</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 2 (Fixed): Grid System &amp; Diagram</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 3 (Dynamic): Solar PV Benefits</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 4 (Dynamic): System Specs &amp; Mounting</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 5 (Dynamic): BOM &amp; Cost Estimations</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 6 (Dynamic): Payback &amp; Bank Details</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                  <span>Page 7 (Fixed): Terms &amp; Conditions</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

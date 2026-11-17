@@ -1,0 +1,309 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base Reset & Fonts */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+/* Custom Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ====================================================================
+   A4 DOCUMENT ACCURATE PRINT & SCREEN SPECIFICATIONS
+   Standard A4 Dimensions: 210mm x 297mm
+   ==================================================================== */
+
+.a4-page {
+  width: 210mm;
+  height: 297mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 auto;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+.pdf-page-header {
+  width: 100%;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.pdf-page-header img {
+  width: 100%;
+  display: block;
+}
+
+.pdf-page-footer {
+  width: 100%;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 4px 20px 10px 20px;
+  text-align: center;
+}
+
+.footer-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 8.5pt;
+  font-weight: 500;
+  color: #6C3483; /* Exact purple from original PDF */
+  margin: 0;
+  letter-spacing: 0.1px;
+}
+
+/* Page 1 Typography & Exact Colors */
+.offer-main-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 13.5pt;
+  color: #196f3d; /* Dark green italic from PDF */
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.ref-number-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11.5pt;
+  color: #0099b8; /* Cyan/teal from PDF */
+  font-weight: 800;
+}
+
+.customer-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color: #922b21; /* Red/brown underlined from PDF */
+  font-weight: 800;
+}
+
+.customer-info-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9.5pt;
+  color: #1a1a1a;
+  line-height: 1.45;
+}
+
+.submitted-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color: #154360; /* Navy blue underlined */
+  font-weight: 800;
+}
+
+.company-quote-box {
+  border: 1px solid #000;
+  background-color: #ffffff;
+  padding: 8px 14px;
+}
+
+.company-quote-box p {
+  line-height: 1.35;
+}
+
+.vendor-reg-row p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11pt;
+  font-weight: 800;
+  color: #000;
+}
+
+/* Page 2 & 3 Typography */
+.system-description p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  line-height: 1.55;
+  color: #1a1a1a;
+}
+
+.benefits-list p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9.5pt;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+/* Tables in Pages 4, 5, 6, 7 */
+.specs-table, .bom-table, .payback-table, .terms-table {
+  border-collapse: collapse;
+}
+
+.specs-table td, .specs-table th {
+  border: 1px solid #333333;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.bom-table td, .bom-table th {
+  border: 1px solid #000000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.payback-table-wrapper table td {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.terms-table td {
+  border: 1px solid #000000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ====================================================================
+   HIGH PRECISION PRINT STYLESHEET
+   Forces perfect 1:1 reproduction of all 7 pages when printed or saved to PDF
+   ==================================================================== */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0mm !important;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+  }
+
+  /* Hide entire dashboard UI, headers, scrollbars */
+  .no-print,
+  .dashboard-container,
+  .viewer-toolbar,
+  header,
+  footer,
+  button {
+    display: none !important;
+  }
+
+  .app-layout {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  .quotation-viewer-wrapper {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .viewer-scroll-canvas {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .preview-document-container {
+    transform: none !important;
+    display: block !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .document-page-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .a4-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ensure background colors & images are rendered at 100% fidelity */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
