@@ -176,21 +176,34 @@ export const QuotationFormView = ({
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
-            onClick={() => onLivePreview(formData)}
-            className="flex items-center space-x-2 px-4 py-2 border border-slate-300 hover:border-slate-400 bg-white text-slate-700 font-semibold text-xs rounded-lg shadow-xs hover:bg-slate-50 transition"
+            type="button"
+            onClick={() => onLivePreview(formData, 'bank')}
+            className="flex items-center space-x-1.5 px-3 py-2 border border-slate-800 bg-[#0b132b] text-amber-400 font-bold text-xs rounded-lg shadow-xs hover:bg-slate-800 transition cursor-pointer"
+            title="Preview 7-Page Techno-Commercial Bank Proposal"
           >
-            <Eye size={15} className="text-slate-500" />
-            <span>Live 7-Page Preview</span>
+            <Eye size={14} className="text-amber-400" />
+            <span>Bank (7P)</span>
           </button>
 
           <button
+            type="button"
+            onClick={() => onLivePreview(formData, 'customer')}
+            className="flex items-center space-x-1.5 px-3 py-2 border border-emerald-800 bg-[#064e3b] text-emerald-300 font-bold text-xs rounded-lg shadow-xs hover:bg-[#047857] transition cursor-pointer"
+            title="Preview 5-Page Visual Customer Proposal"
+          >
+            <Eye size={14} className="text-emerald-300" />
+            <span>Customer (5P)</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleSaveAndGenerate}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#0b132b] hover:bg-slate-800 text-white font-semibold text-xs rounded-lg shadow transition active:scale-95"
+            className="flex items-center space-x-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg shadow transition active:scale-95 cursor-pointer"
           >
             <Save size={15} />
-            <span>{savedSuccessMsg ? 'Saved! Opening...' : 'Save & Generate Proposal'}</span>
+            <span>{savedSuccessMsg ? 'Saved! Opening...' : 'Save & View'}</span>
           </button>
         </div>
       </div>
@@ -1069,41 +1082,79 @@ export const QuotationFormView = ({
               </div>
             </div>
 
-            {/* Proposal Document Structure Checklist */}
-            <div className="border-t border-slate-100 pt-4 space-y-2">
-              <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
-                Proposal Document Structure:
+            {/* Dual Proposal Document Structure Checklist */}
+            <div className="border-t border-slate-100 pt-4 space-y-3">
+              <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                ⚡ Linked Dual Quotation Outputs:
               </div>
-              <ul className="text-xs space-y-1.5 text-slate-600">
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 1 (Fixed): Cover &amp; Executive Intro</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 2 (Fixed): Grid System &amp; Diagram</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 3 (Dynamic): Solar PV Benefits</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 4 (Dynamic): System Specs &amp; Mounting</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 5 (Dynamic): BOM &amp; Cost Estimations</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 6 (Dynamic): Payback &amp; Bank Details</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                  <span>Page 7 (Fixed): Terms &amp; Conditions</span>
-                </li>
-              </ul>
+
+              {/* Bank Quotation (7 Pages) */}
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-900 mb-1">
+                  <span>🏛️ Bank Quotation</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-900 font-mono">7 Pages</span>
+                </div>
+                <ul className="text-[10.5px] space-y-1 text-slate-600">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P1: Cover &amp; Detailed Techno Offer</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P2: On-Grid System Architecture</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P3: 9 Techno-Commercial Benefits</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P4: System Specs &amp; Structure Comparison</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P5: 12-Item BOM Cost Estimations</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P6: GST 70:30, Payback &amp; Bank Terms</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>P7: Commercial Terms &amp; Conditions</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Customer Quotation (5 Pages) */}
+              <div className="p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-200/80">
+                <div className="flex items-center justify-between text-xs font-bold text-emerald-950 mb-1">
+                  <span>👤 Customer Quotation</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-200 text-emerald-900 font-mono">5 Pages</span>
+                </div>
+                <ul className="text-[10.5px] space-y-1 text-emerald-900">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                    <span>P1: Executive Cover, 30% Spine &amp; ROI</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                    <span>P2: Itemized Hardware BOM &amp; Simulation</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                    <span>P3: Commercials &amp; 25-Yr Cashflow Table</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                    <span>P4: Completed Projects Portfolio Showcase</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                    <span>P5: Company Profile, Scopes &amp; QR Codes</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

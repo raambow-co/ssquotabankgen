@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Printer, ZoomIn, ZoomOut, Copy, Check, 
-  FileText, Share2, Download, Eye 
+  FileText, Share2, Download, Eye, Building2, UserCheck, Layers
 } from 'lucide-react';
 import { Page1 } from './Page1';
 import { Page2 } from './Page2';
@@ -10,15 +10,28 @@ import { Page4 } from './Page4';
 import { Page5 } from './Page5';
 import { Page6 } from './Page6';
 import { Page7 } from './Page7';
+import CustomerPage1Cover from './customerPages/CustomerPage1Cover';
+import CustomerPage2SystemSpec from './customerPages/CustomerPage2SystemSpec';
+import CustomerPage3Financials from './customerPages/CustomerPage3Financials';
+import CustomerPage4Portfolio from './customerPages/CustomerPage4Portfolio';
+import CustomerPage5CompanyProfile from './customerPages/CustomerPage5CompanyProfile';
+import { convertToCustomerFormat } from '../utils/quotationAdapter';
 import { formatINR } from '../utils/calculations';
 
-export const ProposalPreviewModal = ({ quotation, onBack, onEdit }) => {
-  const [selectedPage, setSelectedPage] = useState('all'); // 'all', 1, 2, 3, 4, 5, 6, 7
+export const ProposalPreviewModal = ({ 
+  quotation, 
+  initialFormat = 'bank', // 'bank' | 'customer'
+  onBack, 
+  onEdit 
+}) => {
+  const [formatMode, setFormatMode] = useState(initialFormat); // 'bank' | 'customer'
+  const [selectedPage, setSelectedPage] = useState('all');
   const [zoomLevel, setZoomLevel] = useState(85);
   const [copiedNotification, setCopiedNotification] = useState(false);
 
-  const pages = [
-    { id: 1, title: 'P1: Cover & Details', fullTitle: 'Page 1 of 7: Cover & Techno Offer', component: Page1 },
+  // Bank Proposal Pages (7 Pages)
+  const bankPages = [
+    { id: 1, title: 'P1: Cover', fullTitle: 'Page 1 of 7: Cover & Techno Offer', component: Page1 },
     { id: 2, title: 'P2: Grid System', fullTitle: 'Page 2 of 7: On-Grid System Architecture', component: Page2 },
     { id: 3, title: 'P3: Benefits', fullTitle: 'Page 3 of 7: Techno-Commercial Benefits', component: Page3 },
     { id: 4, title: 'P4: Specs & Mounting', fullTitle: 'Page 4 of 7: Specifications & Structure Comparison', component: Page4 },
@@ -27,18 +40,33 @@ export const ProposalPreviewModal = ({ quotation, onBack, onEdit }) => {
     { id: 7, title: 'P7: Terms & Conditions', fullTitle: 'Page 7 of 7: Commercial Terms & Conditions', component: Page7 },
   ];
 
+  // Customer Proposal Pages (5 Pages)
+  const customerPages = [
+    { id: 1, title: 'P1: Cover & ROI', fullTitle: 'Page 1 of 5: Executive Cover & ROI Snapshot', component: CustomerPage1Cover },
+    { id: 2, title: 'P2: Hardware & BOM', fullTitle: 'Page 2 of 5: Technical Specifications & BOM', component: CustomerPage2SystemSpec },
+    { id: 3, title: 'P3: Financials & Cashflow', fullTitle: 'Page 3 of 5: Commercials & 25-Yr Cashflow', component: CustomerPage3Financials },
+    { id: 4, title: 'P4: Projects Portfolio', fullTitle: 'Page 4 of 5: Completed Works Showcase', component: CustomerPage4Portfolio },
+    { id: 5, title: 'P5: Company Profile', fullTitle: 'Page 5 of 5: Corporate Profile & Warranties', component: CustomerPage5CompanyProfile },
+  ];
+
+  const currentPagesList = formatMode === 'bank' ? bankPages : customerPages;
+
+  // Convert quotation for customer format components
+  const { quotation: customerQuotation, settings: customerSettings } = convertToCustomerFormat(quotation);
+
   const handlePrint = () => {
     window.print();
   };
 
   const handleCopyWhatsApp = () => {
-    const summary = `☀️ *SRIMAAN SOLAR SOLUTIONS - QUOTATION SUMMARY*
+    const summary = `☀️ *SRIMAAN SOLAR SOLUTIONS - ${formatMode === 'bank' ? 'BANK EPC QUOTATION' : 'CUSTOMER SOLAR PROPOSAL'}*
 ----------------------------------------
 👤 *Customer:* ${quotation.customer.name}
-📍 *Location:* ${quotation.customer.district}, ${quotation.customer.state}
+📍 *Location:* ${quotation.customer.district || ''}, ${quotation.customer.state || ''}
 ⚡ *System Capacity:* ${quotation.system.capacityKw} kW (${quotation.system.phase})
 📑 *Reference No:* ${quotation.refNo}
 📅 *Date:* ${quotation.date}
+📑 *Format:* ${formatMode === 'bank' ? '7-Page Bank Proposal' : '5-Page Customer Proposal'}
 
 💰 *COMMERCIAL SUMMARY:*
 • Total System Cost: ₹${formatINR(quotation.pricing.totalCost)}
@@ -46,18 +74,18 @@ export const ProposalPreviewModal = ({ quotation, onBack, onEdit }) => {
 👉 *Net Investment:* ₹${formatINR(quotation.pricing.afterSubsidyCost)}
 
 📊 *GENERATION & ROI:*
-• Daily Generation: ~${quotation.system.energyPerDay} Units
+• Daily Generation: ~${quotation.system.energyPerDay || (quotation.system.capacityKw * 4)} Units
 • Annual Savings: ~₹${formatINR(quotation.pricing.annualSavings)}/year
 • Estimated Payback: ${quotation.pricing.paybackYears} Years
 
 🏦 *Bank Account for Advance / PO:*
-• Bank: ${quotation.bank.bankName}
-• A/C Name: ${quotation.bank.accountName}
-• A/C No: ${quotation.bank.accountNo}
-• IFSC: ${quotation.bank.ifscCode}
+• Bank: ${quotation.bank?.bankName || quotation.company?.bankName || 'State Bank of India'}
+• A/C Name: ${quotation.bank?.accountName || quotation.company?.accountName || 'M/s. SRIMAAN SOLAR SOLUTIONS'}
+• A/C No: ${quotation.bank?.accountNo || quotation.company?.accountNumber || '40892716382'}
+• IFSC: ${quotation.bank?.ifscCode || quotation.company?.ifscCode || 'SBIN0020154'}
 
-📞 Contact: ${quotation.company.phone1} / ${quotation.company.phone2}
-📧 Email: ${quotation.company.email}`;
+📞 Contact: ${quotation.company?.phone || '+91 94948 22356'}
+📧 Email: ${quotation.company?.email || 'srimaansolarsolutions@gmail.com'}`;
 
     navigator.clipboard.writeText(summary);
     setCopiedNotification(true);
@@ -81,7 +109,7 @@ export const ProposalPreviewModal = ({ quotation, onBack, onEdit }) => {
           
           <div>
             <div className="font-bold text-slate-900 text-xs flex items-center gap-2">
-              <span>{quotation.customer.name}</span>
+              <span>{quotation.customer.name || 'Valued Customer'}</span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 font-bold">
                 {quotation.refNo}
               </span>
@@ -92,121 +120,192 @@ export const ProposalPreviewModal = ({ quotation, onBack, onEdit }) => {
           </div>
         </div>
 
-        {/* Center: Page Jump Pills */}
+        {/* Center: DUAL GENERATOR FORMAT SWITCHER TABS */}
+        <div className="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 shadow-inner">
+          <button
+            onClick={() => {
+              setFormatMode('bank');
+              setSelectedPage('all');
+            }}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              formatMode === 'bank'
+                ? 'bg-[#0b132b] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <Building2 size={14} className={formatMode === 'bank' ? 'text-amber-400' : 'text-slate-500'} />
+            <span>Bank Quotation</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+              formatMode === 'bank' ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+            }`}>
+              7 Pages
+            </span>
+          </button>
+
+          <button
+            onClick={() => {
+              setFormatMode('customer');
+              setSelectedPage('all');
+            }}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              formatMode === 'customer'
+                ? 'bg-[#064e3b] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <UserCheck size={14} className={formatMode === 'customer' ? 'text-emerald-300' : 'text-slate-500'} />
+            <span>Customer Quotation</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+              formatMode === 'customer' ? 'bg-emerald-400 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+            }`}>
+              5 Pages
+            </span>
+          </button>
+        </div>
+
+        {/* Center-Right: Page Jump Pills */}
         <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5">
           <button
             onClick={() => setSelectedPage('all')}
             className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
               selectedPage === 'all'
-                ? 'bg-[#0b132b] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                ? (formatMode === 'bank' ? 'bg-[#0b132b] text-white' : 'bg-[#064e3b] text-white')
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All 7 Pages
+            All {currentPagesList.length} Pages
           </button>
-          <span className="text-slate-300">|</span>
-          {pages.map((p) => (
+          
+          {currentPagesList.map((page) => (
             <button
-              key={p.id}
-              onClick={() => setSelectedPage(p.id)}
-              className={`px-2 py-1 text-xs font-medium rounded-md whitespace-nowrap transition-all cursor-pointer ${
-                selectedPage === p.id
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              key={page.id}
+              onClick={() => setSelectedPage(page.id)}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                selectedPage === page.id
+                  ? (formatMode === 'bank' ? 'bg-[#0b132b] text-white' : 'bg-[#064e3b] text-white')
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
+              title={page.fullTitle}
             >
-              Page {p.id}
+              {page.title}
             </button>
           ))}
         </div>
 
-        {/* Right: Zoom & Export Controls */}
+        {/* Right Actions: Zoom, Copy Summary, Print */}
         <div className="flex items-center space-x-2">
-          {/* Zoom Controls */}
-          <div className="flex items-center bg-slate-100 border border-slate-300 rounded-lg p-0.5 text-xs text-slate-700">
+          {/* Zoom controls */}
+          <div className="hidden md:flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs">
             <button
-              onClick={() => setZoomLevel((z) => Math.max(50, z - 10))}
-              className="p-1 hover:bg-white rounded transition cursor-pointer"
+              onClick={() => setZoomLevel(prev => Math.max(50, prev - 10))}
+              className="p-1.5 hover:bg-white rounded text-slate-600 hover:text-slate-900 transition cursor-pointer"
               title="Zoom Out"
             >
-              <ZoomOut size={13} />
+              <ZoomOut size={14} />
             </button>
-            <span className="px-2 font-mono font-medium text-[11px] min-w-10 text-center">
+            <span className="px-2 font-mono text-[11px] font-semibold text-slate-700">
               {zoomLevel}%
             </span>
             <button
-              onClick={() => setZoomLevel((z) => Math.min(130, z + 10))}
-              className="p-1 hover:bg-white rounded transition cursor-pointer"
+              onClick={() => setZoomLevel(prev => Math.min(130, prev + 10))}
+              className="p-1.5 hover:bg-white rounded text-slate-600 hover:text-slate-900 transition cursor-pointer"
               title="Zoom In"
             >
-              <ZoomIn size={13} />
-            </button>
-            <button
-              onClick={() => setZoomLevel(85)}
-              className="px-1.5 py-0.5 hover:bg-white rounded text-[10px] font-semibold text-slate-500 transition border-l border-slate-200 cursor-pointer"
-              title="Fit to Screen"
-            >
-              Fit
+              <ZoomIn size={14} />
             </button>
           </div>
 
-          {/* Copy WhatsApp */}
+          {/* Copy WhatsApp text */}
           <button
             onClick={handleCopyWhatsApp}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition cursor-pointer"
-            title="Copy WhatsApp Summary"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-semibold transition cursor-pointer"
+            title="Copy quotation summary to WhatsApp"
           >
-            {copiedNotification ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-            <span>{copiedNotification ? 'Copied' : 'WhatsApp'}</span>
+            {copiedNotification ? <Check size={14} className="text-emerald-600" /> : <Share2 size={14} />}
+            <span>{copiedNotification ? 'Copied!' : 'WhatsApp'}</span>
           </button>
 
-          {/* Print / Save PDF Button */}
+          {/* Edit Proposal */}
+          {onEdit && (
+            <button
+              onClick={onEdit}
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer"
+            >
+              Edit
+            </button>
+          )}
+
+          {/* Print / Save as PDF Button */}
           <button
             onClick={handlePrint}
-            className="flex items-center space-x-1.5 px-4 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-xs rounded-lg shadow-sm transition active:scale-95 cursor-pointer"
-            title="Print or Save All 7 Pages as Clean PDF"
+            className={`flex items-center space-x-1.5 px-4 py-1.5 text-white rounded-lg text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer ${
+              formatMode === 'bank' ? 'bg-[#0b132b] hover:bg-slate-800' : 'bg-[#064e3b] hover:bg-[#047857]'
+            }`}
           >
             <Printer size={15} />
-            <span>Print / Save PDF</span>
+            <span>Print / PDF ({formatMode === 'bank' ? '7P' : '5P'})</span>
           </button>
         </div>
       </div>
 
-      {/* Document View Canvas */}
-      <div className="viewer-scroll-canvas flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center">
+      {/* Main Document Canvas Scroll Area */}
+      <div className="viewer-scroll-canvas flex-1 overflow-y-auto p-4 sm:p-8 flex justify-center custom-scrollbar">
         <div 
-          className="preview-document-container transition-transform duration-150 origin-top flex flex-col items-center space-y-10"
-          style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
+          className="preview-document-container flex flex-col items-center space-y-8 print:space-y-0 transition-transform duration-200 origin-top"
+          style={{ transform: `scale(${zoomLevel / 100})` }}
         >
-          {selectedPage === 'all' ? (
-            pages.map((p) => {
-              const Component = p.component;
-              return (
-                <div key={p.id} className="document-page-wrapper relative">
-                  <div className="no-print absolute -top-6 left-1 text-[11px] font-bold text-slate-600 uppercase tracking-wider bg-white/80 px-2 py-0.5 rounded shadow-xs border border-slate-300">
-                    {p.fullTitle}
-                  </div>
-                  <Component data={quotation} />
+          {/* BANK QUOTATION GENERATOR (7 PAGES) */}
+          {formatMode === 'bank' && (
+            <>
+              {selectedPage === 'all' ? (
+                bankPages.map((page) => {
+                  const PageComp = page.component;
+                  return (
+                    <div key={page.id} className="document-page-wrapper shadow-2xl print:shadow-none">
+                      <PageComp data={quotation} />
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="document-page-wrapper shadow-2xl print:shadow-none">
+                  {React.createElement(
+                    bankPages.find(p => p.id === selectedPage)?.component || Page1,
+                    { data: quotation }
+                  )}
                 </div>
-              );
-            })
-          ) : (
-            (() => {
-              const currentPage = pages.find((p) => p.id === selectedPage);
-              if (!currentPage) return null;
-              const Component = currentPage.component;
-              return (
-                <div className="document-page-wrapper relative">
-                  <div className="no-print absolute -top-6 left-1 text-[11px] font-bold text-slate-600 uppercase tracking-wider bg-white/80 px-2 py-0.5 rounded shadow-xs border border-slate-300">
-                    {currentPage.fullTitle}
-                  </div>
-                  <Component data={quotation} />
+              )}
+            </>
+          )}
+
+          {/* CUSTOMER QUOTATION GENERATOR (5 PAGES) */}
+          {formatMode === 'customer' && (
+            <>
+              {selectedPage === 'all' ? (
+                customerPages.map((page) => {
+                  const PageComp = page.component;
+                  return (
+                    <div key={page.id} className="document-page-wrapper shadow-2xl print:shadow-none">
+                      <PageComp 
+                        quotation={customerQuotation} 
+                        settings={customerSettings} 
+                      />
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="document-page-wrapper shadow-2xl print:shadow-none">
+                  {React.createElement(
+                    customerPages.find(p => p.id === selectedPage)?.component || CustomerPage1Cover,
+                    { quotation: customerQuotation, settings: customerSettings }
+                  )}
                 </div>
-              );
-            })()
+              )}
+            </>
           )}
         </div>
       </div>
     </div>
   );
 };
+
+export default ProposalPreviewModal;

@@ -68,6 +68,39 @@ body {
   scrollbar-width: none;
 }
 
+/* High-Tech Grid Background Effect for Customer Proposals */
+.bg-tech-grid {
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, rgba(14, 165, 233, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 165, 233, 0.04) 1px, transparent 1px);
+}
+
+.bg-tech-grid-dark {
+  background-color: #022c22;
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Screen Preview A4 Sheet (Customer Proposal) */
+.a4-preview-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  height: 297mm;
+  max-height: 297mm;
+  position: relative;
+  background: white;
+  margin: 0 auto;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px -5px rgba(10, 37, 64, 0.12), 0 0 1px 1px rgba(10, 37, 64, 0.05);
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+  box-sizing: border-box;
+}
+
 /* ====================================================================
    A4 DOCUMENT ACCURATE PRINT & SCREEN SPECIFICATIONS
    Standard A4 Dimensions: 210mm x 297mm
@@ -281,7 +314,8 @@ body {
     break-after: page !important;
   }
 
-  .a4-page {
+  .a4-page,
+  .a4-preview-sheet {
     width: 210mm !important;
     height: 297mm !important;
     max-height: 297mm !important;
@@ -295,8 +329,6 @@ body {
     break-inside: avoid !important;
     overflow: hidden !important;
     display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

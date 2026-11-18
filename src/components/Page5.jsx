@@ -109,26 +109,9 @@ export const Page5 = ({ data }) => {
               * Prices quoted are inclusive of all taxes. Statutory GST is bifurcated as 70% of system cost deemed goods (Solar PV Modules &amp; Inverter) taxable @ 5% and 30% deemed balance of system &amp; services taxable @ 18% as per MNRE/GST Council guidelines (Detailed GST Calculation table on Page 6).
             </p>
           </div>
-
-          {/* Technology & Hardware Tier-1 Brand Partners */}
-          <div className="mt-2.5 p-2 bg-slate-50 border border-slate-200 rounded">
-            <div className="flex items-center justify-between">
-              <span className="text-[7pt] font-extrabold uppercase text-slate-700 tracking-wider">
-                TIER-1 OEM HARDWARE PARTNERS:
-              </span>
-              <div className="flex items-center space-x-4">
-                <img src="/assets/brands/waaree.png" alt="Waaree" className="h-4 w-auto object-contain" />
-                <img src="/assets/brands/tata-solar.png" alt="Tata Power Solar" className="h-4 w-auto object-contain" />
-                <img src="/assets/brands/adani.png" alt="Adani Solar" className="h-4 w-auto object-contain" />
-                <img src="/assets/brands/sungrow.png" alt="Sungrow" className="h-4 w-auto object-contain" />
-                <img src="/assets/brands/growatt.png" alt="Growatt" className="h-3.5 w-auto object-contain" />
-                <img src="/assets/brands/polycab.png" alt="Polycab" className="h-4 w-auto object-contain" />
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div className="h-1"></div>
+        <div className="h-2"></div>
       </div>
 
       <PageFooter address={company?.officeAddress} />

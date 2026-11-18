@@ -1,6 +1,7 @@
 # Reference study folder
 quotation generator 2 2/
 
+# Logs
 logs
 *.log
 npm-debug.log*

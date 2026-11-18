@@ -16,7 +16,7 @@ export const getInverterLogo = (brandName) => {
   return '/assets/brands/sungrow.png';
 };
 
-export const getCableLogo = () => {
+export const getCableLogo = (brandName) => {
   return '/assets/brands/polycab.png';
 };
 

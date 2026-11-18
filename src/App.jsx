@@ -57,6 +57,7 @@ class ErrorBoundary extends Component {
 export function AppContent() {
   // Navigation view: 'dashboard' | 'form' | 'preview'
   const [currentView, setCurrentView] = useState('dashboard');
+  const [previewFormat, setPreviewFormat] = useState('bank'); // 'bank' | 'customer'
 
   // Quotations list in database
   const [quotations, setQuotations] = useState(() => {
@@ -168,9 +169,10 @@ export function AppContent() {
     setCurrentView('form');
   };
 
-  // Handler: Preview Quotation
-  const handlePreviewQuotation = (quote) => {
+  // Handler: Preview Quotation (with format support: 'bank' | 'customer')
+  const handlePreviewQuotation = (quote, format = 'bank') => {
     setActiveQuotation(quote);
+    setPreviewFormat(format);
     setCurrentView('preview');
   };
 
@@ -264,8 +266,9 @@ export function AppContent() {
             quotation={activeQuotation}
             onSave={handleSaveQuotation}
             onBack={() => setCurrentView('dashboard')}
-            onLivePreview={(updatedQuote) => {
+            onLivePreview={(updatedQuote, format = 'bank') => {
               setActiveQuotation(updatedQuote);
+              setPreviewFormat(format);
               setCurrentView('preview');
             }}
           />
@@ -274,6 +277,7 @@ export function AppContent() {
         {currentView === 'preview' && (
           <ProposalPreviewModal
             quotation={activeQuotation}
+            initialFormat={previewFormat}
             onBack={() => setCurrentView('form')}
             onEdit={() => setCurrentView('form')}
           />

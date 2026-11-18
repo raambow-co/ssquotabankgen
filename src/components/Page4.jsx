@@ -63,14 +63,14 @@ export const Page4 = ({ data }) => {
         </div>
 
         {/* Structure Images Comparison */}
-        <div className="mounting-structures-comparison my-2">
+        <div className="mounting-structures-comparison my-3">
           <div className="grid grid-cols-2 gap-6 items-end">
             {/* Basic Structure Card */}
             <div className="structure-card text-center">
               <div className="border-2 border-slate-700 rounded-sm overflow-hidden shadow-xs bg-white">
-                <img 
-                  src={ASSETS.basic_structure} 
-                  alt="Basic Low-Profile Solar Mounting Structure" 
+                <img
+                  src={ASSETS.basic_structure}
+                  alt="Basic Low-Profile Solar Mounting Structure"
                   className="w-full h-44 object-cover block"
                 />
                 <div className="bg-[#0f172a] text-white py-1.5 px-2">
@@ -87,9 +87,9 @@ export const Page4 = ({ data }) => {
             {/* Height Structure Card */}
             <div className="structure-card text-center">
               <div className="border-2 border-slate-700 rounded-sm overflow-hidden shadow-xs bg-white">
-                <img 
-                  src={ASSETS.height_structure} 
-                  alt="Height Elevated Solar Structure" 
+                <img
+                  src={ASSETS.height_structure}
+                  alt="Height Elevated Solar Structure"
                   className="w-full h-44 object-cover block"
                 />
                 <div className="bg-[#0f172a] text-white py-1.5 px-2">
@@ -105,34 +105,7 @@ export const Page4 = ({ data }) => {
           </div>
         </div>
 
-        {/* Statutory Compliance & Standards Bar */}
-        <div className="mt-1 pt-2 border-t border-slate-200">
-          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-50/80 rounded border border-slate-200">
-            <span className="text-[7pt] font-extrabold uppercase text-slate-700 tracking-wider">
-              NATIONAL STANDARDS &amp; ACCREDITATIONS:
-            </span>
-            <div className="flex items-center space-x-5">
-              <div className="flex items-center space-x-1.5">
-                <img src="/assets/emblems/mnre-logo.png" alt="MNRE" className="h-5 w-auto object-contain" />
-                <span className="text-[7pt] font-bold text-slate-700">MNRE Empanelled</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <img src="/assets/emblems/pm-surya-ghar.png" alt="PM Surya Ghar" className="h-5 w-auto object-contain" />
-                <span className="text-[7pt] font-bold text-slate-700">PM Surya Ghar</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <img src="/assets/emblems/bis-certified.png" alt="BIS" className="h-4.5 w-auto object-contain" />
-                <span className="text-[7pt] font-bold text-slate-700">BIS Certified</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <img src="/assets/emblems/make-in-india.png" alt="Make in India" className="h-3.5 w-auto object-contain" />
-                <span className="text-[7pt] font-bold text-slate-700">Make In India (DCR)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="h-1"></div>
+        <div className="h-2"></div>
       </div>
 
       <PageFooter address={company?.officeAddress} />
