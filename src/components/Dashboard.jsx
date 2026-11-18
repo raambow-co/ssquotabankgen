@@ -375,11 +375,20 @@ export const Dashboard = ({
                   <label className="text-slate-400 block mb-1">System Capacity (kW)</label>
                   <input
                     type="number"
-                    step="0.5"
-                    min="1"
-                    value={data.system.capacityKw}
+                    step="0.1"
+                    min="0.5"
+                    value={data.system.capacityKw ?? ''}
                     onChange={(e) => {
-                      const val = parseFloat(e.target.value) || 1;
+                      const valStr = e.target.value;
+                      if (valStr === '') {
+                        onChange({
+                          ...data,
+                          system: { ...data.system, capacityKw: '' }
+                        });
+                        return;
+                      }
+                      const val = parseFloat(valStr);
+                      if (isNaN(val)) return;
                       const energy = calculateEnergyMetrics(val);
                       const area = calculateArea(val);
                       const subsidy = calculateSubsidy(val);
@@ -387,7 +396,7 @@ export const Dashboard = ({
                         ...data,
                         system: {
                           ...data.system,
-                          capacityKw: val,
+                          capacityKw: valStr,
                           energyPerDay: energy.energyPerDay,
                           energyPerMonth: energy.energyPerMonth,
                           energyPerYear: energy.energyPerYear,
@@ -401,6 +410,14 @@ export const Dashboard = ({
                         },
                         proposalTitle: `DETAILEDTECHNO OFFER FOR THE SUPPLY OF ${val}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`
                       });
+                    }}
+                    onBlur={() => {
+                      const val = parseFloat(data.system.capacityKw);
+                      if (!val || val <= 0) {
+                        onChange({ ...data, system: { ...data.system, capacityKw: 1 } });
+                      } else {
+                        onChange({ ...data, system: { ...data.system, capacityKw: val } });
+                      }
                     }}
                     className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white font-bold text-xs focus:border-amber-500 outline-none"
                   />

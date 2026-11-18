@@ -49,13 +49,18 @@ export const QuotationFormView = ({
     const totalCost = preset.cost;
     const netCost = totalCost - subsidy;
     const payback = calculatePayback(netCost, energy.energyPerYear, formData.pricing.electricityTariff);
+    const panelsCount = preset.panels || (kw * 2);
 
-    // Update BOM descriptions with new capacity
-    const updatedBom = formData.bom.map(item => {
+    // Update BOM descriptions with new capacity and Item 1 quantity
+    const updatedBom = formData.bom.map((item, idx) => {
       let desc = item.description;
       desc = desc.replace(/\b\d+(\.\d+)?\s*KW\b/gi, `${kw}KW`);
       desc = desc.replace(/\b\d+(\.\d+)?\s*kWp\b/gi, `${kw}kWp`);
-      return { ...item, description: desc };
+      let qty = item.qty;
+      if (idx === 0) {
+        qty = `${panelsCount} Nos`;
+      }
+      return { ...item, description: desc, qty };
     });
 
     setFormData(prev => ({
@@ -63,7 +68,7 @@ export const QuotationFormView = ({
       system: {
         ...prev.system,
         capacityKw: kw,
-        panelsCount: preset.panels || (kw * 2),
+        panelsCount: panelsCount,
         phase: preset.phase,
         energyPerDay: energy.energyPerDay,
         energyPerMonth: energy.energyPerMonth,
@@ -82,6 +87,127 @@ export const QuotationFormView = ({
       proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${kw}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`,
       bom: updatedBom
     }));
+  };
+
+  // Handle Capacity change with smooth typing support
+  const handleCapacityChange = (valStr) => {
+    if (valStr === '') {
+      setFormData(prev => ({
+        ...prev,
+        system: {
+          ...prev.system,
+          capacityKw: ''
+        }
+      }));
+      return;
+    }
+
+    const val = parseFloat(valStr);
+    if (isNaN(val)) return;
+
+    const energy = calculateEnergyMetrics(val);
+    const area = calculateArea(val);
+    const subsidy = calculateSubsidy(val);
+    const recommendedPanels = Math.max(1, Math.round((val * 1000) / 540));
+
+    // Update BOM descriptions with new capacity
+    const updatedBom = formData.bom.map((item, idx) => {
+      let desc = item.description;
+      desc = desc.replace(/\b\d+(\.\d+)?\s*KW\b/gi, `${val}KW`);
+      desc = desc.replace(/\b\d+(\.\d+)?\s*kWp\b/gi, `${val}kWp`);
+      let qty = item.qty;
+      if (idx === 0) {
+        qty = `${recommendedPanels} Nos`;
+      }
+      return { ...item, description: desc, qty };
+    });
+
+    setFormData(prev => ({
+      ...prev,
+      system: {
+        ...prev.system,
+        capacityKw: valStr,
+        panelsCount: recommendedPanels,
+        energyPerDay: energy.energyPerDay,
+        energyPerMonth: energy.energyPerMonth,
+        energyPerYear: energy.energyPerYear,
+        areaRequired: area,
+        areaSystemKw: `${val}kW`
+      },
+      pricing: {
+        ...prev.pricing,
+        subsidyAmount: subsidy,
+        afterSubsidyCost: Math.max(0, prev.pricing.totalCost - subsidy)
+      },
+      proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${val}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`,
+      bom: updatedBom
+    }));
+  };
+
+  const handleCapacityBlur = () => {
+    const val = parseFloat(formData.system.capacityKw);
+    if (!val || val <= 0) {
+      handleCapacityChange('1');
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        system: {
+          ...prev.system,
+          capacityKw: val
+        }
+      }));
+    }
+  };
+
+  // Handle Panels Count change with smooth typing support
+  const handlePanelsCountChange = (valStr) => {
+    if (valStr === '') {
+      setFormData(prev => ({
+        ...prev,
+        system: {
+          ...prev.system,
+          panelsCount: ''
+        }
+      }));
+      return;
+    }
+
+    const count = parseInt(valStr, 10);
+    if (isNaN(count)) return;
+
+    // Update BOM Item 1 quantity with exact panel count
+    const updatedBom = [...formData.bom];
+    if (updatedBom[0]) {
+      updatedBom[0] = {
+        ...updatedBom[0],
+        qty: `${count} Nos`
+      };
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      system: {
+        ...prev.system,
+        panelsCount: valStr
+      },
+      bom: updatedBom
+    }));
+  };
+
+  const handlePanelsCountBlur = () => {
+    const count = parseInt(formData.system.panelsCount, 10);
+    if (!count || count <= 0) {
+      const fallbackCount = Math.max(1, Math.round((Number(formData.system.capacityKw || 1) * 1000) / 540));
+      handlePanelsCountChange(String(fallbackCount));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        system: {
+          ...prev.system,
+          panelsCount: count
+        }
+      }));
+    }
   };
 
   // Price changes with recalculations
@@ -514,54 +640,64 @@ export const QuotationFormView = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                {/* System Capacity (kWp) */}
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    System Capacity (kWp)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-semibold text-slate-700">
+                      System Capacity (kWp)
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-medium">
+                      Inverter Rating / Grid Tie
+                    </span>
+                  </div>
                   <input
                     type="number"
-                    step="0.5"
-                    min="1"
-                    value={formData.system.capacityKw}
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value) || 1;
-                      const energy = calculateEnergyMetrics(val);
-                      const area = calculateArea(val);
-                      const subsidy = calculateSubsidy(val);
-                      setFormData(prev => ({
-                        ...prev,
-                        system: {
-                          ...prev.system,
-                          capacityKw: val,
-                          panelsCount: Math.round(val * 2),
-                          energyPerDay: energy.energyPerDay,
-                          energyPerMonth: energy.energyPerMonth,
-                          energyPerYear: energy.energyPerYear,
-                          areaRequired: area,
-                          areaSystemKw: `${val}kW`
-                        },
-                        pricing: {
-                          ...prev.pricing,
-                          subsidyAmount: subsidy,
-                          afterSubsidyCost: Math.max(0, prev.pricing.totalCost - subsidy)
-                        },
-                        proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${val}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`
-                      }));
-                    }}
+                    step="0.1"
+                    min="0.5"
+                    value={formData.system.capacityKw ?? ''}
+                    onChange={(e) => handleCapacityChange(e.target.value)}
+                    onBlur={handleCapacityBlur}
+                    placeholder="Enter kWp (e.g. 3, 5, 10)"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
+                  <span className="text-[10px] text-slate-500 block mt-1">
+                    Standard rooftop scale: 1 to 20 kWp
+                  </span>
                 </div>
 
+                {/* Number of Solar Modules */}
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Number of Solar Modules
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-semibold text-slate-700">
+                      Number of Solar Modules
+                    </label>
+                    <span className="text-[10px] text-emerald-700 font-bold">
+                      {formData.system.panelsCount ? `${formData.system.panelsCount} × 540Wp = ${((Number(formData.system.panelsCount) * 540) / 1000).toFixed(2)} kWp DC` : ''}
+                    </span>
+                  </div>
                   <input
                     type="number"
-                    value={formData.system.panelsCount}
-                    onChange={(e) => updateField('system', 'panelsCount', parseInt(e.target.value) || 1)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    min="1"
+                    step="1"
+                    value={formData.system.panelsCount ?? ''}
+                    onChange={(e) => handlePanelsCountChange(e.target.value)}
+                    onBlur={handlePanelsCountBlur}
+                    placeholder="Enter module count (e.g. 5, 6, 10)"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">
+                    <span>Mono PERC / TOPCon 540W Modules</span>
+                    {formData.system.panelsCount && (
+                      <button
+                        type="button"
+                        onClick={() => handleCapacityChange(((Number(formData.system.panelsCount) * 540) / 1000).toFixed(1))}
+                        className="text-blue-600 hover:text-blue-800 underline font-semibold"
+                        title="Sync System Capacity to match this module count"
+                      >
+                        Sync Capacity ({((Number(formData.system.panelsCount) * 540) / 1000).toFixed(1)} kWp)
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
