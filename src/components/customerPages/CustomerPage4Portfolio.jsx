@@ -108,33 +108,38 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
 
       <div className="relative z-10 flex flex-col justify-between h-full space-y-2">
         {/* ============================================================== */}
-        {/* 1. TOP HEADER                                                  */}
+        {/* 1. COMMANDING EXECUTIVE BRAND HEADER                           */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between border-b border-slate-200/90 pb-2">
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-10 rounded-xl bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center p-1 shrink-0 overflow-hidden ring-1 ring-amber-400/30">
+        <div className="rounded-2xl p-2.5 bg-gradient-to-r from-[#060e24] via-[#0b1736] to-[#040816] text-white border border-slate-800 shadow-md flex items-center justify-between relative overflow-hidden">
+          <div className="absolute -right-8 -top-8 w-28 h-28 bg-amber-500/15 rounded-full blur-xl pointer-events-none" />
+          
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-14 h-10 rounded-xl bg-white p-1 shadow-md flex items-center justify-center shrink-0 border-2 border-amber-400/50 ring-2 ring-white/10 overflow-hidden">
               <img src="/assets/srimaan_logo.jpeg" alt="Srimaan Solar Solutions" className="max-h-full max-w-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xs font-black text-slate-950 uppercase tracking-tight font-sans">
+                <h3 className="text-xs font-black text-white uppercase tracking-tight font-sans">
                   PROVEN FIELD TRACK RECORD &amp; COMPLETED WORKS
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-2xs">
+                <span className="px-2 py-0.5 rounded-full text-[7.5px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-xs">
                   920+ ROOFTOPS
                 </span>
               </div>
-              <p className="text-[8.5px] text-slate-600 font-medium">
+              <p className="text-[8px] text-slate-300 font-medium">
                 Benchmark Rooftop &amp; Industrial Solar PV Systems Delivered Across Telangana &amp; Andhra Pradesh
               </p>
             </div>
           </div>
 
-          <div className="text-right text-[8.5px]">
-            <span className="font-mono font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
-              Ref: {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}
-            </span>
-            <p className="font-semibold text-slate-600 text-[8px] mt-0.5">Track Record: <span className="font-black text-slate-900">14.5+ MW Commissioned</span></p>
+          <div className="relative z-10 text-right text-[8px]">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white/10 border border-white/15 backdrop-blur-xs">
+              <span className="text-slate-300 uppercase font-semibold text-[7px]">Ref:</span>
+              <span className="font-mono font-black text-amber-300 text-[8px]">
+                {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}
+              </span>
+            </div>
+            <p className="font-semibold text-slate-300 text-[7.5px] mt-0.5">Track Record: <span className="font-black text-white">14.5+ MW Commissioned</span></p>
           </div>
         </div>
 
