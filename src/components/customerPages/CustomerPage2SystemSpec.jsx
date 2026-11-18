@@ -22,7 +22,8 @@ import {
   Radio,
   FileCheck2,
   Flame,
-  Power
+  Power,
+  Building2
 } from 'lucide-react';
 import { formatNumber } from '../../utils/formatters';
 import Watermark from '../common/Watermark';

@@ -160,6 +160,47 @@ assert(adapted.quotation.commercials.subsidyAmount === INITIAL_QUOTATION_DATA.pr
 assert(adapted.quotation.commercials.netPayable === INITIAL_QUOTATION_DATA.pricing.afterSubsidyCost, 'Net payable mapped correctly');
 assert(adapted.settings.company.name === 'SRIMAAN SOLAR SOLUTIONS', 'Company name is SRIMAAN SOLAR SOLUTIONS');
 
+// 8. JSX Tag Imports Audit
+console.log('\n--- 8. AUDITING JSX COMPONENT & ICON IMPORTS ---');
+function getAllJsxFiles(dir) {
+  let results = [];
+  for (const item of fs.readdirSync(dir)) {
+    const full = path.join(dir, item);
+    if (fs.statSync(full).isDirectory()) {
+      results.push(...getAllJsxFiles(full));
+    } else if (full.endsWith('.jsx')) {
+      results.push(full);
+    }
+  }
+  return results;
+}
+
+const allJsx = getAllJsxFiles('src');
+for (const file of allJsx) {
+  const content = fs.readFileSync(file, 'utf8');
+  const tagMatches = content.match(/<([A-Z][a-zA-Z0-9]*)/g) || [];
+  const tags = [...new Set(tagMatches.map(t => t.substring(1)))];
+  
+  let fileUndefined = [];
+  for (const tag of tags) {
+    if (tag === 'React') continue;
+    const wordMatches = content.match(new RegExp(`\\b${tag}\\b`, 'g')) || [];
+    const jsxMatches = content.match(new RegExp(`<${tag}[\\s/>]`, 'g')) || [];
+    const closeMatches = content.match(new RegExp(`</${tag}>`, 'g')) || [];
+    const totalJsxCount = jsxMatches.length + closeMatches.length;
+
+    if (wordMatches.length <= totalJsxCount) {
+      fileUndefined.push(tag);
+    }
+  }
+
+  assert(
+    fileUndefined.length === 0,
+    `All JSX tags in ${path.basename(file)} are imported`,
+    fileUndefined.length > 0 ? `Undefined: <${fileUndefined.join('>, <')}>` : ''
+  );
+}
+
 console.log('\n========================================');
 console.log(`TOTAL TESTS: ${passCount + failCount} | PASSED: ${passCount} | FAILED: ${failCount}`);
 console.log('========================================');
