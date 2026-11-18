@@ -63,7 +63,7 @@ export const Page4 = ({ data }) => {
         </div>
 
         {/* Structure Images Comparison */}
-        <div className="mounting-structures-comparison my-3">
+        <div className="mounting-structures-comparison my-2">
           <div className="grid grid-cols-2 gap-6 items-end">
             {/* Basic Structure Card */}
             <div className="structure-card text-center">
@@ -105,7 +105,34 @@ export const Page4 = ({ data }) => {
           </div>
         </div>
 
-        <div className="h-2"></div>
+        {/* Statutory Compliance & Standards Bar */}
+        <div className="mt-1 pt-2 border-t border-slate-200">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-50/80 rounded border border-slate-200">
+            <span className="text-[7pt] font-extrabold uppercase text-slate-700 tracking-wider">
+              NATIONAL STANDARDS &amp; ACCREDITATIONS:
+            </span>
+            <div className="flex items-center space-x-5">
+              <div className="flex items-center space-x-1.5">
+                <img src="/assets/emblems/mnre-logo.png" alt="MNRE" className="h-5 w-auto object-contain" />
+                <span className="text-[7pt] font-bold text-slate-700">MNRE Empanelled</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <img src="/assets/emblems/pm-surya-ghar.png" alt="PM Surya Ghar" className="h-5 w-auto object-contain" />
+                <span className="text-[7pt] font-bold text-slate-700">PM Surya Ghar</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <img src="/assets/emblems/bis-certified.png" alt="BIS" className="h-4.5 w-auto object-contain" />
+                <span className="text-[7pt] font-bold text-slate-700">BIS Certified</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <img src="/assets/emblems/make-in-india.png" alt="Make in India" className="h-3.5 w-auto object-contain" />
+                <span className="text-[7pt] font-bold text-slate-700">Make In India (DCR)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="h-1"></div>
       </div>
 
       <PageFooter address={company?.officeAddress} />
