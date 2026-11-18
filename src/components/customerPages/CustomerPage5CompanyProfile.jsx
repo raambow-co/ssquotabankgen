@@ -19,6 +19,7 @@ import {
   CheckCheck
 } from 'lucide-react';
 import Watermark from '../common/Watermark';
+import CustomerPageHeader from './CustomerPageHeader';
 import { EMBLEMS } from '../../utils/brandLogos';
 
 export default function CustomerPage5CompanyProfile({ quotation, settings }) {
@@ -53,40 +54,16 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
 
       <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
         {/* ============================================================== */}
-        {/* 1. COMMANDING EXECUTIVE BRAND HEADER                           */}
+        {/* 1. MASTER EXECUTIVE BRAND HEADER                               */}
         {/* ============================================================== */}
-        <div className="rounded-2xl p-2.5 bg-gradient-to-r from-[#060e24] via-[#0b1736] to-[#040816] text-white border border-slate-800 shadow-md flex items-center justify-between relative overflow-hidden">
-          <div className="absolute -right-8 -top-8 w-28 h-28 bg-amber-500/15 rounded-full blur-xl pointer-events-none" />
-          
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="w-14 h-10 rounded-xl bg-white p-1 shadow-md flex items-center justify-center shrink-0 border-2 border-amber-400/50 ring-2 ring-white/10 overflow-hidden">
-              <img src="/assets/srimaan_logo.jpeg" alt="Srimaan Solar Solutions" className="max-h-full max-w-full object-contain" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xs font-black text-white uppercase tracking-tight font-sans">
-                  COMPANY PROFILE, SCOPE MATRIX &amp; ACCREDITATIONS
-                </h3>
-                <span className="px-2 py-0.5 rounded-full text-[7.5px] font-black bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs">
-                  EMPANELLED EPC
-                </span>
-              </div>
-              <p className="text-[8px] text-slate-300 font-medium">
-                Corporate Credentials, Turnkey Scope Responsibility Matrix &amp; Multi-Year O&amp;M Commitment
-              </p>
-            </div>
-          </div>
-
-          <div className="relative z-10 text-right text-[8px]">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white/10 border border-white/15 backdrop-blur-xs">
-              <span className="text-slate-300 uppercase font-semibold text-[7px]">GSTIN:</span>
-              <span className="font-mono font-black text-amber-300 text-[8px]">
-                {company?.gstin || '36AAKFS7291F1Z2'}
-              </span>
-            </div>
-            <p className="font-semibold text-slate-300 text-[7.5px] mt-0.5">HQ: <span className="font-black text-white">Khammam, TS</span></p>
-          </div>
-        </div>
+        <CustomerPageHeader 
+          quotation={quotation}
+          settings={settings}
+          title="COMPANY PROFILE, SCOPE MATRIX & ACCREDITATIONS"
+          subtitle="Corporate Credentials, Turnkey Scope Responsibility Matrix & Multi-Year O&M SLA Commitment"
+          badgeText="EMPANELLED EPC"
+          badgeColor="emerald"
+        />
 
         {/* ============================================================== */}
         {/* 2. CORPORATE DOSSIER & 4 ACCREDITATIONS                        */}

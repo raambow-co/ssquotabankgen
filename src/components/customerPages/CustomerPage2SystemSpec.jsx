@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { formatNumber } from '../../utils/formatters';
 import Watermark from '../common/Watermark';
+import CustomerPageHeader from './CustomerPageHeader';
 import { getPanelLogo, getInverterLogo, getCableLogo, EMBLEMS } from '../../utils/brandLogos';
 
 export default function CustomerPage2SystemSpec({ quotation, settings }) {
@@ -126,40 +127,17 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
 
       <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
         {/* ============================================================== */}
-        {/* 1. COMMANDING EXECUTIVE BRAND HEADER                           */}
+        {/* 1. MASTER EXECUTIVE BRAND HEADER                               */}
         {/* ============================================================== */}
-        <div className="rounded-2xl p-2.5 bg-gradient-to-r from-[#060e24] via-[#0b1736] to-[#040816] text-white border border-slate-800 shadow-md flex items-center justify-between relative overflow-hidden">
-          <div className="absolute -right-8 -top-8 w-28 h-28 bg-amber-500/15 rounded-full blur-xl pointer-events-none" />
-          
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="w-14 h-10 rounded-xl bg-white p-1 shadow-md flex items-center justify-center shrink-0 border-2 border-amber-400/50 ring-2 ring-white/10 overflow-hidden">
-              <img src="/assets/srimaan_logo.jpeg" alt="Srimaan Solar Solutions" className="max-h-full max-w-full object-contain" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xs font-black text-white uppercase tracking-tight font-sans">
-                  SYSTEM ENGINEERING &amp; HARDWARE BILL OF MATERIALS
-                </h3>
-                <span className="px-2 py-0.5 rounded-full text-[7.5px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs">
-                  TIER-1 ARCHITECTURE
-                </span>
-              </div>
-              <p className="text-[8px] text-slate-300 font-medium">
-                Comprehensive Technical Specifications, OEM Certifications &amp; Functional Electrical Flow
-              </p>
-            </div>
-          </div>
-
-          <div className="relative z-10 text-right text-[8px]">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white/10 border border-white/15 backdrop-blur-xs">
-              <span className="text-slate-300 uppercase font-semibold text-[7px]">Ref:</span>
-              <span className="font-mono font-black text-amber-300 text-[8px]">
-                {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}
-              </span>
-            </div>
-            <p className="font-semibold text-slate-300 text-[7.5px] mt-0.5">Capacity: <span className="font-black text-white">{dcKw} kWp DC / {acKw} kW AC</span></p>
-          </div>
-        </div>
+        <CustomerPageHeader 
+          quotation={quotation}
+          settings={settings}
+          title="SYSTEM ENGINEERING & HARDWARE SPECIFICATIONS"
+          subtitle="Comprehensive Technical Bill of Materials, OEM Certifications & Functional Electrical Flow"
+          badgeText="TIER-1 ARCHITECTURE"
+          badgeColor="amber"
+          capacityKw={dcKw}
+        />
 
         {/* ============================================================== */}
         {/* 2. 4 HIGH-IMPACT HARDWARE MASTER CARDS                          */}
