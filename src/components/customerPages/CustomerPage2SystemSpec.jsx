@@ -68,9 +68,9 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
       code: "01",
       category: "Solar PV Modules",
       specs: `${panelCount} Nos. × ${panelWattage}Wp N-Type TOPCon Dual-Glass Bifacial Modules (Total: ${dcKw} kWp DC)`,
-      brand: technical?.panelBrand || "Waaree / Adani / Tata",
+      brand: technical?.panelBrand || "Waaree / Adani / Tata Power",
       standard: "IEC 61215 / IS 14286",
-      warranty: "25-Yr Linear"
+      warranty: "30-Yr Linear Performance"
     },
     {
       code: "02",
@@ -78,23 +78,23 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
       specs: `${acKw} kW AC Capacity, Dual MPPT Tracker, 98.6% Efficiency, Built-in Wi-Fi IoT Cloud Telemetry`,
       brand: technical?.inverterBrand || "Sungrow / Solis / GoodWe",
       standard: "IEC 62109 / VDE 0126",
-      warranty: "8-Yr Onsite"
+      warranty: "8-Yr Onsite Replacement"
     },
     {
       code: "03",
       category: "MMS Structure",
       specs: "Elevated Hot-Dip Galvanized Iron (GI) 80µ Zinc Coating, Wind-Rated for 180 km/h, SS-304 Fasteners",
-      brand: "Srimaan Heavy-Duty GI Structural Rigging",
+      brand: "Srimaan Heavy-Duty Structural Rigging",
       standard: "IS 875 (P-3) / IS 2062",
-      warranty: "10-Yr Structural"
+      warranty: "10-Yr Structural Integrity"
     },
     {
       code: "04",
       category: "Solar DC / AC Cables",
       specs: "4 sq.mm & 6 sq.mm TUV/UL Certified Multi-Strand Tinned Copper Flame Retardant (FR-LSH) Cables",
-      brand: "Polycab / Siechem",
+      brand: "Polycab / Siechem / Havells",
       standard: "EN 50618 / IS 694",
-      warranty: "25-Yr Rated"
+      warranty: "25-Yr Rated Lifespan"
     },
     {
       code: "05",
@@ -102,7 +102,7 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
       specs: "DCDB & ACDB Enclosures with IP65, Type-II 1000V DC SPDs, Bi-polar MCBs & 4-Pole RCCB Protection",
       brand: "Schneider / Hensel / L&T",
       standard: "IEC 61439 / IS 13947",
-      warranty: "5-Yr Warranty"
+      warranty: "5-Yr Manufacturer Warranty"
     },
     {
       code: "06",
@@ -110,353 +110,318 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
       specs: "3 Independent Chemical Compound Earthing Pits (<2Ω Resistance) + Copper Bonded Lightning Arrester",
       brand: "Srimaan Chemical Compound Earthing Matrix",
       standard: "IS 3043 / NFC 17-102",
-      warranty: "5-Yr Assurance"
+      warranty: "5-Yr Comprehensive Warranty"
     }
   ];
 
   return (
     <div className="a4-preview-sheet p-6 sm:p-7 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
-      {/* Top Brand Accent Bar */}
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#0b132b] via-amber-500 to-emerald-600 z-30" />
+      {/* Signature Multi-Tier Maximalist Top Bar */}
+      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
+      <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
 
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-3">
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
         {/* ============================================================== */}
         {/* 1. TOP HEADER & BREADCRUMB STRIP                               */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+        <div className="flex items-center justify-between border-b border-slate-200/90 pb-2.5">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-10 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center p-1 shrink-0 overflow-hidden">
+            <div className="w-14 h-10 rounded-xl bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center p-1 shrink-0 overflow-hidden ring-1 ring-amber-400/30">
               <img src="/assets/srimaan_logo.jpeg" alt="Srimaan Solar Solutions" className="max-h-full max-w-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight font-sans">
+                <h3 className="text-xs font-black text-slate-950 uppercase tracking-tight font-sans">
                   SYSTEM ENGINEERING &amp; HARDWARE BILL OF MATERIALS
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[8px] font-extrabold bg-blue-50 text-blue-800 border border-blue-200">
-                  Tier-1 Standards
+                <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-2xs">
+                  TIER-1 ARCHITECTURE
                 </span>
               </div>
-              <p className="text-[8.5px] text-slate-500">
-                Detailed Engineering BOM, Hardware Compliance Standards &amp; PVsyst Harvest Analytics
+              <p className="text-[8.5px] text-slate-600 font-medium">
+                Comprehensive Technical Specifications, OEM Certifications &amp; Functional Electrical Flow
               </p>
             </div>
           </div>
 
-          <div className="text-right text-[8.5px] text-slate-500">
-            <span className="font-mono font-bold text-slate-900">Ref: {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}</span>
-            <p className="font-semibold text-slate-700">Capacity: <span className="font-bold text-slate-900">{dcKw} kWp DC</span></p>
+          <div className="text-right text-[8.5px]">
+            <span className="font-mono font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
+              Ref: {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}
+            </span>
+            <p className="font-semibold text-slate-600 text-[8px] mt-0.5">Capacity: <span className="font-black text-slate-900">{dcKw} kWp DC / {acKw} kW AC</span></p>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 2. 4-PILLAR HARDWARE SPECIFICATION CARDS                        */}
+        {/* 2. 4 HIGH-IMPACT HARDWARE MASTER CARDS                          */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-4 gap-2.5">
-          {/* Card 1: Solar Modules */}
-          <div className="p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
+        <div className="grid grid-cols-4 gap-2 text-[7.5px]">
+          {/* 1. Modules Card */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-amber-50/20 border border-slate-200 shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 text-[7px] font-extrabold uppercase">
-                  Generation Engine
+              <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1.5">
+                <span className="font-black text-slate-900 uppercase text-[8px] flex items-center gap-1">
+                  <SunMedium className="w-3.5 h-3.5 text-amber-500" />
+                  Solar PV Modules
                 </span>
-                {panelLogo && <img src={panelLogo} alt="" className="h-3 object-contain" />}
+                <span className="text-[6.5px] font-extrabold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded">Tier-1</span>
               </div>
-              <h4 className="font-black text-slate-900 text-xs">{technical?.panelBrand || 'Tier-1 TOPCon'}</h4>
-              <p className="text-[7.5px] text-slate-500 font-medium mt-0.5 truncate">{technical?.panelModel || 'Bi-facial Dual Glass 550Wp'}</p>
-              
-              <div className="mt-2 space-y-0.5 text-[7.5px]">
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Module Count</span>
-                  <span className="font-bold text-slate-800">{panelCount} Units</span>
-                </div>
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Peak Efficiency</span>
-                  <span className="font-bold text-emerald-600">22.3% Peak</span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-slate-500">Rear Bifacial Gain</span>
-                  <span className="font-bold text-amber-600">+15% to +25%</span>
-                </div>
+              <div className="h-6 flex items-center my-1">
+                {panelLogo ? (
+                  <img src={panelLogo} alt="Module Brand" className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <span className="font-black text-slate-900 text-[9px]">{technical?.panelBrand || "Waaree / Adani"}</span>
+                )}
+              </div>
+              <div className="space-y-0.5 text-slate-600 text-[7px] mt-1">
+                <div className="flex justify-between"><span>Type:</span><strong className="text-slate-900">TOPCon Bifacial</strong></div>
+                <div className="flex justify-between"><span>Module Count:</span><strong className="text-slate-900">{panelCount} × {panelWattage}Wp</strong></div>
+                <div className="flex justify-between"><span>Cell Efficiency:</span><strong className="text-slate-900">22.8% Peak</strong></div>
               </div>
             </div>
-            <div className="mt-2 pt-1 border-t border-slate-100 text-[7px] text-blue-700 font-bold">
-              &#10003; 25-Yr Linear Yield SLA
+            <div className="mt-1.5 pt-1 border-t border-slate-200 text-[6.5px] text-emerald-700 font-bold flex justify-between">
+              <span>&#10003; 30-Yr Linear Warranty</span>
+              <span>IEC 61215</span>
             </div>
           </div>
 
-          {/* Card 2: Smart Inverter */}
-          <div className="p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
+          {/* 2. Inverter Card */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 border border-slate-200 shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 text-[7px] font-extrabold uppercase">
-                  Power Conversion
+              <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1.5">
+                <span className="font-black text-slate-900 uppercase text-[8px] flex items-center gap-1">
+                  <Cpu className="w-3.5 h-3.5 text-blue-600" />
+                  Grid Inverter
                 </span>
-                {inverterLogo && <img src={inverterLogo} alt="" className="h-3 object-contain" />}
+                <span className="text-[6.5px] font-extrabold text-blue-800 bg-blue-100 px-1.5 py-0.2 rounded">Smart IoT</span>
               </div>
-              <h4 className="font-black text-slate-900 text-xs">{technical?.inverterBrand || 'Sungrow'}</h4>
-              <p className="text-[7.5px] text-slate-500 font-medium mt-0.5 truncate">{technical?.inverterModel || 'Smart Dual-MPPT Inverter'}</p>
-
-              <div className="mt-2 space-y-0.5 text-[7.5px]">
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Efficiency</span>
-                  <span className="font-bold text-emerald-600">98.6% Euro</span>
-                </div>
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">MPPT Channels</span>
-                  <span className="font-bold text-slate-800">Dual MPPT</span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-slate-500">Telemetry</span>
-                  <span className="font-bold text-slate-900">24/7 Cloud Wi-Fi</span>
-                </div>
+              <div className="h-6 flex items-center my-1">
+                {inverterLogo ? (
+                  <img src={inverterLogo} alt="Inverter Brand" className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <span className="font-black text-slate-900 text-[9px]">{technical?.inverterBrand || "Sungrow / Solis"}</span>
+                )}
+              </div>
+              <div className="space-y-0.5 text-slate-600 text-[7px] mt-1">
+                <div className="flex justify-between"><span>Capacity:</span><strong className="text-slate-900">{acKw} kW AC</strong></div>
+                <div className="flex justify-between"><span>MPPT Channels:</span><strong className="text-slate-900">Dual Trackers</strong></div>
+                <div className="flex justify-between"><span>Peak Efficiency:</span><strong className="text-slate-900">98.6% Euro</strong></div>
               </div>
             </div>
-            <div className="mt-2 pt-1 border-t border-slate-100 text-[7px] text-amber-700 font-bold">
-              &#10003; 8-Yr Onsite Warranty
+            <div className="mt-1.5 pt-1 border-t border-slate-200 text-[6.5px] text-blue-700 font-bold flex justify-between">
+              <span>&#10003; 8-Yr Onsite Warranty</span>
+              <span>Wi-Fi Cloud App</span>
             </div>
           </div>
 
-          {/* Card 3: MMS Structure */}
-          <div className="p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
+          {/* 3. Structure Card */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-purple-50/20 border border-slate-200 shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 text-[7px] font-extrabold uppercase">
-                  Structural Rigging
+              <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1.5">
+                <span className="font-black text-slate-900 uppercase text-[8px] flex items-center gap-1">
+                  <Layers className="w-3.5 h-3.5 text-purple-600" />
+                  Elevated MMS
                 </span>
-                <span className="text-[7px] text-emerald-700 font-bold">80µ Zinc</span>
+                <span className="text-[6.5px] font-extrabold text-purple-800 bg-purple-100 px-1.5 py-0.2 rounded">80µ Zinc</span>
               </div>
-              <h4 className="font-black text-slate-900 text-xs">Hot-Dip GI MMS</h4>
-              <p className="text-[7.5px] text-slate-500 font-medium mt-0.5 truncate">{technical?.structureType || 'Elevated 7-9 ft Rigging'}</p>
-
-              <div className="mt-2 space-y-0.5 text-[7.5px]">
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Wind Resistance</span>
-                  <span className="font-bold text-slate-800">180 km/h Rated</span>
-                </div>
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Hardware Fasteners</span>
-                  <span className="font-bold text-slate-800">SS-304 Grade</span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-slate-500">Rooftop Dead Load</span>
-                  <span className="font-bold text-emerald-600">&lt; 18 kg/m²</span>
-                </div>
+              <div className="h-6 flex items-center my-1">
+                <span className="font-black text-slate-900 text-[8.5px] leading-tight">Srimaan Heavy-Duty Structural Iron</span>
+              </div>
+              <div className="space-y-0.5 text-slate-600 text-[7px] mt-1">
+                <div className="flex justify-between"><span>Galvanization:</span><strong className="text-slate-900">80 Micron Hot-Dip</strong></div>
+                <div className="flex justify-between"><span>Wind Resistance:</span><strong className="text-slate-900">180 km/h Tested</strong></div>
+                <div className="flex justify-between"><span>Fasteners:</span><strong className="text-slate-900">SS-304 Marine Grade</strong></div>
               </div>
             </div>
-            <div className="mt-2 pt-1 border-t border-slate-100 text-[7px] text-slate-700 font-bold">
-              &#10003; 10-Yr Structural SLA
+            <div className="mt-1.5 pt-1 border-t border-slate-200 text-[6.5px] text-purple-700 font-bold flex justify-between">
+              <span>&#10003; 10-Yr Structural Warranty</span>
+              <span>IS 875 Compliant</span>
             </div>
           </div>
 
-          {/* Card 4: Electrical Protection */}
-          <div className="p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
+          {/* 4. Safety & Protection Card */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/20 border border-slate-200 shadow-2xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[7px] font-extrabold uppercase">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1.5">
+                <span className="font-black text-slate-900 uppercase text-[8px] flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                   Electrical Safety
                 </span>
-                <span className="text-[7px] text-blue-700 font-bold">IP65 Enclosure</span>
+                <span className="text-[6.5px] font-extrabold text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded">IS 3043</span>
               </div>
-              <h4 className="font-black text-slate-900 text-xs">Tri-Safe Protection</h4>
-              <p className="text-[7.5px] text-slate-500 font-medium mt-0.5 truncate">DCDB &bull; ACDB &bull; 3 Earth Pits</p>
-
-              <div className="mt-2 space-y-0.5 text-[7.5px]">
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Surge Arresters</span>
-                  <span className="font-bold text-slate-800">Type-II DC/AC SPD</span>
-                </div>
-                <div className="flex justify-between py-0.5 border-b border-slate-100">
-                  <span className="text-slate-500">Earth Resistance</span>
-                  <span className="font-bold text-emerald-600">&lt; 2.0 Ohms</span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-slate-500">Grid Disconnect</span>
-                  <span className="font-bold text-slate-800">Anti-Islanding</span>
-                </div>
+              <div className="h-6 flex items-center my-1">
+                <span className="font-black text-slate-900 text-[8.5px] leading-tight">3 Chemical Pits + Type-II SPDs</span>
+              </div>
+              <div className="space-y-0.5 text-slate-600 text-[7px] mt-1">
+                <div className="flex justify-between"><span>Earthing Resistance:</span><strong className="text-slate-900">&lt; 2.0 Ohms</strong></div>
+                <div className="flex justify-between"><span>DC Cables:</span><strong className="text-slate-900">Polycab TUV FR-LSH</strong></div>
+                <div className="flex justify-between"><span>Enclosures:</span><strong className="text-slate-900">IP65 Weatherproof</strong></div>
               </div>
             </div>
-            <div className="mt-2 pt-1 border-t border-slate-100 text-[7px] text-emerald-700 font-bold">
-              &#10003; IS 3043 Grounding Code
+            <div className="mt-1.5 pt-1 border-t border-slate-200 text-[6.5px] text-emerald-700 font-bold flex justify-between">
+              <span>&#10003; Lightning Arrester ESE</span>
+              <span>CEIG Approved</span>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 3. ITEMIZED BILL OF MATERIALS (BOM) SPECIFICATIONS TABLE        */}
+        {/* 3. ITEMIZED MASTER BILL OF MATERIALS (BOM) TABLE                */}
         {/* ============================================================== */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="bg-slate-50 px-3.5 py-2 border-b border-slate-200 flex items-center justify-between">
-            <span className="text-[9px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-              <Workflow className="w-3.5 h-3.5 text-blue-600" />
-              Itemized Engineering Bill of Materials (BOM) Specifications
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
+          <div className="bg-gradient-to-r from-[#060e24] via-[#0b1736] to-[#060e24] px-3.5 py-1.5 text-white flex items-center justify-between">
+            <span className="text-[8.5px] font-black uppercase tracking-wide flex items-center gap-1.5 text-amber-300">
+              <FileCheck2 className="w-3.5 h-3.5 text-amber-400" />
+              Itemized Engineering Bill of Materials (BOM) &amp; Standards
             </span>
-            <span className="text-[7.5px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-              100% Brand New DCR Compliant Hardware
+            <span className="text-[7px] text-emerald-300 font-bold bg-white/10 px-2 py-0.5 rounded-full border border-white/15">
+              100% Genuine Tier-1 OEM Supply
             </span>
           </div>
 
-          <div className="overflow-x-auto text-[8px]">
+          <div className="overflow-x-auto text-[7.5px]">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/70 text-slate-600 font-bold uppercase border-b border-slate-200 text-[7px] tracking-wider">
-                  <th className="py-1.5 px-3 w-8">#</th>
-                  <th className="py-1.5 px-3">Subsystem Category &amp; Engineering Specifications</th>
-                  <th className="py-1.5 px-3">Approved Tier-1 OEM Make</th>
-                  <th className="py-1.5 px-3">Compliance Standard</th>
-                  <th className="py-1.5 px-3 text-right">Warranty Term</th>
+                <tr className="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-[7px] uppercase tracking-wide">
+                  <th className="py-1 px-2 text-center w-8">Item</th>
+                  <th className="py-1 px-2.5 w-32">Subsystem Component</th>
+                  <th className="py-1 px-3">Technical Engineering Specification</th>
+                  <th className="py-1 px-2.5 w-32">Approved OEM Make</th>
+                  <th className="py-1 px-2.5 w-24 text-center">Standard</th>
+                  <th className="py-1 px-2.5 w-28 text-right">Warranty SLA</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 text-slate-600">
                 {bomRows.map((row, idx) => (
-                  <tr key={idx} className={idx % 2 === 1 ? "bg-slate-50/40" : "bg-white"}>
-                    <td className="py-1.5 px-3 font-mono font-bold text-slate-900">{row.code}</td>
-                    <td className="py-1.5 px-3">
-                      <span className="font-extrabold text-slate-900 block leading-tight text-[8px]">{row.category}</span>
-                      <span className="text-[7px] text-slate-500 leading-tight block mt-0.5">{row.specs}</span>
-                    </td>
-                    <td className="py-1.5 px-3 font-semibold text-slate-800 text-[7.5px]">{row.brand}</td>
-                    <td className="py-1.5 px-3 font-mono text-slate-500 text-[7px]">{row.standard}</td>
-                    <td className="py-1.5 px-3 text-right font-extrabold text-emerald-700 text-[8px]">{row.warranty}</td>
+                  <tr key={idx} className={idx % 2 === 1 ? "bg-slate-50/50" : "bg-white"}>
+                    <td className="py-1 px-2 text-center font-mono font-bold text-slate-900">{row.code}</td>
+                    <td className="py-1 px-2.5 font-bold text-slate-900">{row.category}</td>
+                    <td className="py-1 px-3 text-slate-700 leading-snug">{row.specs}</td>
+                    <td className="py-1 px-2.5 font-bold text-slate-900">{row.brand}</td>
+                    <td className="py-1 px-2.5 text-center font-mono text-[6.5px] font-semibold text-slate-600">{row.standard}</td>
+                    <td className="py-1 px-2.5 text-right font-extrabold text-emerald-700 font-mono">{row.warranty}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
-          <div className="p-2 bg-slate-50 border-t border-slate-200 text-[7.5px] text-slate-600 flex items-center justify-between">
-            <span>Rooftop Shadow-Free Footprint: <strong>~{roofArea} Sq.Ft</strong> clear terrace area</span>
-            <span className="text-slate-900 font-bold">1 kWp DC ≈ 85–90 Sq.Ft Terrace Area</span>
-          </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 4. SOLAR GENERATION HARVEST PROFILE & PVsyst ANALYTICS          */}
+        {/* 4. DUAL VISUAL STUDIO: METEONORM CURVE & ELECTRICAL SCHEMATIC   */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-12 gap-3 items-stretch">
-          {/* Left: 12-Month Generation Bar Chart (7 Cols) */}
-          <div className="col-span-7 bg-white rounded-2xl border border-slate-200 p-3 shadow-xs flex flex-col justify-between">
+        <div className="grid grid-cols-12 gap-2.5 items-stretch">
+          {/* LEFT: 12-MONTH METEONORM GENERATION CURVE (6 COLS) */}
+          <div className="col-span-6 bg-slate-50/90 rounded-2xl border border-slate-200 p-2.5 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 mb-2">
-                <span className="text-[9px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-                  <BarChart3 className="w-3.5 h-3.5 text-amber-600" />
-                  Meteonorm South India Solar Irradiance Profile
+              <div className="flex items-center justify-between pb-1 border-b border-slate-200 mb-1.5">
+                <span className="text-[8px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1">
+                  <BarChart3 className="w-3 h-3 text-amber-500" />
+                  12-Month Meteonorm Solar Yield Forecast
                 </span>
-                <span className="text-[7px] font-bold text-slate-500 font-mono">Avg: {Math.round(avgMonthly)} Units/Mo</span>
+                <span className="text-[6.5px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+                  Annual Yield: ~{formatNumber(annualKwh)} kWh
+                </span>
               </div>
 
-              {/* 12-Month Bar Visualizer */}
-              <div className="grid grid-cols-12 gap-1 items-end h-16 pt-2 bg-slate-50/60 p-2 rounded-xl border border-slate-100">
-                {monthlyProfile.map((m, idx) => {
-                  const mKwh = Math.round(avgMonthly * m.factor);
-                  const heightPercent = Math.min(100, Math.max(25, (m.factor / 1.15) * 100));
-                  const isPeak = m.factor >= 1.05;
-                  const isMonsoon = m.factor <= 0.85;
-
-                  return (
-                    <div key={idx} className="flex flex-col items-center h-full justify-end">
-                      <div 
-                        className={`w-full rounded-t-sm transition-all ${
-                          isPeak 
-                            ? 'bg-gradient-to-t from-amber-500 to-amber-400' 
-                            : isMonsoon 
-                              ? 'bg-gradient-to-t from-blue-400 to-blue-300' 
-                              : 'bg-gradient-to-t from-slate-700 to-slate-500'
-                        }`}
-                        style={{ height: `${heightPercent}%` }}
-                        title={`${m.month}: ${mKwh} Units`}
-                      />
-                      <span className="text-[6.5px] font-mono text-slate-500 mt-1 font-bold">
-                        {m.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-2 grid grid-cols-3 gap-1.5 text-center text-[7px]">
-                <div className="p-1 rounded-lg bg-amber-50/60 border border-amber-200">
-                  <span className="text-amber-800 font-bold block">Summer Peak</span>
-                  <span className="font-extrabold text-amber-950 mt-0.5 block">~{Math.round(dailyKwh * 1.12)} Units/d</span>
-                </div>
-                <div className="p-1 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="text-slate-600 font-bold block">Winter Clear</span>
-                  <span className="font-extrabold text-slate-900 mt-0.5 block">~{Math.round(dailyKwh * 0.95)} Units/d</span>
-                </div>
-                <div className="p-1 rounded-lg bg-blue-50/60 border border-blue-200">
-                  <span className="text-blue-800 font-bold block">Monsoon Average</span>
-                  <span className="font-extrabold text-blue-950 mt-0.5 block">~{Math.round(dailyKwh * 0.78)} Units/d</span>
+              {/* Bar Graph */}
+              <div className="pt-2 pb-1 px-1">
+                <div className="flex items-end justify-between gap-1 h-20 border-b border-slate-300 pb-1">
+                  {monthlyProfile.map((m, idx) => {
+                    const heightPercent = Math.round(m.factor * 75);
+                    const isPeak = m.factor >= 1.05;
+                    const isMonsoon = m.factor <= 0.85;
+                    return (
+                      <div key={idx} className="flex-1 flex flex-col items-center gap-0.5 group">
+                        <span className="text-[5.5px] text-slate-400 font-mono">
+                          {Math.round(avgMonthly * m.factor)}
+                        </span>
+                        <div 
+                          className={`w-full rounded-t-sm transition-all ${
+                            isPeak 
+                              ? 'bg-gradient-to-t from-amber-500 to-amber-400 shadow-xs' 
+                              : isMonsoon
+                                ? 'bg-gradient-to-t from-sky-400 to-sky-300'
+                                : 'bg-gradient-to-t from-emerald-600 to-emerald-500'
+                          }`}
+                          style={{ height: `${heightPercent}%` }}
+                        />
+                        <span className={`text-[6.5px] font-bold ${isPeak ? 'text-amber-800' : 'text-slate-600'}`}>
+                          {m.month}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            <div className="pt-1.5 border-t border-slate-100 text-[6.5px] text-slate-400 leading-tight">
-              Solar insolation modeling benchmarked at 4.85 peak sun hours per day across South-Central India latitudes.
+            <div className="mt-1 pt-1 border-t border-slate-200 flex items-center justify-between text-[6.5px] text-slate-500">
+              <span>★ Summer Peak: Mar-May (~1.12x)</span>
+              <span>Monsoon Season: Jun-Aug (~0.75x)</span>
+              <span>Daily Average: <strong>~{dailyKwh} Units/Day</strong></span>
             </div>
           </div>
 
-          {/* Right: Functional Electrical Architecture Flow (5 Cols) */}
-          <div className="col-span-5 bg-gradient-to-br from-slate-50 via-white to-blue-50/20 rounded-2xl border border-slate-200 p-3 shadow-xs flex flex-col justify-between">
+          {/* RIGHT: ELECTRICAL FLOW ARCHITECTURE SCHEMATIC (6 COLS) */}
+          <div className="col-span-6 bg-gradient-to-br from-[#060e24] via-[#0b1736] to-[#040816] text-white rounded-2xl border border-slate-800 p-2.5 flex flex-col justify-between shadow-2xs relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+
             <div>
-              <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 mb-2">
-                <span className="text-[9px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-emerald-600" />
-                  On-Grid Electrical Flow
+              <div className="flex items-center justify-between pb-1 border-b border-white/10 mb-1.5">
+                <span className="text-[8px] font-black text-amber-300 uppercase tracking-wide flex items-center gap-1">
+                  <Workflow className="w-3 h-3 text-amber-400" />
+                  On-Grid Electrical Flow Architecture
                 </span>
-                <span className="text-[7px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-bold border border-emerald-200">
-                  Bi-Directional
+                <span className="text-[6.5px] font-bold text-emerald-300 bg-white/10 px-1.5 py-0.2 rounded border border-white/15">
+                  Synchronized
                 </span>
               </div>
 
-              {/* Step-by-step connection pill chain */}
-              <div className="space-y-1.5 text-[7.5px]">
-                <div className="p-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-lg bg-blue-50 text-blue-700 font-black flex items-center justify-center shrink-0">1</span>
-                  <div>
-                    <strong className="text-slate-900 block leading-tight">TOPCon Bifacial Solar Array</strong>
-                    <span className="text-slate-500 text-[6.5px]">Generates clean DC electricity from sunlight</span>
-                  </div>
+              {/* Visual Flow Nodes */}
+              <div className="grid grid-cols-4 gap-1 text-center py-1">
+                {/* Node 1: PV Array */}
+                <div className="p-1 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center">
+                  <SunMedium className="w-4 h-4 text-amber-400 mb-0.5" />
+                  <span className="text-[7px] font-black text-white block">PV Array</span>
+                  <span className="text-[5.5px] text-slate-300 block">{dcKw} kWp DC</span>
                 </div>
 
-                <div className="p-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-lg bg-amber-50 text-amber-700 font-black flex items-center justify-center shrink-0">2</span>
-                  <div>
-                    <strong className="text-slate-900 block leading-tight">DCDB Isolator &amp; Type-II SPDs</strong>
-                    <span className="text-slate-500 text-[6.5px]">Rotary disconnect + 1000V surge suppression</span>
-                  </div>
+                {/* Node 2: MPPT Inverter */}
+                <div className="p-1 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center">
+                  <Cpu className="w-4 h-4 text-sky-400 mb-0.5" />
+                  <span className="text-[7px] font-black text-white block">Inverter</span>
+                  <span className="text-[5.5px] text-slate-300 block">{acKw} kW AC Sync</span>
                 </div>
 
-                <div className="p-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-lg bg-emerald-50 text-emerald-700 font-black flex items-center justify-center shrink-0">3</span>
-                  <div>
-                    <strong className="text-slate-900 block leading-tight">Smart Grid-Tied Inverter</strong>
-                    <span className="text-slate-500 text-[6.5px]">Converts DC to pure sine AC power with IoT sync</span>
-                  </div>
+                {/* Node 3: Net-Meter */}
+                <div className="p-1 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center">
+                  <Activity className="w-4 h-4 text-emerald-400 mb-0.5" />
+                  <span className="text-[7px] font-black text-white block">Net-Meter</span>
+                  <span className="text-[5.5px] text-slate-300 block">Bi-Directional</span>
                 </div>
 
-                <div className="p-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-lg bg-slate-100 text-slate-800 font-black flex items-center justify-center shrink-0">4</span>
-                  <div>
-                    <strong className="text-slate-900 block leading-tight">ACDB Panel &amp; Protection</strong>
-                    <span className="text-slate-500 text-[6.5px]">MCB + RCCB protection for premises appliances</span>
-                  </div>
+                {/* Node 4: Grid & Load */}
+                <div className="p-1 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center">
+                  <Building2 className="w-4 h-4 text-purple-400 mb-0.5" />
+                  <span className="text-[7px] font-black text-white block">Home / Grid</span>
+                  <span className="text-[5.5px] text-slate-300 block">Export Credits</span>
                 </div>
+              </div>
 
-                <div className="p-1.5 rounded-xl bg-[#0b132b] text-white shadow-2xs flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center shrink-0">5</span>
-                  <div>
-                    <strong className="text-white block leading-tight">DISCOM Bi-Directional Net-Meter</strong>
-                    <span className="text-slate-300 text-[6.5px]">Surplus units export to grid &amp; reduce billing</span>
-                  </div>
-                </div>
+              {/* Explanatory flow note */}
+              <div className="mt-1 text-[6.5px] text-slate-300 leading-snug bg-white/5 p-1 rounded-lg border border-white/10">
+                Solar power prioritizes powering live daytime home loads. Excess units export automatically through the bi-directional meter to receive DISCOM bill credits.
               </div>
             </div>
 
-            <div className="pt-1.5 border-t border-slate-100 text-[6.5px] text-slate-400 leading-tight">
-              Anti-islanding compliant per IEEE 1547 with automatic cut-off during grid outages.
+            <div className="mt-1 pt-1 border-t border-white/10 flex items-center justify-between text-[6.5px] text-slate-400 font-mono">
+              <span className="text-amber-300">Voc: ~450V DC</span>
+              <span className="text-emerald-300">Vac: 230V/415V 50Hz</span>
+              <span className="text-sky-300">Earthing: &lt;2Ω IS 3043</span>
             </div>
           </div>
         </div>

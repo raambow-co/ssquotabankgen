@@ -44,8 +44,9 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
 
   return (
     <div className="a4-preview-sheet p-6 sm:p-7 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
-      {/* Top Brand Accent Bar */}
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#0b132b] via-amber-500 to-emerald-600 z-30" />
+      {/* Signature Multi-Tier Maximalist Top Bar */}
+      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
+      <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
 
       {/* Subtle Background Watermark */}
       <Watermark />
@@ -54,29 +55,31 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 1. TOP HEADER                                                  */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+        <div className="flex items-center justify-between border-b border-slate-200/90 pb-2.5">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-10 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center p-1 shrink-0 overflow-hidden">
+            <div className="w-14 h-10 rounded-xl bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center p-1 shrink-0 overflow-hidden ring-1 ring-amber-400/30">
               <img src="/assets/srimaan_logo.jpeg" alt="Srimaan Solar Solutions" className="max-h-full max-w-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight font-sans">
+                <h3 className="text-xs font-black text-slate-950 uppercase tracking-tight font-sans">
                   COMPANY PROFILE, SCOPE MATRIX &amp; ACCREDITATIONS
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[8px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  Empanelled EPC
+                <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-2xs">
+                  EMPANELLED EPC
                 </span>
               </div>
-              <p className="text-[8.5px] text-slate-500">
+              <p className="text-[8.5px] text-slate-600 font-medium">
                 Corporate Credentials, Turnkey Scope Responsibility Matrix &amp; Multi-Year O&amp;M Commitment
               </p>
             </div>
           </div>
 
-          <div className="text-right text-[8.5px] text-slate-500">
-            <span className="font-mono font-bold text-slate-900">GSTIN: {company?.gstin || '36AAKFS7291F1Z2'}</span>
-            <p className="font-semibold text-slate-700">HQ: <span className="font-bold text-slate-900">Khammam, TS</span></p>
+          <div className="text-right text-[8.5px]">
+            <span className="font-mono font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
+              GSTIN: {company?.gstin || '36AAKFS7291F1Z2'}
+            </span>
+            <p className="font-semibold text-slate-600 text-[8px] mt-0.5">HQ: <span className="font-black text-slate-900">Khammam, TS</span></p>
           </div>
         </div>
 
@@ -85,7 +88,7 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
         {/* ============================================================== */}
         <div className="grid grid-cols-12 gap-2.5 items-stretch">
           {/* Left: About Srimaan Solar (7 Cols) */}
-          <div className="col-span-7 p-3 rounded-2xl bg-[#0b132b] text-white shadow-xs flex flex-col justify-between relative overflow-hidden">
+          <div className="col-span-7 p-3 rounded-2xl bg-gradient-to-br from-[#060e24] via-[#0b1736] to-[#040816] text-white shadow-md border border-slate-800 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
             
             <div>
@@ -153,13 +156,13 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 3. SCOPE OF WORK RESPONSIBILITY MATRIX                         */}
         {/* ============================================================== */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
           <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-200 flex items-center justify-between">
             <span className="text-[9px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
               <FileCheck2 className="w-3.5 h-3.5 text-blue-600" />
               Scope of Work Responsibility Matrix
             </span>
-            <span className="text-[7.5px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-[7.5px] font-extrabold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
               100% Turnkey Delivery
             </span>
           </div>
@@ -167,7 +170,7 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
           <div className="overflow-x-auto text-[8px]">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-100/70 text-slate-700 font-bold border-b border-slate-200 text-[7.5px] uppercase tracking-wide">
+                <tr className="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200 text-[7px] uppercase tracking-wide">
                   <th className="py-1 px-3 w-7/12">Project Deliverable / Engineering Scope</th>
                   <th className="py-1 px-3 w-3/12 text-center">Srimaan Solar Turnkey Scope</th>
                   <th className="py-1 px-3 w-2/12 text-center">Customer Scope</th>
@@ -175,11 +178,11 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-600">
                 {scopeMatrix.map((row, idx) => (
-                  <tr key={idx} className={idx % 2 === 1 ? "bg-slate-50/50" : ""}>
+                  <tr key={idx} className={idx % 2 === 1 ? "bg-slate-50/50" : "bg-white"}>
                     <td className="py-1 px-3 font-semibold text-slate-800 leading-tight text-[7.5px]">{row.item}</td>
                     <td className="py-1 px-3 text-center">
                       {row.epc ? (
-                        <span className="text-emerald-700 font-extrabold inline-flex items-center gap-1 text-[7.5px] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                        <span className="text-emerald-800 font-black inline-flex items-center gap-1 text-[7.5px] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
                           &#10003; Full EPC Scope
                         </span>
                       ) : (
@@ -188,7 +191,7 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
                     </td>
                     <td className="py-1 px-3 text-center">
                       {row.client ? (
-                        <span className="text-blue-900 font-extrabold inline-flex items-center gap-1 text-[7.5px] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                        <span className="text-blue-900 font-black inline-flex items-center gap-1 text-[7.5px] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
                           &#10003; Client Scope
                         </span>
                       ) : (

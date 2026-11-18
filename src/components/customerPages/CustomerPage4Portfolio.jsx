@@ -15,7 +15,9 @@ import {
   BadgeCheck, 
   CheckCheck, 
   Sparkles,
-  Headphones
+  Headphones,
+  TrendingUp,
+  SunMedium
 } from 'lucide-react';
 import Watermark from '../common/Watermark';
 import { EMBLEMS } from '../../utils/brandLogos';
@@ -23,7 +25,6 @@ import { EMBLEMS } from '../../utils/brandLogos';
 export default function CustomerPage4Portfolio({ quotation, settings }) {
   const company = settings?.company || {};
   const portfolio = settings?.portfolioWorks || {};
-  const metrics = portfolio?.metrics || {};
   
   // 4 Balanced Showcases for a 2x2 Grid
   const showcaseProjects = [
@@ -79,172 +80,167 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
 
   return (
     <div className="a4-preview-sheet p-6 sm:p-7 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
-      {/* Top Brand Accent Bar */}
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#0b132b] via-amber-500 to-emerald-600 z-30" />
+      {/* Signature Multi-Tier Maximalist Top Bar */}
+      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
+      <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
 
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-3">
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
         {/* ============================================================== */}
         {/* 1. TOP HEADER                                                  */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+        <div className="flex items-center justify-between border-b border-slate-200/90 pb-2.5">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-10 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center p-1 shrink-0 overflow-hidden">
+            <div className="w-14 h-10 rounded-xl bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center p-1 shrink-0 overflow-hidden ring-1 ring-amber-400/30">
               <img src="/assets/srimaan_logo.jpeg" alt="Srimaan Solar Solutions" className="max-h-full max-w-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight font-sans">
+                <h3 className="text-xs font-black text-slate-950 uppercase tracking-tight font-sans">
                   PROVEN FIELD TRACK RECORD &amp; COMPLETED WORKS
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[8px] font-extrabold bg-blue-50 text-blue-800 border border-blue-200">
-                  Live Telemetry
+                <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-2xs">
+                  920+ ROOFTOPS
                 </span>
               </div>
-              <p className="text-[8.5px] text-slate-500">
-                Showcase of High-Yield Residential, Commercial &amp; Industrial Clean-Tech EPC Installations
+              <p className="text-[8.5px] text-slate-600 font-medium">
+                Benchmark Rooftop &amp; Industrial Solar PV Systems Delivered Across Telangana &amp; Andhra Pradesh
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <img src={EMBLEMS.pmSuryaGhar} alt="PM Surya Ghar" className="h-6 object-contain" />
-            <img src={EMBLEMS.mnre} alt="MNRE" className="h-6 object-contain" />
+          <div className="text-right text-[8.5px]">
+            <span className="font-mono font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
+              Ref: {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}
+            </span>
+            <p className="font-semibold text-slate-600 text-[8px] mt-0.5">Capacity: <span className="font-black text-slate-900">14.5+ MW Commissioned</span></p>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 2. 4 HORIZONTAL STAT CAPSULES                                  */}
+        {/* 2. 4 EXECUTIVE STAT CAPSULES                                    */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-4 gap-2.5">
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 shadow-2xs flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
-              <Building2 className="w-4 h-4 text-blue-700" />
-            </div>
-            <div>
-              <span className="text-base font-black text-slate-900 block leading-tight">{metrics.plantsCount || '920+'}</span>
-              <span className="text-[7.5px] font-bold text-slate-600 block uppercase">Rooftop Plants</span>
-              <span className="text-[6.5px] text-slate-400 block">Across Telangana &amp; AP</span>
-            </div>
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {/* Stat 1 */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-[#060e24] via-[#0b1736] to-[#040816] text-white border border-slate-800 shadow-2xs">
+            <span className="text-amber-400 font-black text-base font-mono block leading-none">920+</span>
+            <span className="text-[7.5px] font-bold text-slate-200 uppercase tracking-wide block mt-1">Rooftop Plants</span>
+            <span className="text-[6.5px] text-slate-400 block mt-0.5">Residential &amp; Commercial</span>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 shadow-2xs flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-              <Zap className="w-4 h-4 text-amber-700" />
-            </div>
-            <div>
-              <span className="text-base font-black text-slate-900 block leading-tight">{metrics.capacity || '14.5+ MW'}</span>
-              <span className="text-[7.5px] font-bold text-slate-600 block uppercase">Installed Capacity</span>
-              <span className="text-[6.5px] text-slate-400 block">Grid Synchronized</span>
-            </div>
+          {/* Stat 2 */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-amber-50/20 border border-slate-200 shadow-2xs">
+            <span className="text-slate-900 font-black text-base font-mono block leading-none">14.5+ MW</span>
+            <span className="text-[7.5px] font-bold text-slate-700 uppercase tracking-wide block mt-1">Installed Capacity</span>
+            <span className="text-[6.5px] text-slate-400 block mt-0.5">Across Telangana &amp; AP</span>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 shadow-2xs flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-              <Coins className="w-4 h-4 text-emerald-700" />
-            </div>
-            <div>
-              <span className="text-base font-black text-slate-900 block leading-tight">{metrics.savings || '₹5.4+ Cr'}</span>
-              <span className="text-[7.5px] font-bold text-slate-600 block uppercase">Annual Client Savings</span>
-              <span className="text-[6.5px] text-slate-400 block">Utility Bill Reduction</span>
-            </div>
+          {/* Stat 3 */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/20 border border-slate-200 shadow-2xs">
+            <span className="text-emerald-700 font-black text-base font-mono block leading-none">₹ 5.4+ Cr</span>
+            <span className="text-[7.5px] font-bold text-slate-700 uppercase tracking-wide block mt-1">Annual Savings</span>
+            <span className="text-[6.5px] text-slate-400 block mt-0.5">Direct Utility Bill Reductions</span>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 shadow-2xs flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-800 flex items-center justify-center shrink-0">
-              <BadgeCheck className="w-4 h-4 text-slate-800" />
-            </div>
-            <div>
-              <span className="text-base font-black text-slate-900 block leading-tight">{metrics.netMetering || '100%'}</span>
-              <span className="text-[7.5px] font-bold text-slate-600 block uppercase">Net-Metering Sync</span>
-              <span className="text-[6.5px] text-slate-400 block">Zero Regulatory Delays</span>
-            </div>
+          {/* Stat 4 */}
+          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 border border-slate-200 shadow-2xs">
+            <span className="text-blue-700 font-black text-base font-mono block leading-none">100%</span>
+            <span className="text-[7.5px] font-bold text-slate-700 uppercase tracking-wide block mt-1">Net-Metering Sync</span>
+            <span className="text-[6.5px] text-slate-400 block mt-0.5">CEIG &amp; DISCOM Approved</span>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 3. 2x2 LUXURY BALANCED PROJECT SHOWCASE GALLERY                 */}
+        {/* 3. 2x2 LUXURY BALANCED PHOTO SHOWCASE GRID                     */}
         {/* ============================================================== */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-              <Camera className="w-3.5 h-3.5 text-blue-600" />
-              Multi-Sector Project Gallery &bull; Live Telemetry Monitored Installations
-            </span>
-            <span className="text-[7.5px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-              &#10003; 100% Commissioned Works
-            </span>
-          </div>
+        <div className="grid grid-cols-2 gap-2.5 flex-1">
+          {showcaseProjects.map((proj) => (
+            <div 
+              key={proj.id} 
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs flex flex-col justify-between"
+            >
+              {/* Image with Dark Gradient & Badges */}
+              <div className="relative h-28 w-full bg-slate-900 overflow-hidden">
+                <img 
+                  src={proj.imageUrl} 
+                  alt={proj.title}
+                  className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
 
-          <div className="grid grid-cols-2 gap-3">
-            {showcaseProjects.map((proj) => (
-              <div key={proj.id} className="p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
-                <div>
-                  {/* Photo with Overlay Badges */}
-                  <div className="h-32 rounded-xl relative overflow-hidden bg-slate-100 border border-slate-200 mb-2">
-                    <img 
-                      src={proj.imageUrl} 
-                      alt={proj.title} 
-                      className="w-full h-full object-cover" 
-                    />
-                    <div className="absolute top-2 left-2 bg-[#0b132b]/90 text-white text-[7.5px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                      <span>{proj.category}</span>
-                    </div>
-                    <div className="absolute top-2 right-2 bg-amber-400 text-slate-950 font-mono font-black text-[8px] px-2 py-0.5 rounded">
-                      {proj.capacity}
-                    </div>
-                    <div className="absolute bottom-2 left-2 bg-white/95 text-slate-900 text-[7px] font-bold px-1.5 py-0.2 rounded border border-slate-200 flex items-center gap-1">
-                      <MapPin className="w-2.5 h-2.5 text-blue-600" />
-                      <span>{proj.location}</span>
-                    </div>
-                  </div>
-
-                  <h4 className="font-extrabold text-slate-900 text-[10.5px] leading-tight">{proj.title}</h4>
-                  <p className="text-[7.5px] text-slate-500 mt-1 line-clamp-1 leading-snug">
-                    {proj.hardware}
-                  </p>
+                {/* Top Badges */}
+                <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                  <span className="px-2 py-0.5 rounded-full text-[7px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-2xs">
+                    {proj.capacity}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[6.5px] font-bold bg-white/20 backdrop-blur-xs text-white border border-white/20">
+                    {proj.category}
+                  </span>
                 </div>
 
-                {/* Generation & Savings Highlight */}
-                <div className="mt-2.5 pt-2 border-t border-slate-100 grid grid-cols-2 gap-2 text-[8px]">
-                  <div className="p-1 rounded bg-slate-50 border border-slate-200/80">
-                    <span className="text-slate-400 block text-[6.5px] uppercase font-bold">Annual Energy</span>
-                    <span className="font-bold text-slate-900 block mt-0.2">{proj.annualGeneration}</span>
-                  </div>
-                  <div className="p-1 rounded bg-emerald-50/60 border border-emerald-200/80 text-right">
-                    <span className="text-emerald-700 block text-[6.5px] uppercase font-bold">Annual Savings</span>
-                    <span className="font-black text-emerald-800 block mt-0.2">{proj.annualSavings}</span>
+                {/* Bottom Overlay Title & Location */}
+                <div className="absolute bottom-2 left-2 right-2 text-white">
+                  <h4 className="text-[9px] font-black tracking-tight leading-snug drop-shadow-xs">
+                    {proj.title}
+                  </h4>
+                  <div className="flex items-center gap-1 text-[7px] text-slate-300 mt-0.5">
+                    <MapPin className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+                    <span>{proj.location}</span>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {/* Card Meta & Hardware Specs */}
+              <div className="p-2 space-y-1 bg-slate-50/50">
+                <div className="grid grid-cols-2 gap-1 text-[7.5px] border-b border-slate-200/80 pb-1">
+                  <div>
+                    <span className="text-[6.5px] text-slate-400 block font-semibold">Annual Generation:</span>
+                    <strong className="text-slate-900 font-mono text-[8px]">{proj.annualGeneration}</strong>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[6.5px] text-slate-400 block font-semibold">Client Bill Savings:</span>
+                    <strong className="text-emerald-700 font-mono text-[8px]">{proj.annualSavings}</strong>
+                  </div>
+                </div>
+
+                <div className="text-[6.5px] text-slate-600 flex items-center justify-between pt-0.5">
+                  <span className="truncate max-w-[190px]">{proj.hardware}</span>
+                  <span className="text-blue-700 font-extrabold shrink-0 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
+                    {proj.discom}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* ============================================================== */}
-        {/* 4. REGIONAL SERVICE HUBS & ON-SITE SLA NETWORK                 */}
+        {/* 4. REGIONAL SERVICE RESPONSE NETWORK BANNER                     */}
         {/* ============================================================== */}
-        <div className="p-2.5 rounded-2xl bg-gradient-to-r from-slate-50 via-white to-blue-50/30 border border-slate-200 flex items-center justify-between text-[8px]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shrink-0">
-              <Headphones className="w-4 h-4 text-emerald-700" />
-            </div>
+        <div className="p-2 rounded-2xl bg-gradient-to-r from-slate-50 via-white to-slate-50 border border-slate-200 flex items-center justify-between text-[7.5px] shadow-2xs">
+          <div className="flex items-center gap-2">
+            <Headphones className="w-4 h-4 text-amber-500 shrink-0" />
             <div>
-              <span className="font-bold text-slate-900 block leading-tight text-[8.5px]">
-                Dedicated Regional Technical &amp; Maintenance Response Centers
+              <span className="font-black text-slate-900 text-[8px] block">
+                Regional Technical &amp; Maintenance Response Network
               </span>
-              <span className="text-[7px] text-slate-500 block">
-                Khammam HQ &bull; Hyderabad &bull; Vijayawada &bull; Visakhapatnam &bull; Warangal &bull; 48-Hour SLA
+              <span className="text-[6.5px] text-slate-500 block">
+                Dedicated rapid maintenance teams across Telangana &amp; Andhra Pradesh
               </span>
             </div>
           </div>
-
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-slate-900 font-extrabold bg-white px-2 py-1 rounded-lg border border-slate-200 text-[7.5px]">
-              TSSPDCL &bull; TSNPDCL &bull; APEPDCL Empanelled
-            </span>
+          <div className="flex items-center gap-1.5 text-[7px] font-bold text-slate-700">
+            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Khammam HQ</span>
+            <span>&bull;</span>
+            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Hyderabad</span>
+            <span>&bull;</span>
+            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Vijayawada</span>
+            <span>&bull;</span>
+            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Visakhapatnam</span>
+            <span>&bull;</span>
+            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Warangal</span>
           </div>
         </div>
 
