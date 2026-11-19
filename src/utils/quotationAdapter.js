@@ -8,14 +8,14 @@ export const srimaanCustomerSettings = {
     tagline: "Clean Green Renewable Energy EPC Partner",
     subheading: "State DISCOM Empanelled Solar EPC Vendor • Registered PM Surya Ghar Channel Partner",
     about: "M/s. SRIMAAN SOLAR SOLUTIONS is a premier clean-tech engineering and EPC enterprise delivering high-efficiency rooftop and ground-mount solar power systems across Telangana and Andhra Pradesh. Committed to engineering excellence, we deploy Tier-1 DCR solar modules, smart grid-tie inverters, heavy-duty hot-dip galvanized mounting structures, and seamless DISCOM net-metering synchronization.",
-    address: "H.No. 11-10-624/A, Burhanpuram, Khammam, Telangana - 507001",
-    officeAddress: "H.No. 11-10-624/A, Burhanpuram, Khammam, Telangana - 507001",
+    address: "#6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam 507003",
+    officeAddress: "#6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam 507003",
     branches: "Khammam HQ | Hyderabad | Vijayawada | Visakhapatnam | Warangal",
-    phone: "+91 94948 22356 / +91 99897 45356",
+    phone: "9347416140 | 9912416140",
     email: "srimaansolarsolutions@gmail.com",
-    website: "www.srimaansolar.com",
-    gstin: "36AAKFS7291F1Z2",
-    pan: "AAKFS7291F",
+    website: "www.srimaansolarsolutions.com",
+    gstin: "36ADPPT2441N1ZW",
+    pan: "ADPPT2441N",
     cin: "U40106TG2020PTC142380",
     mnreEmpanelment: "SRI-DISCOM-TG-8421",
     msme: "UDYAM-TS-14-0028194",
@@ -229,7 +229,7 @@ export function convertToCustomerFormat(data) {
     warranties: {
       panelPerformance: "25-Year Linear Performance Warranty (Min 98% in Yr 1, ≤0.55%/yr linear degradation, ≥84.8% at Yr 25)",
       panelProduct: "12-Year Comprehensive Manufacturer Workmanship Defect Warranty",
-      inverterWarranty: "10-Year Standard Manufacturer Repair / Replacement Warranty",
+      inverterWarranty: "7-Year Manufacturer's Warranty for Inverter",
       workmanshipAmc: "5-Year Free Comprehensive Maintenance & Quarterly Health Inspections by Srimaan Solar Solutions"
     },
     paymentMilestones: (data.paymentTerms && data.paymentTerms.length > 0)
@@ -239,10 +239,23 @@ export function convertToCustomerFormat(data) {
           description: pt.condition || pt.description || "As per agreed milestone"
         }))
       : [
-          { milestone: "Booking & Engineering Advance", percentage: 20, description: "Upon acceptance & structural CAD design sign-off" },
-          { milestone: "Material Dispatch & Delivery", percentage: 70, description: "Upon physical delivery of panels, inverter & structures at site" },
-          { milestone: "Commissioning & Net Metering", percentage: 10, description: "Upon physical completion & DISCOM net-meter synchronization" }
+          { milestone: "Advance with purchase order", percentage: 20, description: "Upon work order placement & design sign-off" },
+          { milestone: "Before dispatch of materials", percentage: 70, description: "Materials delivered to site after receipt of 90% total cost" },
+          { milestone: "At installation", percentage: 10, description: "Upon installation completion & DISCOM net-meter filing" }
         ],
+    customerScope: [
+      "Civil work and earth-pit digging",
+      "Ladder or staircase access to the roof for workers and materials",
+      "Water and electricity during installation, at the customer's expense",
+      "Lockable storage for materials",
+      "Applicable load extension charges"
+    ],
+    deliveryTerms: {
+      delivery: "Materials will be delivered to the site after receipt of 90% of the total project cost.",
+      commissioning: "The system will be commissioned after net metering is completed. The estimated timeline is 30 days from installation."
+    },
+    siteTerms: "The customer handles local installation issues, including those involving labour unions or local groups. Surplus materials remain the vendor's property.",
+    orderTerms: "Advance payment constitutes acceptance. Orders cannot be cancelled once placed.",
     notes: data.terms && data.terms[0] ? data.terms[0] : "Proposal includes complete turnkey Discom net-metering facilitation.",
     preparedBy: "Srimaan Solar Solutions Engineering Team"
   };

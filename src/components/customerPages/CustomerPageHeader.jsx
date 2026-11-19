@@ -64,19 +64,21 @@ export default function CustomerPageHeader({
           </div>
         </div>
 
-        {/* Right: Proposal Reference & Date Badge */}
+        {/* Right: Official GSTIN, Contact & Proposal Ref as per Official Document */}
         <div className="text-right shrink-0">
-          <div className="px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-300 shadow-2xs">
-            <span className="text-[6.5px] text-slate-500 uppercase font-bold block">Proposal Ref</span>
-            <span className="font-mono font-black text-slate-900 text-[9.5px]">
-              {quotation?.quotationNumber || 'SRIMAAN SOLAR SOLUTIONS-10/07-2025-2026'}
-            </span>
+          <div className="text-[10px] font-black text-slate-900 tracking-wider">
+            GSTIN <span className="font-mono text-emerald-800 font-extrabold">{company.gstin || "36ADPPT2441N1ZW"}</span>
           </div>
-          <div className="mt-1 flex items-center justify-end gap-1.5 text-[7.5px] text-slate-500">
+          <div className="text-[8px] font-semibold text-slate-600 mt-0.5">
+            <span>{company.phone || "9347416140"}</span> &bull; <span>{company.email || "srimaansolarsolutions@gmail.com"}</span>
+          </div>
+          <div className="mt-1 flex items-center justify-end gap-1.5 text-[7px] text-slate-500">
+            <span className="font-mono font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+              Ref: {quotation?.quotationNumber || 'SSS-SOL-2026-0001'}
+            </span>
             <span>Date: <strong className="text-slate-900">{formatDate(quotation?.date || new Date())}</strong></span>
-            <span>&bull;</span>
             <span className="font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-              Guaranteed Validity: 30 Days
+              Validity: 30 Days
             </span>
           </div>
         </div>

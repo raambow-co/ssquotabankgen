@@ -1,304 +1,286 @@
 import React from 'react';
 import { 
-  Award, 
-  CheckCircle2, 
-  Building2, 
-  Home, 
-  Factory, 
-  GraduationCap, 
-  MapPin, 
-  Camera, 
   ShieldCheck, 
+  CalendarCheck, 
+  Truck, 
+  CheckCircle2, 
   Clock, 
-  Zap, 
+  Building2, 
   Coins, 
-  BadgeCheck, 
-  CheckCheck, 
   Sparkles,
-  Headphones,
-  TrendingUp,
-  SunMedium,
-  Leaf,
-  Layers3,
-  Cpu
+  FileCheck2,
+  FileText,
+  AlertCircle,
+  Award
 } from 'lucide-react';
 import Watermark from '../common/Watermark';
 import CustomerPageHeader from './CustomerPageHeader';
-import { EMBLEMS } from '../../utils/brandLogos';
+import CustomerPageFooter from './CustomerPageFooter';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 export default function CustomerPage4Portfolio({ quotation, settings }) {
   const company = settings?.company || {};
-  const portfolio = settings?.portfolioWorks || {};
-  
-  // 4 Balanced Showcases for a 2x2 Grid
-  const showcaseProjects = [
-    {
-      id: "proj-1",
-      title: "Luxury Residential Rooftop",
-      location: "Banjara Hills, Hyderabad",
-      category: "Residential Villa",
-      capacity: "15.0 kWp DC",
-      annualGeneration: "23,250 kWh / yr",
-      annualSavings: "₹ 1,97,600 / yr",
-      co2Offset: "476 Tonnes CO₂",
-      imageUrl: "/assets/portfolio/project-1.jpg",
-      discom: "TSSPDCL Net-Meter",
-      modules: "Waaree 550Wp TOPCon Bifacial (28 Nos)",
-      inverter: "Sungrow 15kW Multi-MPPT IoT Wi-Fi",
-      structure: "80µ Hot-Dip GI Elevated MMS",
-      timeline: "14-Day SLA Handover"
-    },
-    {
-      id: "proj-2",
-      title: "Coastal Independent Residence",
-      location: "MVP Colony, Visakhapatnam",
-      category: "Residential Rooftop",
-      capacity: "10.0 kWp DC",
-      annualGeneration: "15,800 kWh / yr",
-      annualSavings: "₹ 1,34,300 / yr",
-      co2Offset: "324 Tonnes CO₂",
-      imageUrl: "/assets/portfolio/project-2.jpg",
-      discom: "APEPDCL Net-Meter",
-      modules: "Adani 550Wp TOPCon Dual-Glass (18 Nos)",
-      inverter: "Solis 10kW Multi-MPPT Inverter",
-      structure: "Cyclone-Rated Elevated Structure",
-      timeline: "12-Day SLA Handover"
-    },
-    {
-      id: "proj-3",
-      title: "Educational Campus Solar",
-      location: "Guntur, Andhra Pradesh",
-      category: "Institutional",
-      capacity: "50.0 kWp DC",
-      annualGeneration: "78,800 kWh / yr",
-      annualSavings: "₹ 7,10,000 / yr",
-      co2Offset: "1,615 Tonnes CO₂",
-      imageUrl: "/assets/portfolio/project-3.jpg",
-      discom: "APCPDCL Net-Meter",
-      modules: "Tata Power Solar Modules (90 Nos)",
-      inverter: "Sungrow 50kW Commercial Multi-MPPT",
-      structure: "Custom Heavy-Duty Rooftop Array",
-      timeline: "21-Day SLA Handover"
-    },
-    {
-      id: "proj-4",
-      title: "Industrial Manufacturing Facility",
-      location: "Cherlapally Industrial, Hyderabad",
-      category: "Industrial Solar",
-      capacity: "100.0 kWp DC",
-      annualGeneration: "158,000 kWh / yr",
-      annualSavings: "₹ 13,43,000 / yr",
-      co2Offset: "3,240 Tonnes CO₂",
-      imageUrl: "/assets/portfolio/project-4.jpg",
-      discom: "TSSPDCL HT Net-Meter",
-      modules: "Tier-1 550Wp TOPCon High-Yield (182 Nos)",
-      inverter: "Heavy-Duty HT Inverter & Transformer Sync",
-      structure: "Purlin-Mounted Industrial Rigging",
-      timeline: "28-Day SLA Handover"
-    }
-  ];
+  const auth = settings?.authorization || {};
+  const technical = quotation?.technical || {};
+  const commercials = quotation?.commercials || {};
+  const customer = quotation?.customer || {};
+
+  const dcKw = parseFloat(technical?.actualDcCapacityKw || technical?.systemCapacityKw || 5.0);
+  const totalCost = commercials?.totalGrossCost || 0;
+  const subsidy = commercials?.subsidyAmount !== undefined ? commercials.subsidyAmount : 78000;
+  const netPayable = commercials?.netPayable !== undefined ? commercials.netPayable : Math.max(0, totalCost - subsidy);
 
   return (
-    <div className="a4-preview-sheet p-6 sm:p-7 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
-      {/* Signature Multi-Tier Maximalist Top Bar */}
+    <div className="a4-preview-sheet p-6 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
+      {/* Signature Multi-Tier Top Bar */}
       <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
       <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
 
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-2">
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
         {/* ============================================================== */}
         {/* 1. MASTER EXECUTIVE BRAND HEADER                               */}
         {/* ============================================================== */}
         <CustomerPageHeader 
           quotation={quotation}
           settings={settings}
-          title="PROVEN FIELD TRACK RECORD & COMPLETED WORKS"
-          subtitle="Benchmark Rooftop & Industrial Solar PV Systems Commissioned Across Telangana & Andhra Pradesh"
-          badgeText="920+ ROOFTOPS"
-          badgeColor="amber"
+          title="Payment, Delivery and Warranty"
+          subtitle="Milestone Disbursement Schedule, Site Logistics & Statutory Warranties"
+          badgeText="20 : 70 : 10 SLA"
+          badgeColor="emerald"
+          capacityKw={dcKw}
         />
 
         {/* ============================================================== */}
-        {/* 2. 4 EXECUTIVE STAT CAPSULES                                    */}
+        {/* 2. PAYMENT MILESTONES (Exact 20% / 70% / 10% from Official PDF) */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-4 gap-2 text-center">
-          {/* Stat 1 */}
-          <div className="p-2 rounded-2xl bg-gradient-to-br from-[#060e24] via-[#0b1736] to-[#040816] text-white border border-slate-800 shadow-2xs">
-            <span className="text-amber-400 font-black text-base font-mono block leading-none">920+</span>
-            <span className="text-[7.5px] font-bold text-slate-200 uppercase tracking-wide block mt-1">Rooftop Plants</span>
-            <span className="text-[6.5px] text-slate-400 block mt-0.5">Residential &amp; Commercial</span>
-          </div>
+        <div>
+          <h3 className="text-[10px] font-black text-slate-900 tracking-wide uppercase mb-1.5 flex items-center gap-1.5">
+            <Coins className="w-3.5 h-3.5 text-blue-600" />
+            Payment Terms &amp; Milestones
+          </h3>
 
-          {/* Stat 2 */}
-          <div className="p-2 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-amber-50/20 border border-slate-200 shadow-2xs">
-            <span className="text-slate-900 font-black text-base font-mono block leading-none">14.5+ MW</span>
-            <span className="text-[7.5px] font-bold text-slate-700 uppercase tracking-wide block mt-1">Installed Capacity</span>
-            <span className="text-[6.5px] text-slate-400 block mt-0.5">Across Telangana &amp; AP</span>
-          </div>
-
-          {/* Stat 3 */}
-          <div className="p-2 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/20 border border-slate-200 shadow-2xs">
-            <span className="text-emerald-700 font-black text-base font-mono block leading-none">₹ 5.4+ Cr</span>
-            <span className="text-[7.5px] font-bold text-slate-700 uppercase tracking-wide block mt-1">Annual Savings</span>
-            <span className="text-[6.5px] text-slate-400 block mt-0.5">Direct Utility Bill Reductions</span>
-          </div>
-
-          {/* Stat 4 */}
-          <div className="p-2 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 border border-slate-200 shadow-2xs">
-            <span className="text-blue-700 font-black text-base font-mono block leading-none">100%</span>
-            <span className="text-[7.5px] font-bold text-slate-700 uppercase tracking-wide block mt-1">Net-Metering Sync</span>
-            <span className="text-[6.5px] text-slate-400 block mt-0.5">CEIG &amp; DISCOM Approved</span>
-          </div>
-        </div>
-
-        {/* ============================================================== */}
-        {/* 3. 2x2 LUXURY BALANCED PHOTO SHOWCASE GRID (NO EMPTY GAPS)     */}
-        {/* ============================================================== */}
-        <div className="grid grid-cols-2 gap-2.5 flex-1 items-stretch">
-          {showcaseProjects.map((proj) => (
-            <div 
-              key={proj.id} 
-              className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs flex flex-col justify-between"
-            >
-              {/* Image with Dark Gradient & Badges - Expanded to h-44 (176px) */}
-              <div className="relative h-44 w-full bg-slate-900 overflow-hidden shrink-0">
-                <img 
-                  src={proj.imageUrl} 
-                  alt={proj.title}
-                  className="w-full h-full object-cover opacity-95 hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent" />
-
-                {/* Top Floating Badges */}
-                <div className="absolute top-2 left-2 flex items-center gap-1.5">
-                  <span className="px-2 py-0.5 rounded-full text-[7.5px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-2xs">
-                    {proj.capacity}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[7px] font-bold bg-white/25 backdrop-blur-xs text-white border border-white/20">
-                    {proj.category}
-                  </span>
-                </div>
-
-                <div className="absolute top-2 right-2">
-                  <span className="px-2 py-0.5 rounded-full text-[6.5px] font-black bg-emerald-600/90 text-white backdrop-blur-xs shadow-2xs">
-                    &#10003; Active &amp; Generating
-                  </span>
-                </div>
-
-                {/* Bottom Overlay Title & Location */}
-                <div className="absolute bottom-2 left-2 right-2 text-white">
-                  <h4 className="text-[10px] font-black tracking-tight leading-snug drop-shadow-xs">
-                    {proj.title}
-                  </h4>
-                  <div className="flex items-center gap-1 text-[7.5px] text-slate-200 mt-0.5 font-medium">
-                    <MapPin className="w-3 h-3 text-amber-400 shrink-0" />
-                    <span>{proj.location}</span>
-                  </div>
-                </div>
+          <div className="grid grid-cols-3 gap-2.5 text-center">
+            {/* 20% Advance */}
+            <div className="p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+              <div>
+                <span className="text-3xl font-black text-blue-900 font-mono block">20%</span>
+                <span className="text-[8.5px] font-extrabold text-slate-900 uppercase tracking-wide block mt-1">
+                  Advance with purchase order
+                </span>
+                <p className="text-[7px] text-slate-500 mt-1 leading-snug">
+                  Along with work order sign-off to initiate engineering survey &amp; DISCOM net-meter filing.
+                </p>
               </div>
-
-              {/* Dense Technical Specification & Energy Metrics Area */}
-              <div className="p-2 space-y-1.5 bg-slate-50/70 flex-1 flex flex-col justify-between">
-                {/* 3 Metric Pills */}
-                <div className="grid grid-cols-3 gap-1 text-center">
-                  <div className="p-1 rounded-lg bg-white border border-slate-200/80">
-                    <span className="text-[6px] text-slate-400 block font-semibold uppercase">Annual Harvest</span>
-                    <strong className="text-slate-900 font-mono text-[7.5px] block mt-0.2">{proj.annualGeneration}</strong>
-                  </div>
-                  <div className="p-1 rounded-lg bg-emerald-50 border border-emerald-200/80">
-                    <span className="text-[6px] text-emerald-800 block font-semibold uppercase">Client Bill Savings</span>
-                    <strong className="text-emerald-700 font-mono text-[7.5px] block mt-0.2">{proj.annualSavings}</strong>
-                  </div>
-                  <div className="p-1 rounded-lg bg-white border border-slate-200/80">
-                    <span className="text-[6px] text-slate-400 block font-semibold uppercase">CO₂ Offset</span>
-                    <strong className="text-slate-800 font-mono text-[7.5px] block mt-0.2">{proj.co2Offset}</strong>
-                  </div>
-                </div>
-
-                {/* Hardware Spec Badges */}
-                <div className="space-y-0.5 text-[7px] text-slate-600 bg-white p-1.5 rounded-lg border border-slate-200/80">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400 font-semibold flex items-center gap-1">
-                      <SunMedium className="w-2.5 h-2.5 text-amber-500" />
-                      Modules:
-                    </span>
-                    <strong className="text-slate-800 truncate max-w-[170px]">{proj.modules}</strong>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400 font-semibold flex items-center gap-1">
-                      <Cpu className="w-2.5 h-2.5 text-blue-600" />
-                      Inverter:
-                    </span>
-                    <strong className="text-slate-800 truncate max-w-[170px]">{proj.inverter}</strong>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400 font-semibold flex items-center gap-1">
-                      <Layers3 className="w-2.5 h-2.5 text-purple-600" />
-                      MMS:
-                    </span>
-                    <strong className="text-slate-800 truncate max-w-[170px]">{proj.structure}</strong>
-                  </div>
-                </div>
-
-                {/* Bottom Timeline & DISCOM Badge */}
-                <div className="text-[6.5px] text-slate-600 flex items-center justify-between pt-0.5 border-t border-slate-200/80">
-                  <span className="font-semibold text-slate-500 flex items-center gap-1">
-                    <Clock className="w-2.5 h-2.5 text-emerald-600" />
-                    {proj.timeline}
-                  </span>
-                  <span className="text-blue-800 font-black shrink-0 bg-blue-100 px-1.5 py-0.2 rounded border border-blue-200">
-                    {proj.discom}
-                  </span>
-                </div>
+              <div className="mt-2 pt-1 border-t border-slate-100 font-mono font-black text-blue-950 text-[9px]">
+                {formatCurrency(netPayable * 0.20)}
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* ============================================================== */}
-        {/* 4. REGIONAL SERVICE RESPONSE NETWORK BANNER                     */}
-        {/* ============================================================== */}
-        <div className="p-2 rounded-2xl bg-gradient-to-r from-slate-50 via-white to-slate-50 border border-slate-200 flex items-center justify-between text-[7.5px] shadow-2xs">
-          <div className="flex items-center gap-2">
-            <Headphones className="w-4 h-4 text-amber-500 shrink-0" />
-            <div>
-              <span className="font-black text-slate-900 text-[8px] block">
-                Regional Technical &amp; Maintenance Response Network
-              </span>
-              <span className="text-[6.5px] text-slate-500 block">
-                Dedicated rapid maintenance teams across Telangana &amp; Andhra Pradesh
-              </span>
+            {/* 70% Before Dispatch */}
+            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-300 shadow-2xs flex flex-col justify-between">
+              <div>
+                <span className="text-3xl font-black text-slate-900 font-mono block">70%</span>
+                <span className="text-[8.5px] font-extrabold text-slate-900 uppercase tracking-wide block mt-1">
+                  Before dispatch of materials
+                </span>
+                <p className="text-[7px] text-slate-500 mt-1 leading-snug">
+                  Upon readiness of Tier-1 solar modules, inverter, structure and balance of materials.
+                </p>
+              </div>
+              <div className="mt-2 pt-1 border-t border-slate-200 font-mono font-black text-slate-950 text-[9px]">
+                {formatCurrency(netPayable * 0.70)}
+              </div>
+            </div>
+
+            {/* 10% At Installation */}
+            <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-300 shadow-2xs flex flex-col justify-between">
+              <div>
+                <span className="text-3xl font-black text-emerald-800 font-mono block">10%</span>
+                <span className="text-[8.5px] font-extrabold text-emerald-950 uppercase tracking-wide block mt-1">
+                  At installation
+                </span>
+                <p className="text-[7px] text-emerald-900 mt-1 leading-snug">
+                  Upon completion of mechanical &amp; electrical rooftop installation at site.
+                </p>
+              </div>
+              <div className="mt-2 pt-1 border-t border-emerald-200 font-mono font-black text-emerald-950 text-[9px]">
+                {formatCurrency(netPayable * 0.10)}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-[7px] font-bold text-slate-700">
-            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Khammam HQ</span>
-            <span>&bull;</span>
-            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Hyderabad</span>
-            <span>&bull;</span>
-            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Vijayawada</span>
-            <span>&bull;</span>
-            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Visakhapatnam</span>
-            <span>&bull;</span>
-            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200">Warangal</span>
+        </div>
+
+        {/* ============================================================== */}
+        {/* 3. DELIVERY AND COMMISSIONING (From Official PDF)               */}
+        {/* ============================================================== */}
+        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <h4 className="text-[9px] font-black text-slate-900 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+            <Truck className="w-3.5 h-3.5 text-amber-600" />
+            Delivery and Commissioning
+          </h4>
+
+          <div className="grid grid-cols-2 gap-2 text-[7.5px]">
+            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span className="font-extrabold text-slate-900 block text-[8px] mb-0.5">Delivery Timeline</span>
+              <p className="text-slate-600 leading-relaxed">
+                Materials will be delivered to the site after receipt of <strong>90% of the total project cost</strong>.
+              </p>
+            </div>
+            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span className="font-extrabold text-slate-900 block text-[8px] mb-0.5">Plant Commissioning</span>
+              <p className="text-slate-600 leading-relaxed">
+                The system will be commissioned after net metering is completed. The estimated timeline is <strong>30 days from installation</strong>.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 5. PAGE 4 FOOTER                                               */}
+        {/* 4. WARRANTY AND SITE TERMS (From Official PDF)                  */}
         {/* ============================================================== */}
-        <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[8px] text-slate-500">
-          <div>
-            <span className="font-bold text-slate-900">{company.legalName || 'M/s. SRIMAAN SOLAR SOLUTIONS'}</span> &bull; {company?.address || 'H.No. 11-10-624/A, Burhanpuram, Khammam, Telangana - 507001'}
+        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <h4 className="text-[9px] font-black text-slate-900 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            Warranty and Site Terms
+          </h4>
+
+          <div className="border border-slate-200 rounded-xl overflow-hidden text-[7.5px]">
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr className="border-b border-slate-200">
+                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
+                    PV modules
+                  </td>
+                  <td className="p-1.5 text-slate-700 font-semibold">
+                    25-year output power warranty (Linear degradation &le;0.55%/yr)
+                  </td>
+                </tr>
+                <tr className="border-b border-slate-200">
+                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
+                    Inverter
+                  </td>
+                  <td className="p-1.5 text-slate-700 font-semibold">
+                    7-year manufacturer's warranty
+                  </td>
+                </tr>
+                <tr className="border-b border-slate-200">
+                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
+                    Site terms
+                  </td>
+                  <td className="p-1.5 text-slate-700">
+                    The customer handles local installation issues, including those involving labour unions or local groups. Surplus materials remain the vendor's property.
+                  </td>
+                </tr>
+                <tr>
+                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
+                    Order terms
+                  </td>
+                  <td className="p-1.5 text-slate-700">
+                    Advance payment constitutes acceptance. Orders cannot be cancelled once placed.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-emerald-700 font-semibold">{company?.tagline || 'Clean Green Renewable Energy EPC Partner'}</span>
-            <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-              Page 4 of 5
+        </div>
+
+        {/* ============================================================== */}
+        {/* 5. OFFICIAL STATE BANK OF INDIA PAYMENT CARD                    */}
+        {/* ============================================================== */}
+        <div className="p-2.5 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-amber-50/20 border border-slate-200 shadow-2xs">
+          <div className="flex items-center justify-between pb-1 border-b border-slate-200 mb-1">
+            <span className="text-[8.5px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5 text-amber-600" />
+              Official Bank Account for Payments
+            </span>
+            <span className="text-[7px] font-black text-blue-800 bg-blue-100 px-1.5 py-0.2 rounded">
+              SBI Corporate Account
             </span>
           </div>
+
+          <div className="grid grid-cols-4 gap-2 text-[7.5px]">
+            <div className="p-1 rounded-lg bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[6px] uppercase font-bold">Account Name</span>
+              <strong className="text-slate-950 text-[7.5px] block truncate">M/s. SRIMAAN SOLAR SOLUTIONS</strong>
+            </div>
+            <div className="p-1 rounded-lg bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[6px] uppercase font-bold">Bank &amp; Branch</span>
+              <strong className="text-slate-800 text-[7.5px] block truncate">State Bank of India &bull; Khammam</strong>
+            </div>
+            <div className="p-1 rounded-lg bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[6px] uppercase font-bold">Account Number</span>
+              <strong className="text-slate-950 font-mono text-[7.5px] block">40892716382</strong>
+            </div>
+            <div className="p-1 rounded-lg bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[6px] uppercase font-bold">IFSC Code</span>
+              <strong className="text-slate-950 font-mono text-[7.5px] block">SBIN0020154</strong>
+            </div>
+          </div>
         </div>
+
+        {/* ============================================================== */}
+        {/* 6. ACCEPTANCE & BILATERAL AUTHORIZATION (From Official PDF)    */}
+        {/* ============================================================== */}
+        <div className="grid grid-cols-2 gap-2.5 text-xs">
+          {/* Customer Acceptance */}
+          <div className="p-2.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-2xs">
+            <div>
+              <p className="font-black text-slate-900 text-[8.5px] mb-0.5">Acceptance</p>
+              <p className="text-[7px] text-slate-600 leading-snug mb-2">
+                I hereby accept the technical scope, payment terms, and delivery conditions of this quotation and confirm formal placement of the turnkey order.
+              </p>
+            </div>
+            <div className="border-t border-dashed border-slate-300 pt-1.5 flex justify-between text-[7px] text-slate-600">
+              <span>Customer signature: __________________________</span>
+              <span>Date: ______________</span>
+            </div>
+          </div>
+
+          {/* Srimaan Solar Official Signatory & Stamp */}
+          <div className="p-2.5 bg-white border border-slate-200/90 rounded-2xl relative overflow-hidden flex flex-col justify-between shadow-2xs">
+            {/* Rubber Stamp Overlay */}
+            <div className="absolute right-3 top-1 pointer-events-none select-none opacity-85">
+              <div className="w-12 h-12 rounded-full border-2 border-[#060e24] p-0.5 flex items-center justify-center transform rotate-[-6deg]">
+                <div className="w-full h-full rounded-full border border-dashed border-amber-600 flex flex-col items-center justify-center p-0.5 text-center bg-amber-50/40">
+                  <span className="text-[3px] font-black uppercase text-slate-950 tracking-wider">
+                    ★ SRIMAAN SOLAR SOLUTIONS ★
+                  </span>
+                  <span className="text-[4.5px] font-extrabold text-blue-900 my-0.2">
+                    AUTHORIZED
+                  </span>
+                  <span className="text-[3px] font-bold uppercase text-emerald-800 tracking-wider">
+                    TECHNICAL EPC
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-0.5">
+                <p className="font-black text-slate-900 text-[8.5px]">For Srimaan Solar Solutions</p>
+                <span className="text-[6px] text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded font-extrabold border border-emerald-200">
+                  &#10003; Empanelled Partner
+                </span>
+              </div>
+              <p className="text-[7px] text-slate-600 leading-snug mb-2">
+                Technical Engineering &amp; Commercial EPC Projects Division. Registered Channel Partner.
+              </p>
+            </div>
+
+            <div className="border-t border-dashed border-slate-300 pt-1.5 flex justify-between text-[7px] text-slate-600">
+              <span className="font-bold text-slate-900">{auth.signatoryName || 'K. Murali Krishna'} (Managing Director)</span>
+              <span>Date: {formatDate(quotation?.date || new Date())}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================== */}
+        {/* 7. PAGE 4 FOOTER                                               */}
+        {/* ============================================================== */}
+        <CustomerPageFooter pageNumber={4} totalPages={5} />
       </div>
     </div>
   );
