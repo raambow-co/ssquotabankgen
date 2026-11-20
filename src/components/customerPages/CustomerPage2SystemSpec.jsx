@@ -54,6 +54,9 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
   const subsidy = commercials?.subsidyAmount !== undefined ? commercials.subsidyAmount : 78000;
   const netPayable = commercials?.netPayable !== undefined ? commercials.netPayable : Math.max(0, totalCost - subsidy);
 
+  const rawRef = quotation?.quotationNumber || 'SSS-SOL-2026-1048';
+  const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
+
   const panelLogo = getPanelLogo(technical?.panelBrand);
   const inverterLogo = getInverterLogo(technical?.inverterBrand);
 
@@ -168,7 +171,7 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
                 </div>
                 <div className="p-1 rounded-lg bg-slate-50 border border-slate-200/80">
                   <span className="text-slate-400 block text-[6.5px] uppercase font-bold">Quotation no.</span>
-                  <span className="font-mono font-black text-slate-900 truncate block mt-0.2">{quotation?.quotationNumber || '[Number]'}</span>
+                  <span className="font-mono font-black text-slate-900 truncate block mt-0.2">{cleanRef}</span>
                 </div>
                 <div className="p-1 rounded-lg bg-slate-50 border border-slate-200/80">
                   <span className="text-slate-400 block text-[6.5px] uppercase font-bold">Phone</span>
