@@ -67,7 +67,7 @@ export const Page5 = ({ data }) => {
                     Amount to be paid towards the Cost of the {capacity} KW Solar System
                   </td>
                   <td className="py-1.5 px-2 text-center font-bold text-xs">
-                    {pricing.totalCost}
+                    {totalCostDisplay}
                   </td>
                 </tr>
 
@@ -97,7 +97,7 @@ export const Page5 = ({ data }) => {
                     After Subsidy Cost:
                   </td>
                   <td className="py-1.5 px-2 text-center font-extrabold text-gray-900 text-sm tracking-wide">
-                    {pricing.afterSubsidyCost}
+                    {afterSubsidyDisplay}
                   </td>
                 </tr>
               </tbody>

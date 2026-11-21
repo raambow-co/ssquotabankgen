@@ -148,7 +148,11 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
               </span>
             </div>
             <div className="text-[10px] text-slate-500 font-medium">
-              {quotation.system.capacityKw} kWp Rooftop System • Net: ₹{formatINR(quotation.pricing.afterSubsidyCost)}
+              {quotation.system.capacityKw} kWp Rooftop System • Net: ₹{formatINR(
+                formatMode === 'bank' 
+                  ? (quotation.pricing?.bankNetCost || ((quotation.pricing?.bankCost || quotation.pricing?.totalCost || 0) - (quotation.pricing?.subsidyAmount || 0)))
+                  : (quotation.pricing?.afterSubsidyCost || 0)
+              )}
             </div>
           </div>
         </div>
