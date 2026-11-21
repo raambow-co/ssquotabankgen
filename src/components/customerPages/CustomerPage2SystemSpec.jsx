@@ -252,11 +252,7 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
                 <span className="text-[6px] font-black text-amber-800 bg-amber-100 px-1 py-0.2 rounded">Tier-1</span>
               </div>
               <div className="h-5 flex items-center my-0.5">
-                {panelLogo ? (
-                  <img src={panelLogo} alt="Module Brand" className="max-h-full max-w-full object-contain" />
-                ) : (
-                  <span className="font-bold text-slate-900 text-[8px]">Waaree / Adani</span>
-                )}
+                <span className="font-extrabold text-slate-900 text-[7.5px] truncate">{technical?.panelBrand || "Waaree Energies"}</span>
               </div>
               <div className="space-y-0.2 text-[6.5px] text-slate-600">
                 <div className="flex justify-between"><span>Type:</span><strong className="text-slate-900">TOPCon / Mono PERC</strong></div>

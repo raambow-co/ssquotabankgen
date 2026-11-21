@@ -32,15 +32,16 @@ export const CAPACITY_PRESETS = [
 ];
 
 export const MODULE_BRANDS = [
-  "Adani Solar",
   "Waaree Energies",
-  "RenewSys Solar",
-  "Tata Power Solar",
-  "Goldi Solar",
+  "Adani Solar (Mundra)",
+  "Tata Power Solar / TP Solar",
   "Vikram Solar",
   "Premier Energies",
+  "Goldi Solar",
+  "Emmvee Photovoltaic",
   "Rayzon Solar",
-  "Saatvik Solar"
+  "RenewSys India",
+  "Saatvik Green Energy"
 ];
 
 export const MODULE_WATTAGE_PRESETS = [540, 545, 550, 575, 580, 600, 620, 650];
@@ -205,7 +206,7 @@ export const INITIAL_QUOTATION_DATA = {
     capacityKw: 5,
     panelsCount: 10,
     panelWattage: 540,
-    moduleBrand: "Adani Solar",
+    moduleBrand: "Waaree Energies",
     phase: "Single Phase (1-Phase 230V)",
     rooftopType: "RCC Flat Concrete Terrace",
     inverterBrand: "5 KW inverter (Polycab Solar inverter)",
@@ -229,7 +230,7 @@ export const INITIAL_QUOTATION_DATA = {
     paybackYears: "4.0"
   },
 
-  bom: DEFAULT_BOM(5, "5 KW inverter (Polycab Solar inverter)", "Adani Solar", null, 540),
+  bom: DEFAULT_BOM(5, "5 KW inverter (Polycab Solar inverter)", "Waaree Energies", null, 540),
   terms: DEFAULT_TERMS
 };
 

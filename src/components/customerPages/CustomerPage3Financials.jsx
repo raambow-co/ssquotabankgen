@@ -84,11 +84,7 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 </td>
                 <td className="py-1 px-2 text-center border-r border-slate-200">
                   <div className="flex items-center justify-center gap-1.5">
-                    {panelLogo ? (
-                      <img src={panelLogo} alt="Waaree / Adani" className="h-3.5 object-contain" />
-                    ) : (
-                      <span className="font-bold text-slate-900 text-[7pt]">Waaree or Adani</span>
-                    )}
+                    <span className="font-bold text-slate-900 text-[7pt] leading-tight">{technical?.panelBrand || "Waaree Energies"}</span>
                   </div>
                 </td>
                 <td className="py-1 px-2 text-center font-mono font-bold">{panelCount} Nos (1 set)</td>

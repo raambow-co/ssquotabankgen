@@ -155,13 +155,18 @@ export function convertToCustomerFormat(data) {
   const location = locParts.length > 0 ? locParts.join(', ') : 'Plot #112, Khammam, Telangana - 507001';
 
   // Extract clean Brand Names for Tier-1 Hardware rendering
-  let panelBrand = data.system?.moduleBrand || "Adani Solar";
-  if (panelBrand.toLowerCase().includes('waaree')) panelBrand = 'Waaree Solar';
-  else if (panelBrand.toLowerCase().includes('adani') || panelBrand.toLowerCase().includes('adhani')) panelBrand = 'Adani Solar';
-  else if (panelBrand.toLowerCase().includes('tata')) panelBrand = 'Tata Power Solar';
-  else if (panelBrand.toLowerCase().includes('renewsys')) panelBrand = 'RenewSys Solar';
+  let panelBrand = data.system?.moduleBrand || "Adani Solar (Mundra)";
+  if (panelBrand.toLowerCase().includes('waaree')) panelBrand = 'Waaree Energies';
+  else if (panelBrand.toLowerCase().includes('adani') || panelBrand.toLowerCase().includes('adhani')) panelBrand = 'Adani Solar (Mundra)';
+  else if (panelBrand.toLowerCase().includes('tata')) panelBrand = 'Tata Power Solar / TP Solar';
   else if (panelBrand.toLowerCase().includes('vikram')) panelBrand = 'Vikram Solar';
+  else if (panelBrand.toLowerCase().includes('premier')) panelBrand = 'Premier Energies';
   else if (panelBrand.toLowerCase().includes('goldi')) panelBrand = 'Goldi Solar';
+  else if (panelBrand.toLowerCase().includes('emmvee')) panelBrand = 'Emmvee Photovoltaic';
+  else if (panelBrand.toLowerCase().includes('rayzon')) panelBrand = 'Rayzon Solar';
+  else if (panelBrand.toLowerCase().includes('renewsys')) panelBrand = 'RenewSys India';
+  else if (panelBrand.toLowerCase().includes('saatvik')) panelBrand = 'Saatvik Green Energy';
+  else panelBrand = data.system?.moduleBrand || "Adani Solar (Mundra)";
 
   let inverterBrand = data.system?.inverterBrand || "Sungrow Power";
   if (inverterBrand.toLowerCase().includes('sungrow')) inverterBrand = 'Sungrow Power';

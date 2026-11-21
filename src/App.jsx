@@ -112,7 +112,7 @@ export function AppContent() {
     const bankCost = 475000;
     const panelWattage = 540;
     const panels = Math.ceil((initialKw * 1000) / panelWattage);
-    const moduleBrand = "Adani Solar";
+    const moduleBrand = "Waaree Energies";
 
     const newQuote = {
       id: `quote-${Date.now()}`,
