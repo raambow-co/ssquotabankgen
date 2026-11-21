@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Plus, Eye, Edit3, Copy, Trash2, Search, Filter,
   FileText, Zap, TrendingUp, Sun, ChevronRight, CheckCircle2,
-  Building2, UserCheck, Layers
+  Building2, UserCheck, Layers, Receipt
 } from 'lucide-react';
 import { formatINR } from '../utils/calculations';
 
@@ -259,6 +259,16 @@ export const DashboardView = ({
                       >
                         <UserCheck size={12} />
                         <span>Customer (5P)</span>
+                      </button>
+
+                      {/* Advance Receipt Button (1-Page) */}
+                      <button
+                        onClick={() => onPreviewQuotation(quote, 'receipt')}
+                        className="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-md text-[10px] font-bold transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                        title="View & Print Official 1-Page Advance Payment Receipt"
+                      >
+                        <Receipt size={12} />
+                        <span>Receipt</span>
                       </button>
 
                       {/* Edit Button */}

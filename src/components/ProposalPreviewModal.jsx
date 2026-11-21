@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Printer, ZoomIn, ZoomOut, Copy, Check, 
-  FileText, Share2, Download, Eye, Building2, UserCheck, Layers
+  FileText, Share2, Download, Eye, Building2, UserCheck, Layers, Receipt
 } from 'lucide-react';
 import { Page1 } from './Page1';
 import { Page2 } from './Page2';
@@ -15,8 +15,9 @@ import CustomerPage2SystemSpec from './customerPages/CustomerPage2SystemSpec';
 import CustomerPage3Financials from './customerPages/CustomerPage3Financials';
 import CustomerPage4Portfolio from './customerPages/CustomerPage4Portfolio';
 import CustomerPage5CompanyProfile from './customerPages/CustomerPage5CompanyProfile';
+import { AdvanceReceiptView } from './AdvanceReceiptView';
 import { convertToCustomerFormat } from '../utils/quotationAdapter';
-import { formatINR } from '../utils/calculations';
+import { formatINR, numberToWordsINR } from '../utils/calculations';
 
 export const ProposalPreviewModal = ({ 
   quotation, 
@@ -59,6 +60,38 @@ export const ProposalPreviewModal = ({
   };
 
   const handleCopyWhatsApp = () => {
+    if (formatMode === 'receipt') {
+      const rec = quotation.receipt || {};
+      const totalCost = Number(quotation.pricing?.customerCost || quotation.pricing?.totalCost || 220000);
+      const adv = Number(rec.advanceAmount !== undefined ? rec.advanceAmount : Math.round(totalCost * 0.1));
+      const bal = Math.max(0, totalCost - adv);
+      const summary = `🧾 *SRIMAAN SOLAR SOLUTIONS - ADVANCE PAYMENT RECEIPT*
+----------------------------------------
+👤 *Customer:* ${quotation.customer?.name || 'Valued Customer'}
+📍 *Address:* ${quotation.customer?.addressLine1 || quotation.customer?.address || ''}, ${quotation.customer?.district || ''}, ${quotation.customer?.state || 'TELANGANA'}
+📱 *Mobile:* ${quotation.customer?.phone || quotation.customer?.mobile || ''}
+📑 *Receipt No:* ${rec.receiptNo || quotation.customer?.consumerNo || quotation.refNo || '32'}
+📅 *Date:* ${rec.receiptDate || quotation.date || ''}
+⚡ *System Capacity:* ${quotation.system?.capacityKw || 3} kWp
+
+💰 *PAYMENT BREAKUP:*
+• Total Project Cost: ₹${formatINR(totalCost)}
+• Advance Payment Received: ₹${formatINR(adv)}
+• Balance Payable: ₹${formatINR(bal)}
+• Amount in Words: ${numberToWordsINR(adv)}
+• Payment Mode: ${rec.paymentMode || 'Bank Transfer / RTGS / NEFT / UPI'}
+${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: ${rec.reasonForPayment || 'Start work of contract load & feasibility permission'}
+
+🏢 *Srimaan Solar Solutions*
+📍 #6-210, Sriramnagar, Auto nagar, Khammam-507003
+📞 Contact: ${rec.receiverPhone || '9347416140 / 9912416140'}`;
+
+      navigator.clipboard.writeText(summary);
+      setCopiedNotification(true);
+      setTimeout(() => setCopiedNotification(false), 3000);
+      return;
+    }
+
     const summary = `☀️ *SRIMAAN SOLAR SOLUTIONS - ${formatMode === 'bank' ? 'BANK EPC QUOTATION' : 'CUSTOMER SOLAR PROPOSAL'}*
 ----------------------------------------
 👤 *Customer:* ${quotation.customer.name}
@@ -120,7 +153,7 @@ export const ProposalPreviewModal = ({
           </div>
         </div>
 
-        {/* Center: DUAL GENERATOR FORMAT SWITCHER TABS */}
+        {/* Center: DUAL GENERATOR + RECEIPT FORMAT SWITCHER TABS */}
         <div className="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 shadow-inner">
           <button
             onClick={() => {
@@ -161,36 +194,63 @@ export const ProposalPreviewModal = ({
               5 Pages
             </span>
           </button>
-        </div>
 
-        {/* Center-Right: Page Jump Pills */}
-        <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5">
           <button
-            onClick={() => setSelectedPage('all')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-              selectedPage === 'all'
-                ? (formatMode === 'bank' ? 'bg-[#0b132b] text-white' : 'bg-[#064e3b] text-white')
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            onClick={() => {
+              setFormatMode('receipt');
+              setSelectedPage('all');
+            }}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              formatMode === 'receipt'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
             }`}
           >
-            All {currentPagesList.length} Pages
+            <Receipt size={14} className={formatMode === 'receipt' ? 'text-amber-100' : 'text-slate-500'} />
+            <span>Advance Receipt</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+              formatMode === 'receipt' ? 'bg-amber-300 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+            }`}>
+              1 Page
+            </span>
           </button>
-          
-          {currentPagesList.map((page) => (
+        </div>
+
+        {/* Center-Right: Page Jump Pills or Receipt Label */}
+        {formatMode === 'receipt' ? (
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg text-xs font-bold">
+            <Receipt size={13} className="text-amber-600" />
+            <span>Official Advance Payment Voucher (1 Page A4)</span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5">
             <button
-              key={page.id}
-              onClick={() => setSelectedPage(page.id)}
+              onClick={() => setSelectedPage('all')}
               className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                selectedPage === page.id
+                selectedPage === 'all'
                   ? (formatMode === 'bank' ? 'bg-[#0b132b] text-white' : 'bg-[#064e3b] text-white')
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
-              title={page.fullTitle}
             >
-              {page.title}
+              All {currentPagesList.length} Pages
             </button>
-          ))}
-        </div>
+            
+            {currentPagesList.map((page) => (
+              <button
+                key={page.id}
+                onClick={() => setSelectedPage(page.id)}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  selectedPage === page.id
+                    ? (formatMode === 'bank' ? 'bg-[#0b132b] text-white' : 'bg-[#064e3b] text-white')
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+                title={page.fullTitle}
+              >
+                {page.title}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Right Actions: Zoom, Copy Summary, Print */}
         <div className="flex items-center space-x-2">
@@ -219,7 +279,7 @@ export const ProposalPreviewModal = ({
           <button
             onClick={handleCopyWhatsApp}
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-semibold transition cursor-pointer"
-            title="Copy quotation summary to WhatsApp"
+            title="Copy quotation or receipt summary to WhatsApp"
           >
             {copiedNotification ? <Check size={14} className="text-emerald-600" /> : <Share2 size={14} />}
             <span>{copiedNotification ? 'Copied!' : 'WhatsApp'}</span>
@@ -239,11 +299,15 @@ export const ProposalPreviewModal = ({
           <button
             onClick={handlePrint}
             className={`flex items-center space-x-1.5 px-4 py-1.5 text-white rounded-lg text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer ${
-              formatMode === 'bank' ? 'bg-[#0b132b] hover:bg-slate-800' : 'bg-[#064e3b] hover:bg-[#047857]'
+              formatMode === 'bank' 
+                ? 'bg-[#0b132b] hover:bg-slate-800' 
+                : formatMode === 'customer' 
+                  ? 'bg-[#064e3b] hover:bg-[#047857]' 
+                  : 'bg-amber-600 hover:bg-amber-700'
             }`}
           >
             <Printer size={15} />
-            <span>Print / PDF ({formatMode === 'bank' ? '7P' : '5P'})</span>
+            <span>Print / PDF ({formatMode === 'bank' ? '7P' : formatMode === 'customer' ? '5P' : '1P Receipt'})</span>
           </button>
         </div>
       </div>
@@ -301,6 +365,13 @@ export const ProposalPreviewModal = ({
                 </div>
               )}
             </>
+          )}
+
+          {/* ADVANCE PAYMENT RECEIPT (1 PAGE A4) */}
+          {formatMode === 'receipt' && (
+            <div className="document-page-wrapper shadow-2xl print:shadow-none">
+              <AdvanceReceiptView quotation={quotation} />
+            </div>
           )}
         </div>
       </div>

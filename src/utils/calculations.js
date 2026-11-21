@@ -151,3 +151,44 @@ export const calculateGSTBreakdown = (totalCost, customGoodsRatio = 0.70, custom
     totalProjectCost: P
   };
 };
+
+/**
+ * Converts a numeric amount to Indian currency words with 'ONLY' suffix
+ * e.g., 22000 -> 'TWENTY TWO THOUSAND ONLY'
+ */
+export const numberToWordsINR = (num) => {
+  if (!num || isNaN(num) || num <= 0) return 'ZERO ONLY';
+  const a = [
+    '', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN',
+    'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN', 'FIFTEEN', 'SIXTEEN', 'SEVENTEEN', 'EIGHTEEN', 'NINETEEN'
+  ];
+  const b = ['', '', 'TWENTY', 'THIRTY', 'FORTY', 'FIFTY', 'SIXTY', 'SEVENTY', 'EIGHTY', 'NINETY'];
+
+  const convertGroup = (n) => {
+    let str = '';
+    if (n >= 100) {
+      str += a[Math.floor(n / 100)] + ' HUNDRED ';
+      n %= 100;
+    }
+    if (n > 19) {
+      str += b[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + a[n % 10] : '');
+    } else if (n > 0) {
+      str += a[n];
+    }
+    return str.trim();
+  };
+
+  const n = Math.floor(Number(num));
+  const crore = Math.floor(n / 10000000);
+  const lakh = Math.floor((n % 10000000) / 100000);
+  const thousand = Math.floor((n % 100000) / 1000);
+  const remainder = n % 1000;
+
+  let res = '';
+  if (crore > 0) res += convertGroup(crore) + ' CRORE ';
+  if (lakh > 0) res += convertGroup(lakh) + ' LAKH ';
+  if (thousand > 0) res += convertGroup(thousand) + ' THOUSAND ';
+  if (remainder > 0) res += convertGroup(remainder) + ' ';
+
+  return (res.trim() + ' ONLY').replace(/\s+/g, ' ');
+};

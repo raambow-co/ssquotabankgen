@@ -230,6 +230,17 @@ export const INITIAL_QUOTATION_DATA = {
     paybackYears: "4.0"
   },
 
+  receipt: {
+    receiptNo: "32",
+    receiptDate: "20/11/2026",
+    advanceAmount: 22000,
+    paymentMode: "Bank Transfer / RTGS / NEFT / UPI",
+    txnReference: "UPI-Ref#9848163232",
+    reasonForPayment: "Start the work of Enhancement of contract load and Feasibility permission.",
+    receiverName: "T.RAVINDRA CHARY",
+    receiverPhone: "9347416140",
+    receivedOnBehalfOf: "Srimaan Solar Solutions"
+  },
   bom: DEFAULT_BOM(5, "5 KW inverter (Polycab Solar inverter)", "Waaree Energies", null, 540),
   terms: DEFAULT_TERMS
 };

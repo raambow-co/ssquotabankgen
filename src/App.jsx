@@ -163,6 +163,17 @@ export function AppContent() {
         annualSavings: 48000,
         paybackYears: "4.0"
       },
+      receipt: {
+        receiptNo: String(Math.floor(Math.random() * 899) + 100),
+        receiptDate: formatDateToPDFStyle(new Date()),
+        advanceAmount: Math.round(customerCost * 0.1),
+        paymentMode: "Bank Transfer / RTGS / NEFT / UPI",
+        txnReference: "",
+        reasonForPayment: "Start the work of Enhancement of contract load and Feasibility permission.",
+        receiverName: "T.RAVINDRA CHARY",
+        receiverPhone: "9347416140",
+        receivedOnBehalfOf: "Srimaan Solar Solutions"
+      },
       bom: DEFAULT_BOM(initialKw, `${initialKw} KW inverter (Polycab Solar inverter)`, moduleBrand, null, panelWattage),
       terms: DEFAULT_TERMS
     };

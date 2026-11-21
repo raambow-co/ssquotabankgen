@@ -22,7 +22,7 @@ function assert(condition, testName, details = '') {
 import {
   formatINR, formatINRDecimal, calculateSubsidy,
   calculateEnergyMetrics, calculateArea, calculatePayback,
-  calculateGSTBreakdown, generateRefNo
+  calculateGSTBreakdown, generateRefNo, numberToWordsINR
 } from '../src/utils/calculations.js';
 
 console.log('\n--- 1. AUDITING CALCULATION ENGINE ---');
@@ -32,6 +32,9 @@ assert(calculateSubsidy(2) === 60000, 'Subsidy for 2 kW is ₹60,000');
 assert(calculateSubsidy(3) === 78000, 'Subsidy for 3 kW is ₹78,000 (Max Cap)');
 assert(calculateSubsidy(5) === 78000, 'Subsidy for 5 kW is ₹78,000');
 assert(calculateSubsidy(10) === 78000, 'Subsidy for 10 kW is ₹78,000');
+
+assert(numberToWordsINR(22000) === 'TWENTY TWO THOUSAND ONLY', 'numberToWordsINR(22000) formats to TWENTY TWO THOUSAND ONLY');
+assert(numberToWordsINR(220000) === 'TWO LAKH TWENTY THOUSAND ONLY', 'numberToWordsINR(220000) formats to TWO LAKH TWENTY THOUSAND ONLY');
 
 const energy5kw = calculateEnergyMetrics(5);
 assert(energy5kw.energyPerDay === '20', '5 kW daily generation is 20 units');
@@ -97,6 +100,8 @@ assert(fs.existsSync('public/assets/portfolio/project-1.jpg'), 'Portfolio projec
 assert(fs.existsSync('public/assets/portfolio/project-4.jpg'), 'Portfolio project 4 exists');
 assert(fs.existsSync('public/assets/emblems/mnre-logo.png'), 'MNRE emblem exists');
 assert(fs.existsSync('public/assets/emblems/pm-surya-ghar.png'), 'PM Surya Ghar emblem exists');
+assert(fs.existsSync('public/assets/srimaan_seal.jpeg'), 'Receipt official round seal exists');
+assert(fs.existsSync('public/assets/srimaan_receipt_logo.jpeg'), 'Receipt official logo exists');
 
 // 5. Component Files Audit
 console.log('\n--- 5. AUDITING REACT COMPONENT FILES ---');
@@ -104,7 +109,8 @@ const components = [
   'Page1.jsx', 'Page2.jsx', 'Page3.jsx', 'Page4.jsx',
   'Page5.jsx', 'Page6.jsx', 'Page7.jsx', 'PageHeader.jsx',
   'Navbar.jsx', 'DashboardView.jsx', 'QuotationFormView.jsx',
-  'ProposalPreviewModal.jsx', 'CustomerQuotationViewer.jsx', 'SettingsModal.jsx'
+  'ProposalPreviewModal.jsx', 'CustomerQuotationViewer.jsx', 'SettingsModal.jsx',
+  'AdvanceReceiptView.jsx'
 ];
 
 for (const comp of components) {

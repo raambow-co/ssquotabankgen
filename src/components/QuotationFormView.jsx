@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Eye, Save, User, Zap, DollarSign, Clock, 
-  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2 
+  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2, Receipt
 } from 'lucide-react';
 import { 
   TELANGANA_DISTRICTS, ANDHRA_DISTRICTS, STATES_LIST, 
@@ -50,6 +50,17 @@ export const QuotationFormView = ({
         [field]: value
       }));
     }
+  };
+
+  // Receipt field updater
+  const updateReceiptField = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      receipt: {
+        ...(prev.receipt || {}),
+        [field]: value
+      }
+    }));
   };
 
   // Quick capacity preset handler
@@ -441,6 +452,16 @@ export const QuotationFormView = ({
 
           <button
             type="button"
+            onClick={() => onLivePreview(formData, 'receipt')}
+            className="flex items-center space-x-1.5 px-3 py-2 border border-amber-600 bg-amber-600 text-white font-bold text-xs rounded-lg shadow-xs hover:bg-amber-700 transition cursor-pointer"
+            title="Preview Official 1-Page Advance Payment Receipt"
+          >
+            <Receipt size={14} className="text-amber-100" />
+            <span>Receipt (1P)</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleSaveAndGenerate}
             className="flex items-center space-x-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg shadow transition active:scale-95 cursor-pointer"
           >
@@ -491,7 +512,7 @@ export const QuotationFormView = ({
               }`}
             >
               <DollarSign size={14} />
-              <span>3. Pricing &amp; Subsidy (P5/P6)</span>
+              <span>3. Pricing, Subsidy &amp; Receipt</span>
             </button>
 
             <button
@@ -1305,6 +1326,184 @@ export const QuotationFormView = ({
                   ))}
                 </div>
               </div>
+
+              {/* Advance Payment Receipt Voucher Section */}
+              <div className="pt-5 border-t border-slate-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                      <Receipt size={18} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">
+                        Official Advance Payment Voucher (Receipt Generator)
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        Matches official Srimaan receipt voucher format with round seal &amp; logo.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onLivePreview(formData, 'receipt')}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg shadow-xs transition cursor-pointer"
+                  >
+                    <Receipt size={13} />
+                    <span>Preview Receipt (1P)</span>
+                  </button>
+                </div>
+
+                <div className="p-4 bg-amber-50/40 border border-amber-200/80 rounded-xl space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                    {/* Advance Amount */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block font-bold text-slate-900">
+                          Advance Amount Received (₹) <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex gap-1">
+                          <button
+                            type="button"
+                            onClick={() => updateReceiptField('advanceAmount', Math.round(customerCost * 0.1))}
+                            className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded"
+                            title="10% Advance Token"
+                          >
+                            10%
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => updateReceiptField('advanceAmount', Math.round(customerCost * 0.2))}
+                            className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded"
+                            title="20% Advance Token"
+                          >
+                            20%
+                          </button>
+                        </div>
+                      </div>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1000"
+                        value={formData.receipt?.advanceAmount !== undefined ? formData.receipt.advanceAmount : Math.round(customerCost * 0.1)}
+                        onChange={(e) => {
+                          const valStr = e.target.value;
+                          updateReceiptField('advanceAmount', valStr === '' ? '' : parseFloat(valStr));
+                        }}
+                        placeholder="e.g. 22000"
+                        className="w-full px-3 py-2 border-2 border-amber-300 focus:border-amber-600 rounded-lg text-slate-900 font-mono font-bold text-sm bg-white focus:outline-none"
+                      />
+                      <span className="text-[10px] text-slate-500 mt-1 block">
+                        Balance due: <strong className="font-mono text-slate-800">₹{formatINR(Math.max(0, customerCost - Number(formData.receipt?.advanceAmount !== undefined ? formData.receipt.advanceAmount : Math.round(customerCost * 0.1))))}</strong> (on/before material dispatch)
+                      </span>
+                    </div>
+
+                    {/* Receipt Number */}
+                    <div>
+                      <label className="block font-bold text-slate-900 mb-1">
+                        Receipt Number
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.receipt?.receiptNo || formData.customer?.consumerNo || formData.refNo || '32'}
+                        onChange={(e) => updateReceiptField('receiptNo', e.target.value)}
+                        placeholder="Receipt #"
+                        className="w-full px-3 py-2 border border-slate-300 focus:border-slate-900 rounded-lg text-slate-900 font-mono font-bold text-xs bg-white focus:outline-none"
+                      />
+                      <span className="text-[10px] text-slate-400 mt-1 block">
+                        Voucher / Receipt serial number
+                      </span>
+                    </div>
+
+                    {/* Receipt Date */}
+                    <div>
+                      <label className="block font-bold text-slate-900 mb-1">
+                        Receipt Date
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.receipt?.receiptDate || formData.date || ''}
+                        onChange={(e) => updateReceiptField('receiptDate', e.target.value)}
+                        placeholder="DD/MM/YYYY"
+                        className="w-full px-3 py-2 border border-slate-300 focus:border-slate-900 rounded-lg text-slate-900 text-xs bg-white focus:outline-none"
+                      />
+                      <span className="text-[10px] text-slate-400 mt-1 block">
+                        Date payment was acknowledged
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    {/* Payment Mode */}
+                    <div>
+                      <label className="block font-bold text-slate-900 mb-1">
+                        Payment Mode
+                      </label>
+                      <select
+                        value={formData.receipt?.paymentMode || 'Bank Transfer / RTGS / NEFT / UPI'}
+                        onChange={(e) => updateReceiptField('paymentMode', e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 text-xs bg-white focus:outline-none"
+                      >
+                        <option value="Cash">Cash</option>
+                        <option value="Check / Cheque">Check / Cheque</option>
+                        <option value="Debit / Credit Card">Debit / Credit Card</option>
+                        <option value="Bank Transfer / RTGS / NEFT / UPI">Bank Transfer / RTGS / NEFT / UPI</option>
+                      </select>
+                    </div>
+
+                    {/* Transaction / UTR Ref */}
+                    <div>
+                      <label className="block font-bold text-slate-900 mb-1">
+                        Bank / UPI / Cheque Reference No.
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.receipt?.txnReference || ''}
+                        onChange={(e) => updateReceiptField('txnReference', e.target.value)}
+                        placeholder="e.g. UPI / UTR 432910482910 or Cheque # 001928"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs bg-white focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                    {/* Reason For Payment */}
+                    <div className="sm:col-span-2">
+                      <label className="block font-bold text-slate-900 mb-1">
+                        Reason For Payment (Scope Note)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.receipt?.reasonForPayment || 'Start the work of Enhancement of contract load and Feasibility permission.'}
+                        onChange={(e) => updateReceiptField('reasonForPayment', e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 text-xs bg-white focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Receiver Info */}
+                    <div>
+                      <label className="block font-bold text-slate-900 mb-1">
+                        Receiver Name &amp; Phone
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formData.receipt?.receiverName || 'T.RAVINDRA CHARY'}
+                          onChange={(e) => updateReceiptField('receiverName', e.target.value)}
+                          placeholder="Receiver Name"
+                          className="w-1/2 px-2 py-2 border border-slate-300 rounded-lg text-slate-900 text-xs bg-white focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          value={formData.receipt?.receiverPhone || '9347416140'}
+                          onChange={(e) => updateReceiptField('receiverPhone', e.target.value)}
+                          placeholder="Mobile"
+                          className="w-1/2 px-2 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs bg-white focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1603,6 +1802,31 @@ export const QuotationFormView = ({
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
                     <span>P5: Company Profile, Scopes &amp; QR Codes</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Advance Payment Receipt (1 Page) */}
+              <div 
+                onClick={() => onLivePreview(formData, 'receipt')}
+                className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/90 cursor-pointer hover:bg-amber-100/70 transition"
+                title="Click to preview 1-Page Advance Payment Receipt"
+              >
+                <div className="flex items-center justify-between text-xs font-bold text-amber-950 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <Receipt size={13} className="text-amber-700" />
+                    <span>🧾 Official Advance Receipt</span>
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 font-mono font-bold">1 Page</span>
+                </div>
+                <ul className="text-[10.5px] space-y-1 text-amber-950">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-amber-700 shrink-0" />
+                    <span>Official Round Seal &amp; Company Letterhead</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-amber-700 shrink-0" />
+                    <span>Advance vs Balance, Mode &amp; Words</span>
                   </li>
                 </ul>
               </div>
