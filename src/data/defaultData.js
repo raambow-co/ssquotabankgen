@@ -19,26 +19,31 @@ export const STATES_LIST = [
 ];
 
 export const CAPACITY_PRESETS = [
-  { kw: 1, panels: 2, phase: "Single Phase (1-Phase 230V)", cost: 95000, subsidy: 30000, daily: 4, monthly: 120, annual: 1200, area: "80 TO 100" },
-  { kw: 2, panels: 4, phase: "Single Phase (1-Phase 230V)", cost: 180000, subsidy: 60000, daily: 8, monthly: 240, annual: 2400, area: "160 TO 200" },
-  { kw: 3, panels: 6, phase: "Single Phase (1-Phase 230V)", cost: 265000, subsidy: 78000, daily: 12, monthly: 360, annual: 3600, area: "240 TO 300" },
-  { kw: 4, panels: 8, phase: "Single Phase (1-Phase 230V)", cost: 345000, subsidy: 78000, daily: 16, monthly: 480, annual: 4800, area: "320 TO 400" },
-  { kw: 5, panels: 10, phase: "Single Phase (1-Phase 230V)", cost: 425000, subsidy: 78000, daily: 20, monthly: 600, annual: 6000, area: "400 TO 500" },
-  { kw: 6, panels: 12, phase: "Three Phase (3-Phase 415V)", cost: 500000, subsidy: 78000, daily: 24, monthly: 720, annual: 7200, area: "480 TO 600" },
-  { kw: 8, panels: 16, phase: "Three Phase (3-Phase 415V)", cost: 650000, subsidy: 78000, daily: 32, monthly: 960, annual: 9600, area: "640 TO 800" },
-  { kw: 10, panels: 20, phase: "Three Phase (3-Phase 415V)", cost: 790000, subsidy: 78000, daily: 40, monthly: 1200, annual: 12000, area: "800 TO 1000" },
-  { kw: 15, panels: 30, phase: "Three Phase (3-Phase 415V)", cost: 1150000, subsidy: 78000, daily: 60, monthly: 1800, annual: 18000, area: "1200 TO 1500" },
-  { kw: 20, panels: 40, phase: "Three Phase (3-Phase 415V)", cost: 1480000, subsidy: 78000, daily: 80, monthly: 2400, annual: 24000, area: "1600 TO 2000" }
+  { kw: 1, panels: 2, phase: "Single Phase (1-Phase 230V)", cost: 95000, bankCost: 110000, subsidy: 30000, daily: 4, monthly: 120, annual: 1200, area: "80 TO 100" },
+  { kw: 2, panels: 4, phase: "Single Phase (1-Phase 230V)", cost: 180000, bankCost: 205000, subsidy: 60000, daily: 8, monthly: 240, annual: 2400, area: "160 TO 200" },
+  { kw: 3, panels: 6, phase: "Single Phase (1-Phase 230V)", cost: 260000, bankCost: 295000, subsidy: 78000, daily: 12, monthly: 360, annual: 3600, area: "240 TO 300" },
+  { kw: 4, panels: 8, phase: "Single Phase (1-Phase 230V)", cost: 340000, bankCost: 385000, subsidy: 78000, daily: 16, monthly: 480, annual: 4800, area: "320 TO 400" },
+  { kw: 5, panels: 10, phase: "Single Phase (1-Phase 230V)", cost: 420000, bankCost: 475000, subsidy: 78000, daily: 20, monthly: 600, annual: 6000, area: "400 TO 500" },
+  { kw: 6, panels: 12, phase: "Three Phase (3-Phase 415V)", cost: 500000, bankCost: 565000, subsidy: 78000, daily: 24, monthly: 720, annual: 7200, area: "480 TO 600" },
+  { kw: 8, panels: 16, phase: "Three Phase (3-Phase 415V)", cost: 650000, bankCost: 735000, subsidy: 78000, daily: 32, monthly: 960, annual: 9600, area: "640 TO 800" },
+  { kw: 10, panels: 20, phase: "Three Phase (3-Phase 415V)", cost: 790000, bankCost: 890000, subsidy: 78000, daily: 40, monthly: 1200, annual: 12000, area: "800 TO 1000" },
+  { kw: 15, panels: 30, phase: "Three Phase (3-Phase 415V)", cost: 1150000, bankCost: 1290000, subsidy: 78000, daily: 60, monthly: 1800, annual: 18000, area: "1200 TO 1500" },
+  { kw: 20, panels: 40, phase: "Three Phase (3-Phase 415V)", cost: 1480000, bankCost: 1650000, subsidy: 78000, daily: 80, monthly: 2400, annual: 24000, area: "1600 TO 2000" }
 ];
 
 export const MODULE_BRANDS = [
-  "Solar PV module: Monoperc halfcut (Adhani,RenewSys, DCR Module)",
-  "Solar PV module: TOPCon / Mono PERC 550W (Tata Power Solar, DCR Module)",
-  "Solar PV module: Bifacial Dual Glass 545W (Waaree Energies, DCR Module)",
-  "Solar PV module: High Efficiency Monoperc 540W (Vikram Solar, DCR Module)",
-  "Solar PV module: Monoperc Halfcut 540W (Goldi Solar, DCR Module)",
-  "Solar PV module: Premium DCR Solar PV Module (Premier Energies)"
+  "Adani Solar",
+  "Waaree Energies",
+  "RenewSys Solar",
+  "Tata Power Solar",
+  "Goldi Solar",
+  "Vikram Solar",
+  "Premier Energies",
+  "Rayzon Solar",
+  "Saatvik Solar"
 ];
+
+export const MODULE_WATTAGE_PRESETS = [540, 545, 550, 575, 580, 600, 620, 650];
 
 export const INVERTER_BRANDS = [
   "{capacity} KW inverter (Polycab Solar inverter)",
@@ -57,11 +62,13 @@ export const STRUCTURE_OPTIONS = [
   "Custom Elevated Heavy-Duty Hot Dip Galvanized Structure"
 ];
 
-export const DEFAULT_BOM = (capacity = 5, inverterBrand = null, moduleBrand = null, structureType = null) => [
+export const DEFAULT_BOM = (capacity = 5, inverterBrand = null, moduleBrand = null, structureType = null, panelWattage = 540) => [
   {
     id: 1,
     sr: 1,
-    description: moduleBrand || "Solar PV module: Monoperc halfcut (Adhani,RenewSys, DCR Module)",
+    description: moduleBrand
+      ? (moduleBrand.includes('Wp') || moduleBrand.includes('Watt') ? moduleBrand : `Solar PV module: ${panelWattage}Wp TOPCon / Mono PERC DCR (${moduleBrand})`)
+      : `Solar PV module: ${panelWattage}Wp TOPCon / Mono PERC DCR (Adani Solar, DCR Module)`,
     qty: "1SET"
   },
   {
@@ -170,7 +177,7 @@ export const DEFAULT_BANK = {
 
 export const INITIAL_QUOTATION_DATA = {
   id: "quote-1",
-  refNo: "SRIMAAN SOLAR SOLUTIONS-10/07-2025-2026",
+  refNo: "TSNPDCL-04829104",
   date: "09-OCT-2025",
   status: "Approved",
   proposalTitle: "DETAILED TECHNO OFFER FOR THE SUPPLY OF 5KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM",
@@ -197,9 +204,10 @@ export const INITIAL_QUOTATION_DATA = {
   system: {
     capacityKw: 5,
     panelsCount: 10,
+    panelWattage: 540,
+    moduleBrand: "Adani Solar",
     phase: "Single Phase (1-Phase 230V)",
     rooftopType: "RCC Flat Concrete Terrace",
-    moduleBrand: "Solar PV module: Monoperc halfcut (Adhani,RenewSys, DCR Module)",
     inverterBrand: "5 KW inverter (Polycab Solar inverter)",
     structureType: "GI Module 7FT/6FT Mounting structure Designed Wind Load Resistance: 180Kmph, Hotdip Legs And G.I Rafter/Periling (AS PER SITE REQUIRMENT…BASIC AND HEIGHT )",
     energyPerDay: "20",
@@ -211,14 +219,17 @@ export const INITIAL_QUOTATION_DATA = {
 
   pricing: {
     totalCost: 425000,
+    customerCost: 425000,
+    bankCost: 475000,
     subsidyAmount: 78000,
     afterSubsidyCost: 347000,
+    bankNetCost: 397000,
     electricityTariff: 8,
     annualSavings: 48000,
     paybackYears: "4.0"
   },
 
-  bom: DEFAULT_BOM(5),
+  bom: DEFAULT_BOM(5, "5 KW inverter (Polycab Solar inverter)", "Adani Solar", null, 540),
   terms: DEFAULT_TERMS
 };
 
@@ -226,7 +237,7 @@ export const INITIAL_SAVED_QUOTATIONS = [
   INITIAL_QUOTATION_DATA,
   {
     id: "quote-2",
-    refNo: "SRI-SOL-2026-1048",
+    refNo: "TSSPDCL-09182371",
     date: "05 Nov 2026",
     status: "Approved",
     proposalTitle: "DETAILED TECHNO OFFER FOR THE SUPPLY OF 5.5KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM",
@@ -250,9 +261,10 @@ export const INITIAL_SAVED_QUOTATIONS = [
     system: {
       capacityKw: 5.5,
       panelsCount: 10,
+      panelWattage: 550,
+      moduleBrand: "Waaree Energies",
       phase: "Single Phase (1-Phase 230V)",
       rooftopType: "RCC Flat Concrete Terrace",
-      moduleBrand: "Solar PV module: Bifacial Dual Glass 545W (Waaree Energies, DCR Module)",
       inverterBrand: "5.5 KW Grid-Tied Inverter (Sungrow String Inverter)",
       structureType: "GI Module 7FT/6FT Mounting structure Designed Wind Load Resistance: 180Kmph, Hotdip Legs And G.I Rafter/Periling (AS PER SITE REQUIRMENT…BASIC AND HEIGHT )",
       energyPerDay: "22",
@@ -263,18 +275,21 @@ export const INITIAL_SAVED_QUOTATIONS = [
     },
     pricing: {
       totalCost: 318640,
+      customerCost: 318640,
+      bankCost: 365000,
       subsidyAmount: 78000,
       afterSubsidyCost: 240640,
+      bankNetCost: 287000,
       electricityTariff: 8,
       annualSavings: 52800,
       paybackYears: "4.5"
     },
-    bom: DEFAULT_BOM(5.5, "5.5 KW Grid-Tied Inverter (Sungrow String Inverter)", "Solar PV module: Bifacial Dual Glass 545W (Waaree Energies, DCR Module)"),
+    bom: DEFAULT_BOM(5.5, "5.5 KW Grid-Tied Inverter (Sungrow String Inverter)", "Waaree Energies", null, 550),
     terms: DEFAULT_TERMS
   },
   {
     id: "quote-3",
-    refNo: "SRI-SOL-2026-1052",
+    refNo: "APEPDCL-4410293",
     date: "06 Nov 2026",
     status: "Sent",
     proposalTitle: "DETAILED TECHNO OFFER FOR THE SUPPLY OF 10KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM",
@@ -298,9 +313,10 @@ export const INITIAL_SAVED_QUOTATIONS = [
     system: {
       capacityKw: 10,
       panelsCount: 20,
+      panelWattage: 540,
+      moduleBrand: "Tata Power Solar",
       phase: "Three Phase (3-Phase 415V)",
       rooftopType: "Elevated GI Super Structure",
-      moduleBrand: "Solar PV module: TOPCon / Mono PERC 550W (Tata Power Solar, DCR Module)",
       inverterBrand: "10 KW On-Grid Inverter (Growatt Solar Inverter with WiFi)",
       structureType: "Elevated GI Super Structure (Height 6FT to 8FT Walkable Rooftop)",
       energyPerDay: "40",
@@ -311,8 +327,11 @@ export const INITIAL_SAVED_QUOTATIONS = [
     },
     pricing: {
       totalCost: 546240,
+      customerCost: 546240,
+      bankCost: 610000,
       subsidyAmount: 78000,
       afterSubsidyCost: 468240,
+      bankNetCost: 532000,
       electricityTariff: 9,
       annualSavings: 108000,
       paybackYears: "4.3"

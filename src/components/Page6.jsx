@@ -6,15 +6,16 @@ export const Page6 = ({ data }) => {
   const { company, bank, system, pricing, customer } = data;
   const capacity = system?.capacityKw || 5;
 
+  const bankCost = pricing.bankCost || pricing.totalCost;
   const subsidyDisplay = pricing.subsidyAmount;
   const subsidyFormatted = formatINR(pricing.subsidyAmount);
-  const afterSubsidyDisplay = formatINR(pricing.afterSubsidyCost);
+  const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - (pricing.subsidyAmount || 0)));
   const savingsDisplay = pricing.annualSavings ? formatINR(pricing.annualSavings) : "";
 
-  // GST Calculation Breakdown based on statutory Solar EPC rules:
+  // GST Calculation Breakdown based on statutory Solar EPC rules for Bank PO:
   // 70% Goods (Modules & Inverter) @ 5% GST
   // 30% Services & BOS @ 18% GST
-  const gst = pricing.gstBreakdown || calculateGSTBreakdown(pricing.totalCost);
+  const gst = calculateGSTBreakdown(bankCost);
 
   return (
     <div className="a4-page page-6 flex flex-col justify-start">

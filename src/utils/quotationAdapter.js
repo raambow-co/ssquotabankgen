@@ -123,7 +123,7 @@ export function convertToCustomerFormat(data) {
   if (!data) return { quotation: null, settings: srimaanCustomerSettings };
 
   const dcKw = parseFloat(data.system?.capacityKw) || 5.0;
-  const panelWattage = parseFloat(data.system?.panelWattage) || 550;
+  const panelWattage = parseFloat(data.system?.panelWattage) || 540;
   const panelCount = parseInt(data.system?.panelsCount) || Math.ceil((dcKw * 1000) / panelWattage);
 
   // Compute energy generation
@@ -133,7 +133,10 @@ export function convertToCustomerFormat(data) {
   const monthlyUnits = parseFloat(data.system?.monthlyGenUnits) || parseFloat(energyMetrics.energyPerMonth) || Math.round(annualUnits / 12);
 
   const tariff = parseFloat(data.pricing?.tariffPerUnit) || 8.0;
-  const totalCost = parseFloat(data.pricing?.totalCost) || 0;
+  // Dual Pricing: Customer quotation uses customerCost, Bank quotation uses bankCost
+  const customerCost = parseFloat(data.pricing?.customerCost !== undefined ? data.pricing.customerCost : (data.pricing?.totalCost || 0));
+  const bankCost = parseFloat(data.pricing?.bankCost !== undefined ? data.pricing.bankCost : (data.pricing?.totalCost || customerCost));
+  const totalCost = customerCost;
   const subsidy = data.pricing?.subsidyAmount !== undefined ? parseFloat(data.pricing.subsidyAmount) : calculateSubsidy(dcKw);
   const netPayable = data.pricing?.afterSubsidyCost !== undefined ? parseFloat(data.pricing.afterSubsidyCost) : Math.max(0, totalCost - subsidy);
 
@@ -152,7 +155,7 @@ export function convertToCustomerFormat(data) {
   const location = locParts.length > 0 ? locParts.join(', ') : 'Plot #112, Khammam, Telangana - 507001';
 
   // Extract clean Brand Names for Tier-1 Hardware rendering
-  let panelBrand = data.system?.moduleBrand || "Waaree Solar";
+  let panelBrand = data.system?.moduleBrand || "Adani Solar";
   if (panelBrand.toLowerCase().includes('waaree')) panelBrand = 'Waaree Solar';
   else if (panelBrand.toLowerCase().includes('adani') || panelBrand.toLowerCase().includes('adhani')) panelBrand = 'Adani Solar';
   else if (panelBrand.toLowerCase().includes('tata')) panelBrand = 'Tata Power Solar';
@@ -170,19 +173,23 @@ export function convertToCustomerFormat(data) {
 
   const ratePerKw = parseFloat(data.pricing?.ratePerKw) || (dcKw > 0 ? Math.round(totalCost / dcKw) : 52000);
 
+  // Quotation number is ALWAYS the electricity consumer number (UNC / USC)
+  const consumerNo = data.customer?.consumerNo || data.refNo || "TSNPDCL-04829104";
+
   const quotation = {
-    id: data.id || `quote-${data.refNo || Date.now()}`,
-    quotationNumber: data.refNo || "SSS-SOL-2026-1048",
+    id: data.id || `quote-${consumerNo}`,
+    quotationNumber: consumerNo,
     date: data.date || new Date().toISOString().split('T')[0],
     validityDays: data.validityDays || 30,
     status: data.status || "Approved",
     customer: {
       name: data.customer?.name || "Respected Client",
       companyName: data.customer?.fatherName ? `S/o ${data.customer.fatherName}` : "Residential / Commercial Rooftop",
-      phone: data.customer?.mobile || "+91 94948 22356",
+      phone: data.customer?.mobile || data.customer?.phone || "+91 94948 22356",
       email: data.customer?.email || "customer@example.com",
       location: location,
-      consumerNumber: data.customer?.consumerNo || "TSSPDCL-04829104",
+      consumerNumber: consumerNo,
+      consumerServiceNumber: consumerNo,
       sanctionedLoad: `${dcKw} kW`,
       gridPhase: data.system?.phase || (dcKw > 5 ? "3-Phase (415V)" : "1-Phase (230V)"),
       roofType: data.customer?.roofType || "RCC Flat Concrete Terrace",
@@ -194,7 +201,7 @@ export function convertToCustomerFormat(data) {
       actualDcCapacityKw: dcKw,
       acInverterCapacityKw: parseFloat(data.system?.inverterCapacityKw) || (dcKw > 5 ? dcKw : Math.min(dcKw, 5)),
       panelBrand: panelBrand,
-      panelModel: data.system?.moduleBrand || "Mono PERC / TOPCon 550Wp High Efficiency DCR Module",
+      panelModel: data.system?.moduleBrand || "Mono PERC / TOPCon 540Wp High Efficiency DCR Module",
       panelWattage: panelWattage,
       panelCount: panelCount,
       inverterBrand: inverterBrand,
@@ -221,6 +228,8 @@ export function convertToCustomerFormat(data) {
       subsidyScheme: "PM Surya Ghar: Muft Bijli Yojana (CFA)",
       subsidyAmount: subsidy,
       netPayable: netPayable,
+      bankGrossCost: bankCost,
+      bankNetCost: Math.max(0, bankCost - subsidy),
       paybackYears: paybackYears,
       gross25YrSavings: annualSavings * 25,
       net25YrProfit: Math.max(0, (annualSavings * 25) - netPayable),

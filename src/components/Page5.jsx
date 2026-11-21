@@ -6,8 +6,9 @@ export const Page5 = ({ data }) => {
   const { company, system, pricing, bom } = data;
   const capacity = system?.capacityKw || 5;
 
-  const totalCostDisplay = formatINR(pricing.totalCost);
-  const afterSubsidyDisplay = formatINR(pricing.afterSubsidyCost);
+  const bankCost = pricing.bankCost || pricing.totalCost;
+  const totalCostDisplay = formatINR(bankCost);
+  const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - (pricing.subsidyAmount || 0)));
 
   return (
     <div className="a4-page page-5 flex flex-col justify-start">

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Eye, Save, User, Zap, DollarSign, Clock, 
-  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles 
+  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2 
 } from 'lucide-react';
 import { 
   TELANGANA_DISTRICTS, ANDHRA_DISTRICTS, STATES_LIST, 
-  CAPACITY_PRESETS, MODULE_BRANDS, INVERTER_BRANDS, STRUCTURE_OPTIONS 
+  CAPACITY_PRESETS, MODULE_BRANDS, MODULE_WATTAGE_PRESETS, INVERTER_BRANDS, STRUCTURE_OPTIONS 
 } from '../data/defaultData';
 import { 
   formatINR, formatINRDecimal, calculateSubsidy, calculateEnergyMetrics, 
@@ -22,8 +22,20 @@ export const QuotationFormView = ({
   const [activeTab, setActiveTab] = useState('client'); // 'client', 'system', 'pricing', 'milestones'
   const [savedSuccessMsg, setSavedSuccessMsg] = useState(false);
 
-  // Field updater
+  // Field updater (Enforces quotation number = Electricity Consumer Number UNC/USC)
   const updateField = (section, field, value) => {
+    if ((section === 'customer' && field === 'consumerNo') || (!section && field === 'refNo')) {
+      setFormData(prev => ({
+        ...prev,
+        refNo: value,
+        customer: {
+          ...prev.customer,
+          consumerNo: value
+        }
+      }));
+      return;
+    }
+
     if (section) {
       setFormData(prev => ({
         ...prev,
@@ -46,10 +58,15 @@ export const QuotationFormView = ({
     const energy = calculateEnergyMetrics(kw);
     const area = calculateArea(kw);
     const subsidy = preset.subsidy;
-    const totalCost = preset.cost;
-    const netCost = totalCost - subsidy;
+    const customerCost = preset.cost;
+    const bankCost = preset.bankCost || Math.round(preset.cost * 1.12);
+    const totalCost = customerCost;
+    const netCost = customerCost - subsidy;
+    const bankNet = bankCost - subsidy;
     const payback = calculatePayback(netCost, energy.energyPerYear, formData.pricing.electricityTariff);
-    const panelsCount = preset.panels || (kw * 2);
+    const panelWattage = parseFloat(formData.system.panelWattage) || 540;
+    const panelsCount = preset.panels || Math.max(1, Math.round((kw * 1000) / panelWattage));
+    const moduleBrand = formData.system.moduleBrand || 'Adani Solar';
 
     // Update BOM descriptions with new capacity and Item 1 quantity
     const updatedBom = formData.bom.map((item, idx) => {
@@ -59,6 +76,7 @@ export const QuotationFormView = ({
       let qty = item.qty;
       if (idx === 0) {
         qty = `${panelsCount} Nos`;
+        desc = `Solar PV module: ${panelWattage}Wp TOPCon / Mono PERC DCR (${moduleBrand})`;
       }
       return { ...item, description: desc, qty };
     });
@@ -69,6 +87,8 @@ export const QuotationFormView = ({
         ...prev.system,
         capacityKw: kw,
         panelsCount: panelsCount,
+        panelWattage: panelWattage,
+        moduleBrand: moduleBrand,
         phase: preset.phase,
         energyPerDay: energy.energyPerDay,
         energyPerMonth: energy.energyPerMonth,
@@ -79,8 +99,11 @@ export const QuotationFormView = ({
       pricing: {
         ...prev.pricing,
         totalCost,
+        customerCost,
+        bankCost,
         subsidyAmount: subsidy,
         afterSubsidyCost: netCost,
+        bankNetCost: bankNet,
         annualSavings: payback.annualSavings,
         paybackYears: payback.paybackYears
       },
@@ -108,7 +131,9 @@ export const QuotationFormView = ({
     const energy = calculateEnergyMetrics(val);
     const area = calculateArea(val);
     const subsidy = calculateSubsidy(val);
-    const recommendedPanels = Math.max(1, Math.round((val * 1000) / 540));
+    const panelWattage = parseFloat(formData.system.panelWattage) || 540;
+    const recommendedPanels = Math.max(1, Math.round((val * 1000) / panelWattage));
+    const moduleBrand = formData.system.moduleBrand || 'Adani Solar';
 
     // Update BOM descriptions with new capacity
     const updatedBom = formData.bom.map((item, idx) => {
@@ -118,6 +143,7 @@ export const QuotationFormView = ({
       let qty = item.qty;
       if (idx === 0) {
         qty = `${recommendedPanels} Nos`;
+        desc = `Solar PV module: ${panelWattage}Wp TOPCon / Mono PERC DCR (${moduleBrand})`;
       }
       return { ...item, description: desc, qty };
     });
@@ -137,7 +163,8 @@ export const QuotationFormView = ({
       pricing: {
         ...prev.pricing,
         subsidyAmount: subsidy,
-        afterSubsidyCost: Math.max(0, prev.pricing.totalCost - subsidy)
+        afterSubsidyCost: Math.max(0, (prev.pricing.customerCost ?? prev.pricing.totalCost) - subsidy),
+        bankNetCost: Math.max(0, (prev.pricing.bankCost ?? prev.pricing.totalCost) - subsidy)
       },
       proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${val}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`,
       bom: updatedBom
@@ -157,6 +184,43 @@ export const QuotationFormView = ({
         }
       }));
     }
+  };
+
+  // Handle Solar PV Module Brand selection
+  const handleModuleBrandChange = (brand) => {
+    const wattage = formData.system.panelWattage || 540;
+    const desc = `Solar PV module: ${wattage}Wp TOPCon / Mono PERC DCR (${brand})`;
+    const updatedBom = [...formData.bom];
+    if (updatedBom[0]) {
+      updatedBom[0] = { ...updatedBom[0], description: desc };
+    }
+    setFormData(prev => ({
+      ...prev,
+      system: {
+        ...prev.system,
+        moduleBrand: brand
+      },
+      bom: updatedBom
+    }));
+  };
+
+  // Handle Single Panel Wattage (Wp) change
+  const handlePanelWattageChange = (valStr) => {
+    const wattage = parseFloat(valStr) || 540;
+    const brand = formData.system.moduleBrand || 'Adani Solar';
+    const desc = `Solar PV module: ${wattage}Wp TOPCon / Mono PERC DCR (${brand})`;
+    const updatedBom = [...formData.bom];
+    if (updatedBom[0]) {
+      updatedBom[0] = { ...updatedBom[0], description: desc };
+    }
+    setFormData(prev => ({
+      ...prev,
+      system: {
+        ...prev.system,
+        panelWattage: wattage
+      },
+      bom: updatedBom
+    }));
   };
 
   // Handle Panels Count change with smooth typing support
@@ -196,8 +260,9 @@ export const QuotationFormView = ({
 
   const handlePanelsCountBlur = () => {
     const count = parseInt(formData.system.panelsCount, 10);
+    const wattage = parseFloat(formData.system.panelWattage) || 540;
     if (!count || count <= 0) {
-      const fallbackCount = Math.max(1, Math.round((Number(formData.system.capacityKw || 1) * 1000) / 540));
+      const fallbackCount = Math.max(1, Math.round((Number(formData.system.capacityKw || 1) * 1000) / wattage));
       handlePanelsCountChange(String(fallbackCount));
     } else {
       setFormData(prev => ({
@@ -210,17 +275,28 @@ export const QuotationFormView = ({
     }
   };
 
-  // Price changes with recalculations
+  // Dual Price change with recalculations (Bank Cost vs Customer Cost)
   const handlePriceChange = (field, val) => {
     const num = Number(val) || 0;
     const newPricing = { ...formData.pricing, [field]: num };
     
-    if (field === 'totalCost' || field === 'subsidyAmount') {
-      newPricing.afterSubsidyCost = Math.max(0, (newPricing.totalCost || 0) - (newPricing.subsidyAmount || 0));
+    if (field === 'bankCost') {
+      newPricing.bankNetCost = Math.max(0, num - (newPricing.subsidyAmount || 0));
+    } else if (field === 'customerCost') {
+      newPricing.totalCost = num;
+      newPricing.afterSubsidyCost = Math.max(0, num - (newPricing.subsidyAmount || 0));
+    } else if (field === 'totalCost') {
+      newPricing.afterSubsidyCost = Math.max(0, num - (newPricing.subsidyAmount || 0));
+    } else if (field === 'subsidyAmount') {
+      newPricing.afterSubsidyCost = Math.max(0, (newPricing.customerCost ?? newPricing.totalCost ?? 0) - num);
+      newPricing.bankNetCost = Math.max(0, (newPricing.bankCost ?? newPricing.totalCost ?? 0) - num);
     }
     
+    const customerNet = newPricing.customerCost !== undefined 
+      ? Math.max(0, newPricing.customerCost - (newPricing.subsidyAmount || 0))
+      : newPricing.afterSubsidyCost;
     const annualUnits = Number(formData.system.energyPerYear) || (formData.system.capacityKw * 1200);
-    const payback = calculatePayback(newPricing.afterSubsidyCost, annualUnits, newPricing.electricityTariff);
+    const payback = calculatePayback(customerNet, annualUnits, newPricing.electricityTariff);
     newPricing.annualSavings = payback.annualSavings;
     newPricing.paybackYears = payback.paybackYears;
 
@@ -272,7 +348,13 @@ export const QuotationFormView = ({
 
   const capacity = formData.system.capacityKw;
   const panels = formData.system.panelsCount || (capacity * 2);
-  const gst = formData.pricing.gstBreakdown || calculateGSTBreakdown(formData.pricing.totalCost);
+  const bankCost = formData.pricing.bankCost !== undefined ? formData.pricing.bankCost : (formData.pricing.totalCost || 0);
+  const customerCost = formData.pricing.customerCost !== undefined ? formData.pricing.customerCost : (formData.pricing.totalCost || 0);
+  const subsidy = formData.pricing.subsidyAmount || 0;
+  const customerNet = Math.max(0, customerCost - subsidy);
+  const bankNet = Math.max(0, bankCost - subsidy);
+  const gst = formData.pricing.gstBreakdown || calculateGSTBreakdown(bankCost);
+  const customerGst = calculateGSTBreakdown(customerCost);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-fadeIn">
@@ -474,16 +556,24 @@ export const QuotationFormView = ({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Electricity Consumer Service No.
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-semibold text-slate-700">
+                      Electricity Consumer Service No. (UNC / USC) <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      ★ Official Quotation No.
+                    </span>
+                  </div>
                   <input
                     type="text"
-                    value={formData.customer.consumerNo}
+                    value={formData.customer.consumerNo || ''}
                     onChange={(e) => updateField('customer', 'consumerNo', e.target.value)}
-                    placeholder="e.g. TSSPDCL-04829104"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    placeholder="e.g. TSNPDCL-04829104 or 1004829104"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    Unique Consumer Number (UNC / USC) is automatically used as the Official Quotation Number across Bank &amp; Customer proposals.
+                  </span>
                 </div>
 
                 <div>
@@ -672,7 +762,7 @@ export const QuotationFormView = ({
                       Number of Solar Modules
                     </label>
                     <span className="text-[10px] text-emerald-700 font-bold">
-                      {formData.system.panelsCount ? `${formData.system.panelsCount} × 540Wp = ${((Number(formData.system.panelsCount) * 540) / 1000).toFixed(2)} kWp DC` : ''}
+                      {formData.system.panelsCount ? `${formData.system.panelsCount} × ${formData.system.panelWattage || 540}Wp = ${((Number(formData.system.panelsCount) * (formData.system.panelWattage || 540)) / 1000).toFixed(2)} kWp DC` : ''}
                     </span>
                   </div>
                   <input
@@ -686,42 +776,81 @@ export const QuotationFormView = ({
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
                   <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">
-                    <span>Mono PERC / TOPCon 540W Modules</span>
+                    <span>{formData.system.panelWattage || 540}W TOPCon / Mono PERC</span>
                     {formData.system.panelsCount && (
                       <button
                         type="button"
-                        onClick={() => handleCapacityChange(((Number(formData.system.panelsCount) * 540) / 1000).toFixed(1))}
-                        className="text-blue-600 hover:text-blue-800 underline font-semibold"
+                        onClick={() => handleCapacityChange(((Number(formData.system.panelsCount) * (formData.system.panelWattage || 540)) / 1000).toFixed(1))}
+                        className="text-blue-600 hover:text-blue-800 underline font-semibold cursor-pointer"
                         title="Sync System Capacity to match this module count"
                       >
-                        Sync Capacity ({((Number(formData.system.panelsCount) * 540) / 1000).toFixed(1)} kWp)
+                        Sync Capacity ({((Number(formData.system.panelsCount) * (formData.system.panelWattage || 540)) / 1000).toFixed(1)} kWp)
                       </button>
                     )}
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Solar PV Module Brand / Technology
-                  </label>
-                  <select
-                    value={formData.system.moduleBrand}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      updateField('system', 'moduleBrand', val);
-                      // Update BOM Item 1
-                      const updatedBom = [...formData.bom];
-                      if (updatedBom[0]) {
-                        updatedBom[0].description = val;
-                        setFormData(prev => ({ ...prev, bom: updatedBom, system: { ...prev.system, moduleBrand: val } }));
-                      }
-                    }}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
-                  >
-                    {MODULE_BRANDS.map(b => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
+                {/* TWO INDIVIDUAL SECTIONS: 1) Module Brand & 2) Single Panel Wattage (Side-by-Side) */}
+                <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 bg-slate-50/90 rounded-xl border border-slate-200">
+                  {/* Section 1: Solar PV Module Brand */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block font-semibold text-slate-900 text-xs">
+                        Solar PV Module Brand <span className="text-red-500">*</span>
+                      </label>
+                      <span className="text-[10px] text-slate-500 font-medium">Select Brand</span>
+                    </div>
+                    <select
+                      value={formData.system.moduleBrand || 'Adani Solar'}
+                      onChange={(e) => handleModuleBrandChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white font-bold text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
+                    >
+                      {MODULE_BRANDS.map(b => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                    <span className="text-[10px] text-slate-500 mt-1 block">
+                      Tier-1 DCR / ALMM Approved Solar Manufacturer
+                    </span>
+                  </div>
+
+                  {/* Section 2: Single Panel Wattage (Wp) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block font-semibold text-slate-900 text-xs">
+                        Single Solar Panel Wattage (Wp) <span className="text-red-500">*</span>
+                      </label>
+                      <span className="text-[10px] text-emerald-700 font-bold">
+                        e.g. 540 / 620 Wp
+                      </span>
+                    </div>
+                    <input
+                      type="number"
+                      step="5"
+                      min="300"
+                      max="800"
+                      value={formData.system.panelWattage || 540}
+                      onChange={(e) => handlePanelWattageChange(e.target.value)}
+                      placeholder="Enter single panel watt (e.g. 540, 620)"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
+                    />
+                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      {(MODULE_WATTAGE_PRESETS || [540, 545, 550, 580, 620, 650]).map(watt => (
+                        <button
+                          key={watt}
+                          type="button"
+                          onClick={() => handlePanelWattageChange(watt)}
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold border transition cursor-pointer ${
+                            Number(formData.system.panelWattage) === watt
+                              ? 'bg-[#0b132b] text-white border-slate-900 shadow-2xs'
+                              : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300'
+                          }`}
+                        >
+                          {watt}W
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
@@ -817,23 +946,137 @@ export const QuotationFormView = ({
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Gross Project Cost (₹)
-                  </label>
-                  <input
-                    type="number"
-                    step="1000"
-                    value={formData.pricing.totalCost}
-                    onChange={(e) => handlePriceChange('totalCost', e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
-                  />
-                  <span className="text-[10px] text-slate-400 mt-1 block">
-                    ₹{formatINR(formData.pricing.totalCost)} (Inclusive of GST)
-                  </span>
+              {/* Dual Pricing: Bank PO Cost vs Customer Quotation Cost */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <span>Dual Commercial Pricing Configuration</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                      Bank PO Price is higher than Customer Quote
+                    </span>
+                  </h3>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Box 1: Price for Bank PO */}
+                  <div className="p-4 bg-slate-50/80 border-2 border-slate-300 rounded-xl space-y-3 relative overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-7 h-7 rounded-lg bg-[#0b132b] text-white flex items-center justify-center">
+                          <Building2 size={15} />
+                        </div>
+                        <div>
+                          <label className="block font-bold text-slate-900 text-xs">
+                            Cost / Price for Bank PO (₹) <span className="text-red-500">*</span>
+                          </label>
+                          <span className="text-[10px] text-slate-500">
+                            For Bank 7-Page Proposal &amp; Loan Sanction
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-900 text-white shadow-2xs">
+                        Bank PO (Higher)
+                      </span>
+                    </div>
+
+                    <div>
+                      <input
+                        type="number"
+                        step="1000"
+                        value={formData.pricing.bankCost !== undefined ? formData.pricing.bankCost : (formData.pricing.totalCost || 0)}
+                        onChange={(e) => handlePriceChange('bankCost', e.target.value)}
+                        placeholder="Enter Bank Project Cost (e.g. 475000)"
+                        className="w-full px-3 py-2.5 border-2 border-slate-300 focus:border-slate-900 rounded-lg text-slate-900 font-mono font-black text-base bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-200">
+                      <div>
+                        <span className="text-slate-500 block text-[10px]">Gross Bank PO:</span>
+                        <span className="font-mono font-bold text-slate-900">
+                          ₹{formatINR(bankCost)}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-slate-500 block text-[10px]">Net Loan Value:</span>
+                        <span className="font-mono font-bold text-slate-800">
+                          ₹{formatINR(bankNet)}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-slate-500 leading-tight">
+                      • Displayed on <strong>Page 5 (BOM Cost)</strong> and <strong>Page 6 (Statutory GST Table)</strong> of the Bank Proposal.
+                    </p>
+                  </div>
+
+                  {/* Box 2: Price for Solar Customer */}
+                  <div className="p-4 bg-emerald-50/50 border-2 border-emerald-300 rounded-xl space-y-3 relative overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
+                          <User size={15} />
+                        </div>
+                        <div>
+                          <label className="block font-bold text-slate-900 text-xs">
+                            Cost / Price for Solar Customer (₹) <span className="text-red-500">*</span>
+                          </label>
+                          <span className="text-[10px] text-emerald-800 font-medium">
+                            For Customer 5-Page Commercial Quotation
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white shadow-2xs">
+                        Customer Quote
+                      </span>
+                    </div>
+
+                    <div>
+                      <input
+                        type="number"
+                        step="1000"
+                        value={formData.pricing.customerCost !== undefined ? formData.pricing.customerCost : (formData.pricing.totalCost || 0)}
+                        onChange={(e) => handlePriceChange('customerCost', e.target.value)}
+                        placeholder="Enter Customer Project Cost (e.g. 420000)"
+                        className="w-full px-3 py-2.5 border-2 border-emerald-300 focus:border-emerald-600 rounded-lg text-slate-900 font-mono font-black text-base bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-emerald-200">
+                      <div>
+                        <span className="text-slate-500 block text-[10px]">Agreed Gross Price:</span>
+                        <span className="font-mono font-bold text-emerald-800">
+                          ₹{formatINR(customerCost)}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-slate-500 block text-[10px]">Client Net Payable:</span>
+                        <span className="font-mono font-bold text-emerald-800">
+                          ₹{formatINR(customerNet)}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-emerald-800 leading-tight font-medium">
+                      • Displayed on <strong>Customer 5-Page Visual Proposal</strong> and client financial agreements.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pricing Difference Callout */}
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between text-xs text-amber-900">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={16} className="text-amber-600 shrink-0" />
+                    <span>
+                      <strong>PO Margin Differential:</strong> Bank PO Price is <strong>₹{formatINR(Math.max(0, bankCost - customerCost))}</strong> higher than Customer Quotation.
+                    </span>
+                  </div>
+                  <span className="font-mono font-bold text-amber-800">
+                    +{bankCost > 0 ? (((bankCost - customerCost) / customerCost) * 100).toFixed(1) : 0}% Loan Markup
+                  </span>
+                </div>
+              </div>
+
+              {/* Subsidy, Tariff and Payback Settings */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs pt-2">
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block font-semibold text-slate-700">
@@ -861,7 +1104,7 @@ export const QuotationFormView = ({
 
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
-                    DISCOM Electricity Tariff (₹ / Unit)
+                    DISCOM Tariff (₹ / Unit)
                   </label>
                   <input
                     type="number"
@@ -870,6 +1113,9 @@ export const QuotationFormView = ({
                     onChange={(e) => handlePriceChange('electricityTariff', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Avg DISCOM unit rate (TSSPDCL / TSNPDCL)
+                  </span>
                 </div>
 
                 <div>
@@ -882,6 +1128,9 @@ export const QuotationFormView = ({
                     onChange={(e) => updateField('pricing', 'paybackYears', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Based on annual solar generation
+                  </span>
                 </div>
               </div>
 
@@ -1037,25 +1286,34 @@ export const QuotationFormView = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Quotation Reference No.
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-semibold text-slate-700">
+                      Quotation Reference No. (Electricity Consumer UNC)
+                    </label>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      ★ Electricity UNC
+                    </span>
+                  </div>
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      value={formData.refNo}
+                      value={formData.customer?.consumerNo || formData.refNo}
                       onChange={(e) => updateField(null, 'refNo', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      placeholder="e.g. TSNPDCL-04829104 or 1004829104"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                     <button
                       type="button"
-                      onClick={() => updateField(null, 'refNo', generateRefNo(Math.floor(Math.random() * 20) + 1, Math.floor(Math.random() * 10) + 1))}
+                      onClick={() => updateField(null, 'refNo', `TSNPDCL-${Math.floor(Math.random() * 8999999) + 1000000}`)}
                       className="p-2 border border-slate-300 hover:bg-slate-50 rounded-lg text-slate-600"
                       title="Generate new Ref No"
                     >
                       <RotateCcw size={14} />
                     </button>
                   </div>
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    Always linked 1:1 to Customer Electricity Consumer Number (UNC / USC).
+                  </span>
                 </div>
 
                 <div>
@@ -1169,36 +1427,56 @@ export const QuotationFormView = ({
               </div>
             </div>
 
-            {/* Commercial Breakdown */}
+            {/* Dual Commercial Breakdown */}
             <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between text-slate-600">
-                <span>Gross Project Cost:</span>
-                <span className="font-bold text-slate-900">₹{formatINR(formData.pricing.totalCost)}</span>
+              <div className="flex items-center justify-between text-slate-700 font-medium">
+                <span className="flex items-center gap-1">
+                  <Building2 size={13} className="text-slate-500" />
+                  <span>Bank PO Cost:</span>
+                </span>
+                <span className="font-mono font-bold text-slate-900">₹{formatINR(bankCost)}</span>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-2">
-                <span>• Base Project Value:</span>
-                <span>₹{formatINR(gst.subTotalBase)}</span>
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-4">
+                <span>• Bank PO Net Loan:</span>
+                <span className="font-mono font-medium text-slate-600">₹{formatINR(bankNet)}</span>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-2">
+
+              <div className="flex items-center justify-between text-slate-700 font-medium pt-1 border-t border-slate-100">
+                <span className="flex items-center gap-1">
+                  <User size={13} className="text-emerald-600" />
+                  <span>Customer Quote Cost:</span>
+                </span>
+                <span className="font-mono font-bold text-emerald-800">₹{formatINR(customerCost)}</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-4">
+                <span>• Customer Base Value:</span>
+                <span className="font-mono">₹{formatINR(customerGst.subTotalBase)}</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pl-4">
                 <span>• Total GST (5% + 18%):</span>
-                <span className="font-semibold text-slate-700">₹{formatINR(gst.totalGst)}</span>
+                <span className="font-mono font-semibold text-slate-600">₹{formatINR(customerGst.totalGst)}</span>
               </div>
+
               <div className="flex items-center justify-between text-slate-600 pt-1 border-t border-slate-100">
                 <span>Government Subsidy:</span>
-                <span className="font-bold text-emerald-600">- ₹{formatINR(formData.pricing.subsidyAmount)}</span>
+                <span className="font-mono font-bold text-emerald-600">- ₹{formatINR(subsidy)}</span>
               </div>
             </div>
 
             {/* Net Investment Dark Box */}
             <div className="bg-[#0b132b] rounded-xl p-4 text-white text-center shadow-md">
               <div className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                NET INVESTMENT
+                CUSTOMER NET INVESTMENT
               </div>
               <div className="text-3xl font-extrabold text-white mt-1">
-                ₹{formatINR(formData.pricing.afterSubsidyCost)}
+                ₹{formatINR(customerNet)}
               </div>
-              <div className="text-[10px] text-slate-400 mt-0.5">
+              <div className="text-[10px] text-emerald-400 mt-0.5 font-medium">
                 Client's actual out-of-pocket
+              </div>
+              <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] text-slate-300">
+                <span>Bank PO: <strong className="text-white">₹{formatINR(bankCost)}</strong></span>
+                <span>Bank Net: <strong className="text-white">₹{formatINR(bankNet)}</strong></span>
               </div>
             </div>
 

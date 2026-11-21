@@ -32,7 +32,7 @@ export const Page1 = ({ data }) => {
               ONGRID POWER GENERATING SYSTEM
             </h1>
             <h2 className="ref-number-text font-bold text-[#0099b8] mt-1 tracking-wide text-[11.5pt]">
-              REF: {refNo}
+              REF: {customer?.consumerNo || refNo}
             </h2>
           </div>
 

@@ -102,20 +102,24 @@ export function AppContent() {
 
   // Handler: Start New Quotation
   const handleStartNewQuotation = () => {
-    const randomSeq = Math.floor(Math.random() * 8999) + 1000;
-    const newRef = `SRI-SOL-2026-${randomSeq}`;
+    const randomSeq = Math.floor(Math.random() * 8999999) + 1000000;
+    const initialConsumerNo = `TSNPDCL-${randomSeq}`;
     const initialKw = 5;
     const energy = calculateEnergyMetrics(initialKw);
     const area = calculateArea(initialKw);
     const subsidy = calculateSubsidy(initialKw);
-    const cost = 425000;
+    const customerCost = 420000;
+    const bankCost = 475000;
+    const panelWattage = 540;
+    const panels = Math.ceil((initialKw * 1000) / panelWattage);
+    const moduleBrand = "Adani Solar";
 
     const newQuote = {
       id: `quote-${Date.now()}`,
-      refNo: newRef,
+      refNo: initialConsumerNo,
       date: formatDateToPDFStyle(new Date()),
       status: "Draft",
-      proposalTitle: `DETAILEDTECHNO OFFER FOR THE SUPPLY OF ${initialKw}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`,
+      proposalTitle: `DETAILED TECHNO OFFER FOR THE SUPPLY OF ${initialKw}KW SOLAR ROOFTOP ONGRID POWER GENERATING SYSTEM`,
       customer: {
         name: "",
         company: "",
@@ -125,7 +129,7 @@ export function AppContent() {
         pinCode: "",
         phone: "",
         email: "",
-        consumerNo: "",
+        consumerNo: initialConsumerNo,
         connectedLoad: `${initialKw} kW`,
         phase: "Single Phase (1-Phase 230V)",
         rooftopType: "RCC Flat Concrete Terrace",
@@ -135,10 +139,11 @@ export function AppContent() {
       bank: bankSettings,
       system: {
         capacityKw: initialKw,
-        panelsCount: 10,
+        panelsCount: panels,
+        panelWattage: panelWattage,
+        moduleBrand: moduleBrand,
         phase: "Single Phase (1-Phase 230V)",
         rooftopType: "RCC Flat Concrete Terrace",
-        moduleBrand: "Solar PV module: Monoperc halfcut (Adhani,RenewSys, DCR Module)",
         inverterBrand: `${initialKw} KW inverter (Polycab Solar inverter)`,
         structureType: "GI Module 7FT/6FT Mounting structure Designed Wind Load Resistance: 180Kmph, Hotdip Legs And G.I Rafter/Periling (AS PER SITE REQUIRMENT…BASIC AND HEIGHT )",
         energyPerDay: energy.energyPerDay,
@@ -148,14 +153,17 @@ export function AppContent() {
         areaSystemKw: `${initialKw}kW`
       },
       pricing: {
-        totalCost: cost,
+        totalCost: customerCost,
+        customerCost: customerCost,
+        bankCost: bankCost,
         subsidyAmount: subsidy,
-        afterSubsidyCost: cost - subsidy,
+        afterSubsidyCost: customerCost - subsidy,
+        bankNetCost: bankCost - subsidy,
         electricityTariff: 8,
         annualSavings: 48000,
         paybackYears: "4.0"
       },
-      bom: DEFAULT_BOM(initialKw),
+      bom: DEFAULT_BOM(initialKw, `${initialKw} KW inverter (Polycab Solar inverter)`, moduleBrand, null, panelWattage),
       terms: DEFAULT_TERMS
     };
 
@@ -192,16 +200,18 @@ export function AppContent() {
 
   // Handler: Duplicate Quotation
   const handleDuplicateQuotation = (quote) => {
-    const randomSeq = Math.floor(Math.random() * 8999) + 1000;
+    const randomSeq = Math.floor(Math.random() * 8999999) + 1000000;
+    const newConsumerNo = `TSNPDCL-${randomSeq}`;
     const duplicated = {
       ...JSON.parse(JSON.stringify(quote)),
       id: `quote-${Date.now()}`,
-      refNo: `SRI-SOL-2026-${randomSeq}`,
+      refNo: newConsumerNo,
       date: formatDateToPDFStyle(new Date()),
       status: "Draft",
       customer: {
         ...quote.customer,
-        name: `${quote.customer.name} (Copy)`
+        name: `${quote.customer?.name || 'Customer'} (Copy)`,
+        consumerNo: newConsumerNo
       }
     };
     setQuotations([duplicated, ...quotations]);
