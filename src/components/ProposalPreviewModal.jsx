@@ -55,6 +55,23 @@ export const ProposalPreviewModal = ({
   // Convert quotation for customer format components
   const { quotation: customerQuotation, settings: customerSettings } = convertToCustomerFormat(quotation);
 
+  // STRICT GUARANTEE: Bank Proposal strictly uses Bank PO Pricing only (never customer quotation price)
+  const bankCostVal = Number(quotation.pricing?.bankCost || (quotation.pricing?.customerCost ? Math.round(quotation.pricing.customerCost * 1.12) : quotation.pricing?.totalCost) || 0);
+  const bankSubsidyVal = Number(quotation.pricing?.subsidyAmount !== undefined ? quotation.pricing.subsidyAmount : 78000);
+  const bankNetVal = Math.max(0, bankCostVal - bankSubsidyVal);
+
+  const bankQuotation = {
+    ...quotation,
+    pricing: {
+      ...quotation.pricing,
+      bankCost: bankCostVal,
+      totalCost: bankCostVal, // Enforce Bank PO Cost as totalCost for all 7 Bank pages
+      subsidyAmount: bankSubsidyVal,
+      afterSubsidyCost: bankNetVal, // Enforce Bank Net Cost as afterSubsidyCost for Bank pages
+      bankNetCost: bankNetVal
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -92,19 +109,23 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
       return;
     }
 
-    const summary = `☀️ *SRIMAAN SOLAR SOLUTIONS - ${formatMode === 'bank' ? 'BANK EPC QUOTATION' : 'CUSTOMER SOLAR PROPOSAL'}*
+    const isBank = formatMode === 'bank';
+    const totalCostToDisplay = isBank ? bankCostVal : Number(quotation.pricing?.customerCost || quotation.pricing?.totalCost || 0);
+    const netCostToDisplay = isBank ? bankNetVal : Number(quotation.pricing?.customerCost ? quotation.pricing.customerCost - bankSubsidyVal : quotation.pricing?.afterSubsidyCost || 0);
+
+    const summary = `☀️ *SRIMAAN SOLAR SOLUTIONS - ${isBank ? 'BANK EPC QUOTATION' : 'CUSTOMER SOLAR PROPOSAL'}*
 ----------------------------------------
 👤 *Customer:* ${quotation.customer.name}
 📍 *Location:* ${quotation.customer.district || ''}, ${quotation.customer.state || ''}
 ⚡ *System Capacity:* ${quotation.system.capacityKw} kW (${quotation.system.phase})
 📑 *Reference No:* ${quotation.refNo}
 📅 *Date:* ${quotation.date}
-📑 *Format:* ${formatMode === 'bank' ? '7-Page Bank Proposal' : '5-Page Customer Proposal'}
+📑 *Format:* ${isBank ? '7-Page Bank Proposal' : '5-Page Customer Proposal'}
 
 💰 *COMMERCIAL SUMMARY:*
-• Total System Cost: ₹${formatINR(quotation.pricing.totalCost)}
-• PM Surya Ghar Subsidy: ₹${formatINR(quotation.pricing.subsidyAmount)}
-👉 *Net Investment:* ₹${formatINR(quotation.pricing.afterSubsidyCost)}
+• Total System Cost: ₹${formatINR(totalCostToDisplay)}
+• PM Surya Ghar Subsidy: ₹${formatINR(bankSubsidyVal)}
+👉 *Net Investment:* ₹${formatINR(netCostToDisplay)}
 
 📊 *GENERATION & ROI:*
 • Daily Generation: ~${quotation.system.energyPerDay || (quotation.system.capacityKw * 4)} Units
@@ -330,7 +351,7 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
                   const PageComp = page.component;
                   return (
                     <div key={page.id} className="document-page-wrapper shadow-2xl print:shadow-none">
-                      <PageComp data={quotation} />
+                      <PageComp data={bankQuotation} />
                     </div>
                   );
                 })
@@ -338,7 +359,7 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
                 <div className="document-page-wrapper shadow-2xl print:shadow-none">
                   {React.createElement(
                     bankPages.find(p => p.id === selectedPage)?.component || Page1,
-                    { data: quotation }
+                    { data: bankQuotation }
                   )}
                 </div>
               )}
