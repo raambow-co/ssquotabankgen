@@ -1196,14 +1196,11 @@ export const QuotationFormView = ({
               <div className="space-y-3 pt-4 border-t border-slate-100">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <div>
-                    <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <span>GST CALCULATION: Statutory EPC Breakdown</span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        70% Goods (5%) • 30% Services (18%)
-                      </span>
+                    <h3 className="text-xs font-bold text-[#c2410c] uppercase tracking-wider flex items-center gap-1.5 underline underline-offset-2">
+                      <span>PRICE OFFER (Bank PO GST Bifurcation)</span>
                     </h3>
                     <p className="text-[11px] text-slate-500 mt-0.5">
-                      Statutory bifurcation as per MNRE &amp; GST Council norms for Solar EPC contracts (Appears on Page 6).
+                      Price quote for total Design, Engineering, Supply, Installation, Testing &amp; Commissioning of Solar Power Plant (Appears on Page 6).
                     </p>
                   </div>
                 </div>
@@ -1211,69 +1208,63 @@ export const QuotationFormView = ({
                 <div className="border border-slate-300 rounded-lg overflow-hidden shadow-xs">
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
-                      <tr className="bg-[#B7D7A8] border-b border-slate-300 text-slate-900 font-bold text-[11px]">
-                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-10">S.No</th>
-                        <th className="py-2 px-3 border-r border-slate-300">Item Description</th>
-                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-28">Amount (INR)</th>
-                        <th className="py-2 px-2 text-center border-r border-slate-300 w-16">GST Rate</th>
-                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-24">GST (INR)</th>
-                        <th className="py-2 px-3 text-center w-32">Total Incl. GST (INR)</th>
+                      <tr className="bg-slate-100 border-b border-slate-300 text-slate-900 font-bold text-[11px]">
+                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-12">SL. No.</th>
+                        <th className="py-2 px-3 border-r border-slate-300">Product Description</th>
+                        <th className="py-2 px-2.5 text-center border-r border-slate-300 w-28">Price (INR)</th>
+                        <th className="py-2 px-2 text-center border-r border-slate-300 w-20">CGST</th>
+                        <th className="py-2 px-2 text-center border-r border-slate-300 w-20">SGST</th>
+                        <th className="py-2 px-3 text-center w-28">TOTAL Amount</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 text-slate-800">
                       <tr>
                         <td className="py-2 px-2.5 text-center font-bold border-r border-slate-200">1</td>
                         <td className="py-2 px-3 border-r border-slate-200 font-semibold">
-                          Solar Modules (5%) &amp; solar inverter (1)
-                          <span className="block text-[10px] text-slate-400 font-normal">70% of system contract value deemed supply of goods</span>
+                          Supply of {capacity}kW Grid Connected Roof Top Solar PV System
                         </td>
-                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
-                          {formatINRDecimal(gst.goodsBase)}
+                        <td className="py-2 px-2.5 text-center font-mono font-bold border-r border-slate-200">
+                          {formatINR(gst.goodsBase)}
                         </td>
-                        <td className="py-2 px-2 text-center font-bold border-r border-slate-200 text-emerald-700">
-                          {gst.goodsRate}
+                        <td className="py-2 px-2 text-center font-mono border-r border-slate-200">
+                          <div className="font-bold">{formatINR(gst.goodsCgst)}</div>
+                          <div className="text-[10px] text-slate-500 font-semibold">2.5%</div>
                         </td>
-                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
-                          {formatINRDecimal(gst.goodsGst)}
+                        <td className="py-2 px-2 text-center font-mono border-r border-slate-200">
+                          <div className="font-bold">{formatINR(gst.goodsSgst)}</div>
+                          <div className="text-[10px] text-slate-500 font-semibold">2.5%</div>
                         </td>
                         <td className="py-2 px-3 text-center font-mono font-bold text-slate-900">
-                          {formatINRDecimal(gst.goodsTotal)}
+                          {formatINR(gst.goodsTotal)}
                         </td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2.5 text-center font-bold border-r border-slate-200">2</td>
-                        <td className="py-2 px-3 border-r border-slate-200 font-medium text-[11px] leading-snug">
-                          Galvanized structure, Polycab cables, ACDB/DCDB, junction boxes, earthing, plumbing, civil work, transport, installation &amp; commissioning
-                          <span className="block text-[10px] text-slate-400 font-normal">30% of system contract value deemed services &amp; BOS</span>
+                        <td className="py-2 px-3 border-r border-slate-200 font-semibold text-[11px] leading-snug">
+                          Design, Engineering, I&amp;C with Testing of {capacity}kw Solar PV System
                         </td>
-                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
-                          {formatINRDecimal(gst.servicesBase)}
+                        <td className="py-2 px-2.5 text-center font-mono font-bold border-r border-slate-200">
+                          {formatINR(gst.servicesBase)}
                         </td>
-                        <td className="py-2 px-2 text-center font-bold border-r border-slate-200 text-amber-700">
-                          {gst.servicesRate}
+                        <td className="py-2 px-2 text-center font-mono border-r border-slate-200">
+                          <div className="font-bold">{formatINR(gst.servicesCgst)}</div>
+                          <div className="text-[10px] text-slate-500 font-semibold">9%</div>
                         </td>
-                        <td className="py-2 px-2.5 text-center font-mono font-medium border-r border-slate-200">
-                          {formatINRDecimal(gst.servicesGst)}
+                        <td className="py-2 px-2 text-center font-mono border-r border-slate-200">
+                          <div className="font-bold">{formatINR(gst.servicesSgst)}</div>
+                          <div className="text-[10px] text-slate-500 font-semibold">9%</div>
                         </td>
                         <td className="py-2 px-3 text-center font-mono font-bold text-slate-900">
-                          {formatINRDecimal(gst.servicesTotal)}
+                          {formatINR(gst.servicesTotal)}
                         </td>
                       </tr>
                       <tr className="bg-slate-50 font-bold">
-                        <td colSpan={2} className="py-2 px-3 text-left border-r border-slate-200 font-bold">Sub Total</td>
-                        <td className="py-2 px-2.5 text-center font-mono border-r border-slate-200">{formatINRDecimal(gst.subTotalBase)}</td>
+                        <td className="border-r border-slate-200"></td>
+                        <td className="py-2 px-3 text-left border-r border-slate-200 font-bold">Total amount</td>
+                        <td className="py-2 px-2.5 text-center font-mono border-r border-slate-200">{formatINR(gst.totalBase)}</td>
                         <td className="border-r border-slate-200"></td>
                         <td className="border-r border-slate-200"></td>
-                        <td className="py-2 px-3 text-center font-mono text-slate-900">{formatINRDecimal(gst.totalProjectCost)}</td>
-                      </tr>
-                      <tr className="bg-slate-50/60 font-bold">
-                        <td colSpan={4} className="py-2 px-3 text-left border-r border-slate-200 font-bold">Total GST (SGST + CGST)</td>
-                        <td className="py-2 px-2.5 text-center font-mono border-r border-slate-200 text-slate-900">{formatINRDecimal(gst.totalGst)}</td>
-                        <td></td>
-                      </tr>
-                      <tr className="bg-[#f0f9eb] font-extrabold text-slate-900">
-                        <td colSpan={5} className="py-2 px-3 text-left border-r border-slate-300 font-extrabold">TOTAL PROJECT COST</td>
-                        <td className="py-2 px-3 text-center font-mono font-extrabold text-slate-900">Rs. {formatINRDecimal(gst.totalProjectCost)}</td>
+                        <td className="py-2 px-3 text-center font-mono font-extrabold text-slate-900">{formatINR(gst.totalProjectCost)}</td>
                       </tr>
                     </tbody>
                   </table>

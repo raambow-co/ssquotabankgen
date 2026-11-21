@@ -52,13 +52,31 @@ console.log('\n--- 2. AUDITING GST STATUTORY EPC MODULE ---');
 const gst225k = calculateGSTBreakdown(225000);
 assert(gst225k.goodsBase === 156038, 'Benchmark Goods Base is ₹1,56,038.00');
 assert(gst225k.goodsGst === 7802, 'Benchmark Goods GST (5%) is ₹7,802.00');
+assert(gst225k.goodsCgst === 3901, 'Benchmark Goods CGST (2.5%) is ₹3,901');
+assert(gst225k.goodsSgst === 3901, 'Benchmark Goods SGST (2.5%) is ₹3,901');
 assert(gst225k.goodsTotal === 163840, 'Benchmark Goods Total is ₹1,63,840.00');
 assert(gst225k.servicesBase === 51830, 'Benchmark Services Base is ₹51,830.00');
 assert(gst225k.servicesGst === 9330, 'Benchmark Services GST (18%) is ₹9,330.00');
+assert(gst225k.servicesCgst === 4665, 'Benchmark Services CGST (9%) is ₹4,665');
+assert(gst225k.servicesSgst === 4665, 'Benchmark Services SGST (9%) is ₹4,665');
 assert(gst225k.servicesTotal === 61160, 'Benchmark Services Total is ₹61,160.00');
 assert(gst225k.subTotalBase === 207868, 'Benchmark Sub Total Base is ₹2,07,868.00');
+assert(gst225k.totalBase === 207868, 'Benchmark Total Base is ₹2,07,868');
 assert(gst225k.totalGst === 17132, 'Benchmark Total GST is ₹17,132.00');
 assert(gst225k.totalProjectCost === 225000, 'Benchmark Total Project Cost is ₹2,25,000.00');
+
+// Test with client's exact 4,10,000 (6 kW) statutory reference invoice (from image media_1795283380673_e401f579)
+const gst410k = calculateGSTBreakdown(410000);
+assert(gst410k.goodsBase === 273334, '410k Goods Base matches client image (273334)');
+assert(gst410k.goodsCgst === 6833, '410k Goods CGST (2.5%) matches client image (6833)');
+assert(gst410k.goodsSgst === 6833, '410k Goods SGST (2.5%) matches client image (6833)');
+assert(gst410k.goodsTotal === 287000, '410k Goods Total matches client image (287000)');
+assert(gst410k.servicesBase === 104237, '410k Services Base matches client image (104237)');
+assert(gst410k.servicesCgst === 9381, '410k Services CGST (9%) matches client image (9381)');
+assert(gst410k.servicesSgst === 9381, '410k Services SGST (9%) matches client image (9381)');
+assert(gst410k.servicesTotal === 123000, '410k Services Total matches client image (123000)');
+assert(gst410k.totalBase === 377571, '410k Total Base matches client image (377571)');
+assert(gst410k.totalProjectCost === 410000, '410k Total Project Cost matches client image (410000)');
 
 // Test dynamic GST for 4,25,000 (5 kW)
 const gst425k = calculateGSTBreakdown(425000);
