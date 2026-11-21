@@ -204,23 +204,44 @@ export const QuotationFormView = ({
     }));
   };
 
-  // Handle Single Panel Wattage (Wp) change
+  // Handle Single Panel Wattage (Wp) change with free typing, backspace & 0 support
   const handlePanelWattageChange = (valStr) => {
-    const wattage = parseFloat(valStr) || 540;
-    const brand = formData.system.moduleBrand || 'Adani Solar';
-    const desc = `Solar PV module: ${wattage}Wp TOPCon / Mono PERC DCR (${brand})`;
+    if (valStr === '') {
+      setFormData(prev => ({
+        ...prev,
+        system: {
+          ...prev.system,
+          panelWattage: ''
+        }
+      }));
+      return;
+    }
+
+    const wattage = parseFloat(valStr);
+    if (isNaN(wattage)) return;
+
+    const brand = formData.system.moduleBrand || 'Waaree Energies';
+    const desc = `Solar PV module: ${valStr}Wp TOPCon / Mono PERC DCR (${brand})`;
     const updatedBom = [...formData.bom];
     if (updatedBom[0]) {
       updatedBom[0] = { ...updatedBom[0], description: desc };
     }
+
     setFormData(prev => ({
       ...prev,
       system: {
         ...prev.system,
-        panelWattage: wattage
+        panelWattage: valStr
       },
       bom: updatedBom
     }));
+  };
+
+  const handlePanelWattageBlur = () => {
+    const valStr = String(formData.system.panelWattage ?? '').trim();
+    if (valStr === '' || isNaN(Number(valStr)) || Number(valStr) <= 0) {
+      handlePanelWattageChange('540');
+    }
   };
 
   // Handle Panels Count change with smooth typing support
@@ -277,26 +298,39 @@ export const QuotationFormView = ({
 
   // Dual Price change with recalculations (Bank Cost vs Customer Cost)
   const handlePriceChange = (field, val) => {
-    const num = Number(val) || 0;
+    if (val === '') {
+      setFormData(prev => ({
+        ...prev,
+        pricing: {
+          ...prev.pricing,
+          [field]: ''
+        }
+      }));
+      return;
+    }
+
+    const num = Number(val);
+    if (isNaN(num)) return;
+    
     const newPricing = { ...formData.pricing, [field]: num };
     
     if (field === 'bankCost') {
-      newPricing.bankNetCost = Math.max(0, num - (newPricing.subsidyAmount || 0));
+      newPricing.bankNetCost = Math.max(0, num - (Number(newPricing.subsidyAmount) || 0));
     } else if (field === 'customerCost') {
       newPricing.totalCost = num;
-      newPricing.afterSubsidyCost = Math.max(0, num - (newPricing.subsidyAmount || 0));
+      newPricing.afterSubsidyCost = Math.max(0, num - (Number(newPricing.subsidyAmount) || 0));
     } else if (field === 'totalCost') {
-      newPricing.afterSubsidyCost = Math.max(0, num - (newPricing.subsidyAmount || 0));
+      newPricing.afterSubsidyCost = Math.max(0, num - (Number(newPricing.subsidyAmount) || 0));
     } else if (field === 'subsidyAmount') {
-      newPricing.afterSubsidyCost = Math.max(0, (newPricing.customerCost ?? newPricing.totalCost ?? 0) - num);
-      newPricing.bankNetCost = Math.max(0, (newPricing.bankCost ?? newPricing.totalCost ?? 0) - num);
+      newPricing.afterSubsidyCost = Math.max(0, (Number(newPricing.customerCost) || Number(newPricing.totalCost) || 0) - num);
+      newPricing.bankNetCost = Math.max(0, (Number(newPricing.bankCost) || Number(newPricing.totalCost) || 0) - num);
     }
     
-    const customerNet = newPricing.customerCost !== undefined 
-      ? Math.max(0, newPricing.customerCost - (newPricing.subsidyAmount || 0))
-      : newPricing.afterSubsidyCost;
-    const annualUnits = Number(formData.system.energyPerYear) || (formData.system.capacityKw * 1200);
-    const payback = calculatePayback(customerNet, annualUnits, newPricing.electricityTariff);
+    const customerNet = newPricing.customerCost !== undefined && newPricing.customerCost !== ''
+      ? Math.max(0, Number(newPricing.customerCost) - (Number(newPricing.subsidyAmount) || 0))
+      : (Number(newPricing.afterSubsidyCost) || 0);
+    const annualUnits = Number(formData.system.energyPerYear) || (Number(formData.system.capacityKw || 5) * 1200);
+    const payback = calculatePayback(customerNet, annualUnits, Number(newPricing.electricityTariff) || 8);
     newPricing.annualSavings = payback.annualSavings;
     newPricing.paybackYears = payback.paybackYears;
 
@@ -827,10 +861,10 @@ export const QuotationFormView = ({
                     <input
                       type="number"
                       step="5"
-                      min="300"
-                      max="800"
-                      value={formData.system.panelWattage || 540}
+                      min="0"
+                      value={formData.system.panelWattage ?? ''}
                       onChange={(e) => handlePanelWattageChange(e.target.value)}
+                      onBlur={handlePanelWattageBlur}
                       placeholder="Enter single panel watt (e.g. 540, 620)"
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono font-bold text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
                     />
@@ -983,7 +1017,8 @@ export const QuotationFormView = ({
                       <input
                         type="number"
                         step="1000"
-                        value={formData.pricing.bankCost !== undefined ? formData.pricing.bankCost : (formData.pricing.totalCost || 0)}
+                        min="0"
+                        value={formData.pricing.bankCost !== undefined ? formData.pricing.bankCost : (formData.pricing.totalCost ?? '')}
                         onChange={(e) => handlePriceChange('bankCost', e.target.value)}
                         placeholder="Enter Bank Project Cost (e.g. 475000)"
                         className="w-full px-3 py-2.5 border-2 border-slate-300 focus:border-slate-900 rounded-lg text-slate-900 font-mono font-black text-base bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
@@ -1034,7 +1069,8 @@ export const QuotationFormView = ({
                       <input
                         type="number"
                         step="1000"
-                        value={formData.pricing.customerCost !== undefined ? formData.pricing.customerCost : (formData.pricing.totalCost || 0)}
+                        min="0"
+                        value={formData.pricing.customerCost !== undefined ? formData.pricing.customerCost : (formData.pricing.totalCost ?? '')}
                         onChange={(e) => handlePriceChange('customerCost', e.target.value)}
                         placeholder="Enter Customer Project Cost (e.g. 420000)"
                         className="w-full px-3 py-2.5 border-2 border-emerald-300 focus:border-emerald-600 rounded-lg text-slate-900 font-mono font-black text-base bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -1093,7 +1129,8 @@ export const QuotationFormView = ({
                   <input
                     type="number"
                     step="1000"
-                    value={formData.pricing.subsidyAmount}
+                    min="0"
+                    value={formData.pricing.subsidyAmount ?? ''}
                     onChange={(e) => handlePriceChange('subsidyAmount', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-emerald-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
