@@ -303,6 +303,7 @@ export function convertToCustomerFormat(data) {
     technical: masterSettings.technical || srimaanCustomerSettings.technical,
     pricing: masterSettings.pricing || srimaanCustomerSettings.pricing,
     warranties: masterSettings.warranties || srimaanCustomerSettings.warranties,
+    authorization: masterSettings.authorization || srimaanCustomerSettings.authorization,
     portfolio: masterSettings.portfolio || srimaanCustomerSettings.portfolio
   };
 

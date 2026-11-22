@@ -341,13 +341,13 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
               <div className="w-11 h-11 rounded-full border-2 border-[#060e24] p-0.5 flex items-center justify-center transform rotate-[-6deg]">
                 <div className="w-full h-full rounded-full border border-dashed border-amber-600 flex flex-col items-center justify-center p-0.5 text-center bg-amber-50/40">
                   <span className="text-[2.8pt] font-black uppercase text-slate-950 tracking-wider">
-                    ★ SRIMAAN SOLAR SOLUTIONS ★
+                    {auth.stampTop || "★ SRIMAAN SOLAR SOLUTIONS ★"}
                   </span>
                   <span className="text-[4pt] font-extrabold text-blue-900 my-0.2">
-                    AUTHORIZED
+                    {auth.stampCenter || "AUTHORIZED"}
                   </span>
                   <span className="text-[2.8pt] font-bold uppercase text-emerald-800 tracking-wider">
-                    TECHNICAL EPC
+                    {auth.stampBottom || "TECHNICAL EPC DIVISION"}
                   </span>
                 </div>
               </div>
@@ -355,9 +355,9 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
 
             <div>
               <div className="flex items-center justify-between mb-0.5">
-                <p className="font-black text-slate-900 text-[7.5pt]">For Srimaan Solar Solutions</p>
+                <p className="font-black text-slate-900 text-[7.5pt]">For {company.legalName || 'Srimaan Solar Solutions'}</p>
                 <span className="text-[5.5pt] text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded font-extrabold border border-emerald-200">
-                  &#10003; Empanelled Partner
+                  &#10003; {auth.approvedBadge || "Approved & Signed"}
                 </span>
               </div>
               <p className="text-[6.2pt] text-slate-600 leading-snug mb-1.5">
@@ -366,7 +366,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
             </div>
 
             <div className="border-t border-dashed border-slate-300 pt-1 flex justify-between text-[6.5pt] text-slate-600">
-              <span className="font-bold text-slate-900">{auth.signatoryName || 'T. Ravindra Chary'} (Managing Director)</span>
+              <span className="font-bold text-slate-900">{auth.signatoryName || 'T. Ravindra Chary'} ({auth.signatoryTitle || 'Managing Director'})</span>
               <span>Date: {formatDate(quotation?.date || new Date())}</span>
             </div>
           </div>

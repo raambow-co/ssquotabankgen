@@ -22,6 +22,16 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
   const technical = quotation?.technical || {};
   const dcKw = parseFloat(technical?.actualDcCapacityKw || technical?.systemCapacityKw || 5.0);
 
+  const defaultScopeMatrix = [
+    { description: "Supply of Tier-1 Bifacial Solar PV Modules & Smart Grid Inverter", scope: "epc" },
+    { description: "Custom Hot-Dip GI Structure (80µ Zinc), Civil Pedestals & Rigging", scope: "epc" },
+    { description: "ACDB, DCDB, 3 Chemical Earthing Pits (IS 3043) & Lightning Arrester", scope: "epc" },
+    { description: "State DISCOM Bi-Directional Net-Metering Documentation & Approvals", scope: "epc" },
+    { description: "5-Year Comprehensive Workmanship, Structural & Yield AMC Guarantee", scope: "epc" },
+    { description: "Shadow-Free Terrace Space & Water Point with Hose for Panel Cleaning", scope: "client" }
+  ];
+  const scopeList = settings?.warranties?.scopeMatrix?.length ? settings.warranties.scopeMatrix : defaultScopeMatrix;
+
   return (
     <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
       {/* Signature Multi-Tier Top Bar */}
@@ -264,77 +274,19 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-slate-100">
-                  <td className="py-1 px-3 text-slate-800 font-medium">
-                    Supply of Tier-1 Bifacial Solar PV Modules &amp; Smart Grid Inverter
-                  </td>
-                  <td className="py-1 px-2 text-center font-bold text-emerald-700 border-l border-slate-100 bg-emerald-50/20">
-                    &check; Full Scope
-                  </td>
-                  <td className="py-1 px-2 text-center text-slate-400 border-l border-slate-100">
-                    &mdash;
-                  </td>
-                </tr>
-
-                <tr className="border-b border-slate-100">
-                  <td className="py-1 px-3 text-slate-800 font-medium">
-                    Custom Hot-Dip GI Structure (80&mu; Zinc), Civil Pedestals &amp; Rigging
-                  </td>
-                  <td className="py-1 px-2 text-center font-bold text-emerald-700 border-l border-slate-100 bg-emerald-50/20">
-                    &check; Full Scope
-                  </td>
-                  <td className="py-1 px-2 text-center text-slate-400 border-l border-slate-100">
-                    &mdash;
-                  </td>
-                </tr>
-
-                <tr className="border-b border-slate-100">
-                  <td className="py-1 px-3 text-slate-800 font-medium">
-                    ACDB, DCDB, 3 Chemical Earthing Pits (IS 3043) &amp; Lightning Arrester
-                  </td>
-                  <td className="py-1 px-2 text-center font-bold text-emerald-700 border-l border-slate-100 bg-emerald-50/20">
-                    &check; Full Scope
-                  </td>
-                  <td className="py-1 px-2 text-center text-slate-400 border-l border-slate-100">
-                    &mdash;
-                  </td>
-                </tr>
-
-                <tr className="border-b border-slate-100">
-                  <td className="py-1 px-3 text-slate-800 font-medium">
-                    State DISCOM Bi-Directional Net-Metering Documentation &amp; Approvals
-                  </td>
-                  <td className="py-1 px-2 text-center font-bold text-emerald-700 border-l border-slate-100 bg-emerald-50/20">
-                    &check; Full Scope
-                  </td>
-                  <td className="py-1 px-2 text-center text-slate-400 border-l border-slate-100">
-                    &mdash;
-                  </td>
-                </tr>
-
-                <tr className="border-b border-slate-100">
-                  <td className="py-1 px-3 text-slate-800 font-medium">
-                    5-Year Comprehensive Workmanship, Structural &amp; Yield AMC Guarantee
-                  </td>
-                  <td className="py-1 px-2 text-center font-bold text-emerald-700 border-l border-slate-100 bg-emerald-50/20">
-                    &check; Full Scope
-                  </td>
-                  <td className="py-1 px-2 text-center text-slate-400 border-l border-slate-100">
-                    &mdash;
-                  </td>
-                </tr>
-
-                <tr>
-                  <td className="py-1 px-3 text-slate-800 font-medium">
-                    Shadow-Free Terrace Space &amp; Water Point with Hose for Panel Cleaning
-                  </td>
-                  <td className="py-1 px-2 text-center text-slate-400 border-l border-slate-100">
-                    &mdash;
-                  </td>
-                  <td className="py-1 px-2 text-center font-bold text-slate-900 border-l border-slate-100 bg-slate-50/50">
-                    &check; Client Scope
-                  </td>
-                </tr>
+                {scopeList.map((item, idx) => (
+                  <tr key={idx} className={idx < scopeList.length - 1 ? "border-b border-slate-100" : ""}>
+                    <td className="py-1 px-3 text-slate-800 font-medium">
+                      {item.description}
+                    </td>
+                    <td className={`py-1 px-2 text-center font-bold border-l border-slate-100 ${item.scope === 'epc' ? 'text-emerald-700 bg-emerald-50/20' : 'text-slate-400'}`}>
+                      {item.scope === 'epc' ? '✓ Full Scope' : '—'}
+                    </td>
+                    <td className={`py-1 px-2 text-center border-l border-slate-100 ${item.scope === 'client' ? 'font-bold text-slate-900 bg-slate-50/50' : 'text-slate-400'}`}>
+                      {item.scope === 'client' ? '✓ Client Scope' : '—'}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

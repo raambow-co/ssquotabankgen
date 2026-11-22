@@ -22,7 +22,9 @@ import {
   Phone, 
   Mail, 
   Layers,
-  Zap 
+  Zap,
+  PenTool,
+  BadgeCheck 
 } from 'lucide-react';
 import { DEFAULT_COMPANY, DEFAULT_BANK, DEFAULT_BANK2 } from '../data/defaultData';
 import { srimaanCustomerSettings } from '../utils/quotationAdapter';
@@ -206,14 +208,35 @@ export const SettingsModal = ({
         propertyYield: "2.5% - 3.2%"
       },
       warranties: {
-        modulePerformance: "25-Year Linear Performance Warranty (≥84.8% at Yr 25)",
-        moduleProduct: "12-Year Workmanship Defect Warranty",
-        inverter: "7-Year Comprehensive Replacement Warranty",
+        linearPerformanceStatement: "25-Year Linear Performance Warranty (≥ 98% Year 1, ≤ 0.55%/yr linear degradation, ≥ 84.8% at Year 25)",
+        moduleWorkmanship: "12-Year Comprehensive Manufacturer Product Workmanship Defect Warranty",
+        inverterWarranty: "10-Year Standard Manufacturer Repair / Replacement Warranty",
+        comprehensiveWorkmanshipAmc: "5-Year Comprehensive Free AMC & Preventive Maintenance by M/s. SRIMAAN SOLAR SOLUTIONS",
+        scopeMatrix: [
+          { description: "Supply of Tier-1 Bifacial Solar PV Modules & Smart Grid Inverter", scope: "epc" },
+          { description: "Custom Hot-Dip GI Structure (80µ Zinc), Civil Pedestals & Rigging", scope: "epc" },
+          { description: "ACDB, DCDB, 3 Chemical Earthing Pits (IS 3043) & Lightning Arrester", scope: "epc" },
+          { description: "State DISCOM Bi-Directional Net-Metering Documentation & Approvals", scope: "epc" },
+          { description: "5-Year Comprehensive Workmanship, Structural & Yield AMC Guarantee", scope: "epc" },
+          { description: "Shadow-Free Terrace Space & Water Point with Hose for Panel Cleaning", scope: "client" }
+        ],
+        // Backward compatibility
+        modulePerformance: "25-Year Linear Performance Warranty (≥ 98% Year 1, ≤ 0.55%/yr linear degradation, ≥ 84.8% at Year 25)",
+        moduleProduct: "12-Year Comprehensive Manufacturer Product Workmanship Defect Warranty",
+        inverter: "10-Year Standard Manufacturer Repair / Replacement Warranty",
         structure: "15-Year Hot-Dip GI Structural Durability Guarantee",
-        workmanshipAmc: "5-Year Free Annual Maintenance & Quarterly Health Inspections",
+        workmanshipAmc: "5-Year Comprehensive Free AMC & Preventive Maintenance by M/s. SRIMAAN SOLAR SOLUTIONS",
         milestoneAdvance: 20,
         milestoneDispatch: 70,
         milestoneInstallation: 10
+      },
+      authorization: {
+        signatoryName: "T. Ravindra Chary",
+        signatoryTitle: "Managing Director & Project Head",
+        approvedBadge: "Approved & Signed",
+        stampTop: "★ SRIMAAN SOLAR SOLUTIONS ★",
+        stampCenter: "AUTHORIZED",
+        stampBottom: "TECHNICAL EPC DIVISION"
       },
       portfolio: [
         { id: 1, title: "Residential Rooftop 10 kWp", location: "Khammam, Telangana", image: "/assets/portfolio/project-1.jpg", type: "Residential" },
@@ -247,6 +270,21 @@ export const SettingsModal = ({
             windRatingStandard: parsed.technical?.windRatingStandard || defaultSettings.technical.windRatingStandard,
             dcSolarCableStandard: parsed.technical?.dcSolarCableStandard || defaultSettings.technical.dcSolarCableStandard,
             earthingChemicalStandard: parsed.technical?.earthingChemicalStandard || defaultSettings.technical.earthingChemicalStandard,
+          },
+          warranties: {
+            ...defaultSettings.warranties,
+            ...(parsed.warranties || {}),
+            linearPerformanceStatement: parsed.warranties?.linearPerformanceStatement || parsed.warranties?.modulePerformance || defaultSettings.warranties.linearPerformanceStatement,
+            moduleWorkmanship: parsed.warranties?.moduleWorkmanship || parsed.warranties?.moduleProduct || defaultSettings.warranties.moduleWorkmanship,
+            inverterWarranty: parsed.warranties?.inverterWarranty || parsed.warranties?.inverter || defaultSettings.warranties.inverterWarranty,
+            comprehensiveWorkmanshipAmc: parsed.warranties?.comprehensiveWorkmanshipAmc || parsed.warranties?.workmanshipAmc || defaultSettings.warranties.comprehensiveWorkmanshipAmc,
+            scopeMatrix: (parsed.warranties?.scopeMatrix && Array.isArray(parsed.warranties.scopeMatrix) && parsed.warranties.scopeMatrix.length > 0)
+              ? parsed.warranties.scopeMatrix
+              : defaultSettings.warranties.scopeMatrix
+          },
+          authorization: {
+            ...defaultSettings.authorization,
+            ...(parsed.authorization || {})
           }
         };
       }
@@ -465,6 +503,53 @@ export const SettingsModal = ({
     });
   };
 
+  // Scope of Work Responsibility Matrix management
+  const handleAddScopeItem = () => {
+    setSettings(prev => {
+      const current = prev.warranties?.scopeMatrix || [];
+      const newItem = {
+        description: "New Site Engineering & Supply Scope Deliverable",
+        scope: "epc"
+      };
+      return {
+        ...prev,
+        warranties: {
+          ...prev.warranties,
+          scopeMatrix: [...current, newItem]
+        }
+      };
+    });
+  };
+
+  const handleUpdateScopeItem = (index, field, value) => {
+    setSettings(prev => {
+      const current = [...(prev.warranties?.scopeMatrix || [])];
+      if (current[index]) {
+        current[index] = { ...current[index], [field]: value };
+      }
+      return {
+        ...prev,
+        warranties: {
+          ...prev.warranties,
+          scopeMatrix: current
+        }
+      };
+    });
+  };
+
+  const handleRemoveScopeItem = (index) => {
+    setSettings(prev => {
+      const current = (prev.warranties?.scopeMatrix || []).filter((_, i) => i !== index);
+      return {
+        ...prev,
+        warranties: {
+          ...prev.warranties,
+          scopeMatrix: current
+        }
+      };
+    });
+  };
+
   // Save all settings to localStorage and trigger callback
   const handleSaveAll = () => {
     try {
@@ -478,6 +563,9 @@ export const SettingsModal = ({
       if (settings.bank2) {
         localStorage.setItem('srimaan_bank2_settings', JSON.stringify(settings.bank2));
       }
+      if (settings.authorization) {
+        localStorage.setItem('srimaan_authorization_settings', JSON.stringify(settings.authorization));
+      }
     } catch (e) {
       console.warn("Storage error", e);
     }
@@ -487,6 +575,7 @@ export const SettingsModal = ({
         company: settings.company,
         bank: settings.bank,
         bank2: settings.bank2,
+        authorization: settings.authorization,
         masterSettings: settings
       });
     }
@@ -1670,112 +1759,238 @@ export const SettingsModal = ({
           )}
 
           {/* ------------------------------------------------------------ */}
-          {/* TAB 6: WARRANTIES, SCOPE & O&M                               */}
+          {/* TAB 6: WARRANTIES, SCOPE & O&M (Exact Match to Client Images)*/}
           {/* ------------------------------------------------------------ */}
           {activeTab === 'warranties' && (
-            <div className="space-y-4 animate-fadeIn">
+            <div className="space-y-5 animate-fadeIn">
+              {/* SECTION 1: WARRANTY & PERFORMANCE GUARANTEES */}
               <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5">
                   <ShieldCheck size={16} className="text-emerald-500" />
                   <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
-                    Statutory Equipment Warranties &amp; Guarantees
+                    Warranty &amp; Performance Guarantees
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-3">
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">PV Modules Performance Warranty</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      25-Year Linear Performance Warranty Statement
+                    </label>
                     <input
                       type="text"
-                      value={settings.warranties.modulePerformance}
-                      onChange={(e) => updateSection('warranties', 'modulePerformance', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-medium"
+                      value={settings.warranties.linearPerformanceStatement || settings.warranties.modulePerformance || "25-Year Linear Performance Warranty (≥ 98% Year 1, ≤ 0.55%/yr linear degradation, ≥ 84.8% at Year 25)"}
+                      onChange={(e) => {
+                        updateSection('warranties', 'linearPerformanceStatement', e.target.value);
+                        updateSection('warranties', 'modulePerformance', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">PV Modules Product Workmanship</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Solar PV Module Workmanship Defect Warranty
+                    </label>
                     <input
                       type="text"
-                      value={settings.warranties.moduleProduct}
-                      onChange={(e) => updateSection('warranties', 'moduleProduct', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-medium"
+                      value={settings.warranties.moduleWorkmanship || settings.warranties.moduleProduct || "12-Year Comprehensive Manufacturer Product Workmanship Defect Warranty"}
+                      onChange={(e) => {
+                        updateSection('warranties', 'moduleWorkmanship', e.target.value);
+                        updateSection('warranties', 'moduleProduct', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Solar Grid Inverter Warranty</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Inverter Standard Warranty
+                    </label>
                     <input
                       type="text"
-                      value={settings.warranties.inverter}
-                      onChange={(e) => updateSection('warranties', 'inverter', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-medium"
+                      value={settings.warranties.inverterWarranty || settings.warranties.inverter || "10-Year Standard Manufacturer Repair / Replacement Warranty"}
+                      onChange={(e) => {
+                        updateSection('warranties', 'inverterWarranty', e.target.value);
+                        updateSection('warranties', 'inverter', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Mounting Structure Guarantee</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Comprehensive Free Workmanship &amp; Preventive AMC
+                    </label>
                     <input
                       type="text"
-                      value={settings.warranties.structure}
-                      onChange={(e) => updateSection('warranties', 'structure', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-medium"
+                      value={settings.warranties.comprehensiveWorkmanshipAmc || settings.warranties.workmanshipAmc || "5-Year Comprehensive Free AMC & Preventive Maintenance by M/s. SRIMAAN SOLAR SOLUTIONS"}
+                      onChange={(e) => {
+                        updateSection('warranties', 'comprehensiveWorkmanshipAmc', e.target.value);
+                        updateSection('warranties', 'workmanshipAmc', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Free Comprehensive Workmanship AMC</label>
-                  <input
-                    type="text"
-                    value={settings.warranties.workmanshipAmc}
-                    onChange={(e) => updateSection('warranties', 'workmanshipAmc', e.target.value)}
-                    className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-medium"
-                  />
                 </div>
               </div>
 
-              {/* Payment Terms Milestones */}
+              {/* SECTION 2: SCOPE OF WORK RESPONSIBILITY MATRIX (PAGE 5 TABLE) */}
               <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                  <CreditCard size={16} className="text-blue-500" />
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <PenTool size={16} className="text-blue-500" />
+                    <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
+                      Scope of Work Responsibility Matrix (Page 5 Table)
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddScopeItem}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition cursor-pointer"
+                  >
+                    <Plus size={13} className="text-slate-600" />
+                    <span>Add Scope Item</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {(settings.warranties.scopeMatrix || []).map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white rounded-lg border border-slate-200 p-2.5 sm:p-3 flex flex-wrap sm:flex-nowrap items-center gap-3 shadow-2xs"
+                    >
+                      <input
+                        type="text"
+                        value={item.description || ''}
+                        onChange={(e) => handleUpdateScopeItem(idx, 'description', e.target.value)}
+                        placeholder="Deliverable / Responsibility Scope description..."
+                        className="flex-1 min-w-[200px] px-3 py-1.5 border border-slate-300 rounded-md text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+
+                      <div className="flex items-center gap-4 shrink-0 px-2">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={item.scope === 'epc'}
+                            onChange={() => handleUpdateScopeItem(idx, 'scope', 'epc')}
+                            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer accent-blue-600"
+                          />
+                          <span>EPC Scope</span>
+                        </label>
+
+                        <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={item.scope === 'client'}
+                            onChange={() => handleUpdateScopeItem(idx, 'scope', 'client')}
+                            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer accent-blue-600"
+                          />
+                          <span>Client Scope</span>
+                        </label>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveScopeItem(idx)}
+                        className="text-slate-400 hover:text-rose-500 p-1.5 rounded transition cursor-pointer shrink-0"
+                        title="Delete Scope Item"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION 3: AUTHORIZED SIGNATORY & OFFICIAL RUBBER STAMP (PAGE 3) */}
+              <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+                  <BadgeCheck size={16} className="text-amber-500" />
                   <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
-                    Disbursement Milestones SLA (20 : 70 : 10)
+                    Authorized Signatory &amp; Official Rubber Stamp (Page 3)
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Advance Milestone (%)</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Signatory Name
+                    </label>
                     <input
-                      type="number"
-                      value={settings.warranties.milestoneAdvance}
-                      onChange={(e) => updateSection('warranties', 'milestoneAdvance', parseInt(e.target.value, 10) || 20)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold"
+                      type="text"
+                      value={settings.authorization?.signatoryName || "T. Ravindra Chary"}
+                      onChange={(e) => updateSection('authorization', 'signatoryName', e.target.value)}
+                      placeholder="e.g. T. Ravindra Chary"
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
-                    <span className="text-[10px] text-slate-400 mt-0.5 block">With Purchase Order</span>
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Dispatch Milestone (%)</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Designation / Title
+                    </label>
                     <input
-                      type="number"
-                      value={settings.warranties.milestoneDispatch}
-                      onChange={(e) => updateSection('warranties', 'milestoneDispatch', parseInt(e.target.value, 10) || 70)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold"
+                      type="text"
+                      value={settings.authorization?.signatoryTitle || "Managing Director & Project Head"}
+                      onChange={(e) => updateSection('authorization', 'signatoryTitle', e.target.value)}
+                      placeholder="e.g. Managing Director & Project Head"
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
-                    <span className="text-[10px] text-slate-400 mt-0.5 block">Before Dispatch of Material</span>
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Installation Milestone (%)</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Approval Badge Label
+                    </label>
                     <input
-                      type="number"
-                      value={settings.warranties.milestoneInstallation}
-                      onChange={(e) => updateSection('warranties', 'milestoneInstallation', parseInt(e.target.value, 10) || 10)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold"
+                      type="text"
+                      value={settings.authorization?.approvedBadge || "Approved & Signed"}
+                      onChange={(e) => updateSection('authorization', 'approvedBadge', e.target.value)}
+                      placeholder="e.g. Approved & Signed"
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
-                    <span className="text-[10px] text-slate-400 mt-0.5 block">At Installation &amp; Sync</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Stamp Top Circular Text
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.authorization?.stampTop || "★ SRIMAAN SOLAR SOLUTIONS ★"}
+                      onChange={(e) => updateSection('authorization', 'stampTop', e.target.value)}
+                      placeholder="e.g. ★ SRIMAAN SOLAR SOLUTIONS ★"
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Stamp Center Text
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.authorization?.stampCenter || "AUTHORIZED"}
+                      onChange={(e) => updateSection('authorization', 'stampCenter', e.target.value)}
+                      placeholder="e.g. AUTHORIZED"
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Stamp Bottom Circular Text
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.authorization?.stampBottom || "TECHNICAL EPC DIVISION"}
+                      onChange={(e) => updateSection('authorization', 'stampBottom', e.target.value)}
+                      placeholder="e.g. TECHNICAL EPC DIVISION"
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
                   </div>
                 </div>
               </div>
