@@ -88,7 +88,7 @@ export const Page5 = ({ data }) => {
                   <td colSpan={2} className="py-1.5 px-4 text-center font-extrabold text-gray-900 text-sm border-r border-black tracking-wide">
                     After Subsidy Cost:
                   </td>
-                  <td className="py-1.5 px-2 text-center font-extrabold text-gray-900 text-sm tracking-wide">
+                  <td className="py-1.5 px-2 text-center font-extrabold text-gray-900 text-sm tracking-wide font-mono">
                     {afterSubsidyDisplay}
                   </td>
                 </tr>
