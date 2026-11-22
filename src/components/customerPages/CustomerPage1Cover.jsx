@@ -2,30 +2,22 @@ import React from 'react';
 import { 
   SunMedium, 
   MapPin, 
-  Phone, 
-  Mail, 
-  Calendar, 
-  ShieldCheck, 
+  Building2,
+  FileText,
+  Shield, 
   Award, 
   Zap, 
-  Sparkles,
-  Cpu,
-  Layers3,
-  BadgeCheck,
-  CheckCheck,
-  Building2,
-  Coins,
-  Shield,
-  Gauge,
-  Lock,
-  BatteryCharging,
-  Radio,
-  Workflow,
-  CheckCircle2
+  CheckCircle2,
+  Clock,
+  Leaf,
+  Trees,
+  Home
 } from 'lucide-react';
 import Watermark from '../common/Watermark';
 import CustomerPageFooter from './CustomerPageFooter';
-import { formatDate, formatCurrency, formatNumber } from '../../utils/formatters';
+import { formatDate, formatNumber } from '../../utils/formatters';
+import { EMBLEMS } from '../../utils/brandLogos';
+import { ASSETS } from '../../assets/assetsData';
 
 export default function CustomerPage1Cover({ quotation, settings }) {
   const company = settings?.company || {};
@@ -39,13 +31,11 @@ export default function CustomerPage1Cover({ quotation, settings }) {
   const panelCount = technical?.panelCount || Math.ceil((dcKw * 1000) / panelWattage);
   const annualKwh = technical?.estimatedAnnualUnits || Math.round((technical?.estimatedDailyUnits || (dcKw * 4.25)) * 365);
   const dailyKwh = technical?.estimatedDailyUnits || Number((annualKwh / 365).toFixed(1));
-
-  const totalCost = commercials?.totalGrossCost || 0;
-  const subsidy = commercials?.subsidyAmount !== undefined ? commercials.subsidyAmount : 78000;
-  const netPayable = commercials?.netPayable !== undefined ? commercials.netPayable : Math.max(0, totalCost - subsidy);
+  const minArea = Math.round(dcKw * 70);
+  const maxArea = Math.round(dcKw * 100);
 
   // Format clean reference number
-  const rawRef = quotation?.quotationNumber || 'SSS-SOL-2026-0001';
+  const rawRef = quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-SOL-2026-1048';
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
   return (
@@ -59,307 +49,418 @@ export default function CustomerPage1Cover({ quotation, settings }) {
 
       <div className="relative z-10 flex flex-col h-full space-y-2.5">
         {/* ============================================================== */}
-        {/* 1. TOP GOVERNMENT EMPANELMENT & ACCREDITATION STRIP            */}
+        {/* 1. MASTER HEADER WITH LOGO, GOVT EMBLEMS & PROPOSAL BADGE     */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between pb-1 border-b border-slate-200 text-[7.5px] text-slate-600 font-semibold uppercase tracking-wider shrink-0">
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            MNRE Empanelled Channel Partner &bull; Govt. of India Certified
-          </span>
-          <span className="flex items-center gap-2 text-slate-600">
-            <span>TSSPDCL &bull; TSNPDCL &bull; APEPDCL Registered Partner</span>
-            <span>&bull;</span>
-            <span className="text-emerald-700 font-extrabold">PM Surya Ghar DBT National Portal</span>
-          </span>
-        </div>
+        <div className="flex items-center justify-between pb-1 pt-0.5 border-b border-slate-100 shrink-0">
+          {/* Left: Company Logo */}
+          <div className="h-11 sm:h-12 w-44 sm:w-48 flex items-center shrink-0">
+            <img 
+              src="/assets/srimaan_logo.jpeg" 
+              alt="Srimaan Solar Solutions" 
+              className="h-full w-auto max-w-full object-contain"
+            />
+          </div>
 
-        {/* ============================================================== */}
-        {/* 2. MASTER BRAND HEADER WITH CLEAN LOGO & OFFICIAL GSTIN        */}
-        {/* ============================================================== */}
-        <div className="flex items-center justify-between gap-3 py-0.5 shrink-0">
-          {/* Logo + Company Identity */}
-          <div className="flex items-center gap-3 min-w-0">
-            {/* Prominent Logo */}
-            <div className="h-14 sm:h-16 w-48 sm:w-52 flex items-center shrink-0">
+          {/* Center: PM Surya Ghar & MNRE Emblems */}
+          <div className="flex items-center justify-center gap-3 shrink-0">
+            {EMBLEMS.pmSuryaGhar && (
               <img 
-                src="/assets/srimaan_logo.jpeg" 
-                alt="Srimaan Solar Solutions" 
-                className="h-full w-auto max-w-full object-contain"
+                src={EMBLEMS.pmSuryaGhar} 
+                alt="PM Surya Ghar Muft Bijli Yojana" 
+                className="h-7 sm:h-8 object-contain"
               />
-            </div>
-
-            {/* Vertical Gold Divider */}
-            <div className="h-10 w-[1.5px] bg-gradient-to-b from-amber-400 via-slate-300 to-transparent shrink-0 hidden sm:block" />
-
-            {/* Company Tagline & HQ */}
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-black text-slate-950 tracking-tight uppercase font-sans whitespace-nowrap">
-                  SRIMAAN SOLAR SOLUTIONS
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-[7.5px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-2xs whitespace-nowrap">
-                  DISCOM EMPANELLED EPC
-                </span>
-              </div>
-              <p className="text-[8.5px] font-bold text-emerald-800 mt-0.5 truncate">
-                &ldquo;Clean Green Renewable Energy EPC Partner&rdquo;
-              </p>
-              <p className="text-[7.5px] text-slate-500 font-medium truncate">
-                HQ: #6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam 507003
-              </p>
-            </div>
+            )}
+            {EMBLEMS.mnre && (
+              <img 
+                src={EMBLEMS.mnre} 
+                alt="MNRE - Ministry of New and Renewable Energy" 
+                className="h-7 sm:h-8 object-contain"
+              />
+            )}
           </div>
 
-          {/* Official GSTIN, Contact & Proposal Ref */}
+          {/* Right: Proposal Document Badge, Ref & Date */}
           <div className="text-right shrink-0">
-            <div className="text-[10px] font-black text-slate-900 tracking-wider">
-              GSTIN <span className="font-mono text-emerald-800 font-extrabold">{company.gstin || "36ADPPT2441N1ZW"}</span>
+            <div className="inline-flex items-center gap-1 text-[7.5px] font-bold text-amber-800 bg-amber-50/90 px-2 py-0.5 rounded border border-amber-200 shadow-2xs">
+              <FileText className="w-2.5 h-2.5 text-amber-600" />
+              <span className="uppercase tracking-wider">Techno-Commercial Proposal</span>
             </div>
-            <div className="text-[8px] font-semibold text-slate-600 mt-0.5">
-              <span>{company.phone || "9347416140"}</span> &bull; <span>{company.email || "srimaansolarsolutions@gmail.com"}</span>
+            <div className="mt-1 text-[7px] text-slate-600 font-mono">
+              Ref: <strong className="text-slate-900">{cleanRef}</strong>
             </div>
-            <div className="mt-1 flex items-center justify-end gap-1.5 text-[7px] text-slate-500">
-              <span className="font-mono font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                Ref: {cleanRef}
-              </span>
-              <span>Date: <strong className="text-slate-900">{formatDate(quotation?.date || new Date())}</strong></span>
-              <span className="font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                Validity: 30 Days
-              </span>
+            <div className="text-[7px] text-slate-500">
+              Date: <strong className="text-slate-800">{formatDate(quotation?.date || new Date())}</strong>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 3. EXECUTIVE PROPOSAL HERO SHOWCASE BANNER                      */}
+        {/* 2. EXECUTIVE HERO SHOWCASE BANNER                              */}
         {/* ============================================================== */}
-        <div className="relative rounded-2xl overflow-hidden shadow-md border border-amber-400/30 bg-gradient-to-r from-[#060e24] via-[#0c1c3f] to-[#08152e] text-white p-3.5 shrink-0">
-          <div className="flex items-center justify-between gap-4">
-            {/* Left: Engineering Scope & Title */}
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[7.5px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-xs flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-slate-950" />
-                  TURNKEY SOLAR EPC PROPOSAL
+        <div className="relative rounded-2xl overflow-hidden shadow-md border border-slate-800 bg-gradient-to-r from-[#060e24] via-[#0c1c3f] to-[#08152e] text-white p-3.5 sm:p-4 shrink-0">
+          {/* Subtle Solar Panels Background Texture */}
+          {ASSETS.solar_hero_banner && (
+            <div 
+              className="absolute inset-0 opacity-15 bg-cover bg-center pointer-events-none"
+              style={{ backgroundImage: `url(${ASSETS.solar_hero_banner})` }}
+            />
+          )}
+
+          <div className="relative z-10 space-y-2">
+            {/* Top Badges */}
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[7px] font-black bg-white/10 text-slate-200 border border-white/20 uppercase tracking-wide flex items-center gap-1">
+                <SunMedium className="w-2.5 h-2.5 text-amber-400" />
+                Grid-Interactive Solar PV System
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[7px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                DISCOM Empanelled EPC
+              </span>
+            </div>
+
+            {/* Title & Engineering Scope */}
+            <div>
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-white font-sans drop-shadow-xs">
+                Techno-Commercial Solar Proposal
+              </h1>
+              <p className="text-[7.5px] sm:text-[8px] text-slate-200 font-medium mt-0.5 max-w-2xl leading-snug">
+                Tailored high-efficiency solar photovoltaic power generation system engineered for maximum energy yield, structural durability, and substantial utility bill savings.
+              </p>
+            </div>
+
+            {/* 3 Metric Columns Row */}
+            <div className="grid grid-cols-3 gap-3 pt-2 border-t border-white/15">
+              <div>
+                <span className="text-[6.5px] uppercase font-bold text-slate-400 tracking-wider block">
+                  Proposed DC Capacity
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[7px] font-bold bg-white/15 backdrop-blur-xs text-white border border-white/20">
-                  On-Grid Net-Metered
+                <span className="text-lg font-black text-amber-400 font-mono block mt-0.2">
+                  {dcKw} kWp DC
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[7px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  PM Surya Ghar Subsidy Eligible
+                <span className="text-[7px] text-slate-300 font-medium block mt-0.2">
+                  {panelCount} &times; {panelWattage}Wp Modules
                 </span>
               </div>
 
               <div>
-                <h2 className="text-base sm:text-lg font-black tracking-tight uppercase font-sans text-white drop-shadow-xs">
-                  {dcKw} kW Rooftop Solar Photovoltaic Power Plant
-                </h2>
-                <p className="text-[8px] text-slate-200 font-medium mt-0.5">
-                  Engineered with Tier-1 TOPCon Bifacial Solar Modules &bull; High-Yield Smart Grid Inverter &bull; 80&mu; Hot-Dip Galvanized Rigging
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 pt-0.5 text-[7px] text-amber-300 font-semibold">
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
-                  25-Year Linear Module Warranty
+                <span className="text-[6.5px] uppercase font-bold text-slate-400 tracking-wider block">
+                  Inverter AC Rating
                 </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
-                  7-Year Inverter Warranty
+                <span className="text-lg font-black text-white font-mono block mt-0.2">
+                  {acKw} kW AC Grid-Tied
                 </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
-                  100% DISCOM Net-Metering SLA
+                <span className="text-[7px] text-slate-300 font-medium block mt-0.2">
+                  Dual MPPT &bull; 1.1&times; DC:AC
                 </span>
               </div>
-            </div>
 
-            {/* Right: Sizing & Generation Golden Box */}
-            <div className="text-right bg-black/40 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/15 shrink-0 min-w-[130px]">
-              <span className="text-[7px] text-amber-300 font-bold uppercase tracking-wider block">
-                System Sizing
-              </span>
-              <span className="text-xl font-black text-white font-mono block mt-0.5">
-                {dcKw} kWp DC
-              </span>
-              <div className="mt-1 pt-1 border-t border-white/10 text-[7px] text-slate-300 font-medium">
-                <div>Yield: <strong className="text-white font-mono">~{dailyKwh} kWh/day</strong></div>
-                <div>Annual: <strong className="text-emerald-300 font-mono">{formatNumber(annualKwh)} kWh/yr</strong></div>
+              <div>
+                <span className="text-[6.5px] uppercase font-bold text-slate-400 tracking-wider block">
+                  Est. Annual Generation
+                </span>
+                <span className="text-lg font-black text-white font-mono block mt-0.2">
+                  ~{formatNumber(annualKwh)} kWh/yr
+                </span>
+                <span className="text-[7px] text-slate-300 font-medium block mt-0.2">
+                  ~{dailyKwh} kWh/day avg.
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 4. CLIENT DOSSIER & INSTALLATION SUPPORT (Executive Grid)      */}
-        {/* ============================================================== */}
-        <div className="grid grid-cols-12 gap-2.5 items-stretch shrink-0">
-          {/* Client Details (6 Cols) */}
-          <div className="col-span-6 p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100 mb-1.5">
-                <span className="text-[8.5px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-                  <Building2 className="w-3 h-3 text-blue-600" />
-                  Prepared For (Client Dossier)
-                </span>
-                <span className="text-[7px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">
-                  Site Technical Record
-                </span>
-              </div>
-              <div className="space-y-1 text-[8px]">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium">Customer Name:</span>
-                  <strong className="text-slate-900 font-bold">{customer?.name || 'Respected Customer'}</strong>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium">Contact Phone:</span>
-                  <strong className="text-slate-900 font-mono font-bold">{customer?.phone || '9347416140'}</strong>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium">Installation Site:</span>
-                  <strong className="text-slate-900 truncate max-w-[190px]">{customer?.address || 'Khammam, Telangana'}</strong>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium">Consumer Service No:</span>
-                  <strong className="text-slate-900 font-mono font-bold">{customer?.consumerServiceNumber || 'TS-DISCOM-RES'}</strong>
-                </div>
-              </div>
-            </div>
-            <div className="mt-1.5 pt-1 border-t border-slate-100 text-[7px] text-slate-500 flex justify-between">
-              <span>Category: <strong className="text-slate-900">{customer?.tariffCategory || 'Domestic Rooftop'}</strong></span>
-              <span>Sanctioned Load: <strong className="text-slate-900">{customer?.sanctionedLoadKw || `${dcKw} kW`}</strong></span>
-            </div>
-          </div>
-
-          {/* Installation and Support (6 Cols) */}
-          <div className="col-span-6 p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100 mb-1.5">
-                <span className="text-[8.5px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Installation &amp; Support Scope
-                </span>
-                <span className="text-[7px] text-emerald-800 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                  Turnkey EPC Scope
-                </span>
-              </div>
-              <p className="text-[8px] text-slate-600 leading-relaxed">
-                We assist customers with system selection, equipment supply, rooftop installation, and commissioning. For eligible residential projects, we coordinate subsidy documentation and manage DISCOM net-metering synchronization end-to-end.
-              </p>
-            </div>
-            <div className="mt-1.5 pt-1 border-t border-slate-100 text-[7.5px] text-emerald-800 font-bold flex items-center gap-1">
-              <CheckCheck className="w-3 h-3 text-emerald-600" />
-              <span>Includes scheduled system checkups &amp; smart inverter diagnostics.</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ============================================================== */}
-        {/* 5. ABOUT US SECTION (From Srimaan Solar Official Document)      */}
-        {/* ============================================================== */}
-        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs shrink-0">
-          <div className="flex items-center justify-between mb-1 pb-1 border-b border-slate-100">
-            <h3 className="text-[9.5px] font-black text-slate-900 tracking-wide uppercase flex items-center gap-1.5">
-              <SunMedium className="w-3.5 h-3.5 text-amber-500" />
-              ABOUT SRIMAAN SOLAR SOLUTIONS
-            </h3>
-            <span className="text-[7px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              Telangana &amp; Andhra Pradesh Premier EPC
-            </span>
-          </div>
-          <p className="text-[8px] text-slate-600 leading-relaxed">
-            <strong>Srimaan Solar Solutions</strong> delivers turnkey rooftop solar power systems for homes, commercial establishments, and industrial facilities across Telangana and Andhra Pradesh. We design bespoke systems optimized for your roof geometry, energy consumption profile, and maximum return on investment.
-          </p>
-        </div>
-
-        {/* ============================================================== */}
-        {/* 6. SOLAR SYSTEMS WE OFFER (3 Pillar Cards from Official PDF)    */}
+        {/* 3. CLIENT & SITE SPECIFICATIONS                                */}
         {/* ============================================================== */}
         <div className="shrink-0">
-          <h4 className="text-[9px] font-extrabold text-slate-900 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-            <Workflow className="w-3 h-3 text-blue-600" />
-            Solar Systems We Offer
-          </h4>
-          <div className="grid grid-cols-3 gap-2.5">
-            {/* On-grid */}
-            <div className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-200 text-center flex flex-col justify-between">
-              <div>
-                <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mx-auto mb-1">
-                  <Zap className="w-4 h-4" />
+          <div className="text-[7.5px] font-black uppercase tracking-wider text-slate-500 mb-1">
+            Client &amp; Site Specifications
+          </div>
+          <div className="p-3 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+            <div className="grid grid-cols-12 gap-3 items-start text-[7.5px]">
+              {/* Client Name & Address (5 cols) */}
+              <div className="col-span-5 space-y-1.5">
+                <div>
+                  <span className="text-[6.5px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                    <Building2 className="w-2.5 h-2.5 text-blue-600" />
+                    Client Name
+                  </span>
+                  <strong className="text-[9.5px] font-black text-slate-900 block mt-0.2">
+                    {customer?.name || 'Valued Customer'}
+                  </strong>
+                  <span className="text-[7px] text-slate-500 block truncate">
+                    {customer?.facilityName || customer?.district || 'Telangana'}
+                  </span>
                 </div>
-                <h5 className="font-extrabold text-slate-900 text-[9px]">On-Grid Solar</h5>
-                <p className="text-[7.5px] text-slate-600 mt-1 leading-snug">
-                  Connects to the electricity grid. Surplus power exported through bi-directional net metering.
-                </p>
+                <div>
+                  <span className="text-[6.5px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                    <MapPin className="w-2.5 h-2.5 text-emerald-600" />
+                    Installation Site Address
+                  </span>
+                  <p className="text-[7.5px] font-medium text-slate-700 leading-snug mt-0.2">
+                    {customer?.address || 'Khammam, Telangana - 507003'}
+                  </p>
+                </div>
               </div>
-              <span className="mt-2 inline-block text-[7px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                Recommended for Subsidies
+
+              {/* Contact & Sanctioned Load (4 cols) */}
+              <div className="col-span-4 space-y-2">
+                <div>
+                  <span className="text-[6.5px] uppercase font-bold text-slate-400 block">
+                    Contact Mobile
+                  </span>
+                  <strong className="text-[8px] font-black text-slate-900 font-mono block mt-0.2">
+                    +91 {customer?.phone || '9347416140'}
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-[6.5px] uppercase font-bold text-slate-400 block">
+                    Sanctioned Load
+                  </span>
+                  <strong className="text-[8px] font-black text-slate-900 font-mono block mt-0.2">
+                    {customer?.sanctionedLoadKw || `${dcKw} kW`}
+                  </strong>
+                </div>
+              </div>
+
+              {/* Phase & Roof Type (3 cols) */}
+              <div className="col-span-3 space-y-2">
+                <div>
+                  <span className="text-[6.5px] uppercase font-bold text-slate-400 block">
+                    Grid Phase
+                  </span>
+                  <strong className="text-[8px] font-bold text-slate-900 block mt-0.2">
+                    {customer?.phase || '3-Phase'}
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-[6.5px] uppercase font-bold text-slate-400 block">
+                    Roof Type &amp; Area
+                  </span>
+                  <strong className="text-[7.5px] font-bold text-slate-900 block mt-0.2 leading-snug">
+                    {customer?.roofType || 'RCC Flat Concrete Terrace'} (~{minArea}&ndash;{maxArea} Sq.Ft)
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================== */}
+        {/* 4. COVER LETTER & ENGINEERING PHOTO                           */}
+        {/* ============================================================== */}
+        <div className="p-3 bg-white rounded-xl border border-slate-200/90 shadow-2xs shrink-0">
+          <div className="grid grid-cols-12 gap-3 items-center">
+            {/* Left side: Letter (8 cols) */}
+            <div className="col-span-8 space-y-1">
+              <h4 className="text-[8.5px] font-black text-slate-900">
+                Dear {customer?.name || 'Customer'},
+              </h4>
+              <p className="text-[7.5px] text-slate-600 leading-relaxed">
+                Thank you for considering <strong>SRIMAAN SOLAR SOLUTIONS</strong> for your rooftop solar installation. We are dedicated to delivering top-tier engineering standards, uncompromising quality, and long-term performance assurance.
+              </p>
+              <p className="text-[7.5px] text-slate-600 leading-relaxed">
+                This proposal details the technical engineering design, Tier-1 equipment specifications, transparent investment economics, and our turnkey roadmap from statutory DISCOM net-metering facilitation to lifetime remote monitoring.
+              </p>
+              <p className="text-[7px] italic text-slate-500 font-medium pt-0.5">
+                For SRIMAAN SOLAR SOLUTIONS &mdash; Technical EPC Projects Division
+              </p>
+            </div>
+
+            {/* Right side: Installation Image with Caption (4 cols) */}
+            <div className="col-span-4">
+              <div className="rounded-lg overflow-hidden border border-slate-200 shadow-xs relative">
+                <img 
+                  src={ASSETS.basic_structure || ASSETS.solar_hero_banner} 
+                  alt="Srimaan Engineering Rooftop Solar" 
+                  className="w-full h-18 object-cover"
+                />
+                <div className="absolute bottom-0 inset-x-0 bg-slate-950/85 text-white text-[6.5px] font-bold text-center py-0.5">
+                  Srimaan Solar Engineering
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================== */}
+        {/* 5. 4 VALUE PROPOSITION / GUARANTEE BADGES                      */}
+        {/* ============================================================== */}
+        <div className="grid grid-cols-4 gap-2.5 shrink-0 text-center">
+          {/* Badge 1: 25-Yr Performance */}
+          <div className="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+            <Shield className="w-3.5 h-3.5 text-blue-600 mx-auto mb-0.5" />
+            <strong className="text-[8px] font-black text-slate-900 block">
+              25-Yr Performance
+            </strong>
+            <span className="text-[6.5px] text-slate-500 block mt-0.2">
+              &ge;84.8% output; 12-yr product
+            </span>
+          </div>
+
+          {/* Badge 2: DISCOM Empanelled */}
+          <div className="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+            <Award className="w-3.5 h-3.5 text-amber-500 mx-auto mb-0.5" />
+            <strong className="text-[8px] font-black text-slate-900 block">
+              DISCOM Empanelled
+            </strong>
+            <span className="text-[6.5px] text-slate-500 block mt-0.2">
+              Eligible for PM Surya Ghar CFA
+            </span>
+          </div>
+
+          {/* Badge 3: Up to 80-90% Offset */}
+          <div className="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+            <Zap className="w-3.5 h-3.5 text-purple-600 mx-auto mb-0.5" />
+            <strong className="text-[8px] font-black text-slate-900 block">
+              Up to 80&ndash;90% Offset*
+            </strong>
+            <span className="text-[6.5px] text-slate-500 block mt-0.2">
+              *Subject to load &amp; banking
+            </span>
+          </div>
+
+          {/* Badge 4: Turnkey EPC & Liaison */}
+          <div className="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
+            <strong className="text-[8px] font-black text-slate-900 block">
+              Turnkey EPC &amp; Liaison
+            </strong>
+            <span className="text-[6.5px] text-slate-500 block mt-0.2">
+              Full DISCOM facilitation
+            </span>
+          </div>
+        </div>
+
+        {/* ============================================================== */}
+        {/* 6. FAST-TRACK PROJECT DELIVERY SCHEDULE (15-DAY TURNKEY SLA)   */}
+        {/* ============================================================== */}
+        <div className="p-2.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs shrink-0">
+          <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+            <div className="flex items-center gap-1.5 text-[7.5px] font-black text-slate-900 uppercase tracking-wide">
+              <Clock className="w-3 h-3 text-blue-600" />
+              Fast-Track Project Delivery Schedule (15-Day Turnkey SLA)
+            </div>
+            <span className="text-[6.5px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              Guaranteed On-Time Commissioning
+            </span>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 mt-1.5">
+            {/* Step 1 */}
+            <div className="p-1.5 bg-slate-50 rounded-lg border border-slate-200 text-center">
+              <span className="px-2 py-0.2 rounded-full text-[6px] font-black bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider inline-block">
+                Days 1&ndash;3
+              </span>
+              <strong className="text-[7.5px] font-black text-slate-900 block mt-0.5">
+                3D Site Survey &amp; CAD
+              </strong>
+              <span className="text-[6.5px] text-slate-500 block mt-0.2 leading-tight">
+                LiDAR shading &amp; DISCOM portal filing
               </span>
             </div>
 
-            {/* Off-grid */}
-            <div className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-200 text-center flex flex-col justify-between">
-              <div>
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-1">
-                  <BatteryCharging className="w-4 h-4" />
-                </div>
-                <h5 className="font-extrabold text-slate-900 text-[9px]">Off-Grid Solar</h5>
-                <p className="text-[7.5px] text-slate-600 mt-1 leading-snug">
-                  Uses deep-cycle battery storage to power properties independently of the electricity grid.
-                </p>
-              </div>
-              <span className="mt-2 inline-block text-[7px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                100% Independent Power
+            {/* Step 2 */}
+            <div className="p-1.5 bg-slate-50 rounded-lg border border-slate-200 text-center">
+              <span className="px-2 py-0.2 rounded-full text-[6px] font-black bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider inline-block">
+                Days 4&ndash;7
+              </span>
+              <strong className="text-[7.5px] font-black text-slate-900 block mt-0.5">
+                Statutory Feasibility
+              </strong>
+              <span className="text-[6.5px] text-slate-500 block mt-0.2 leading-tight">
+                DISCOM DTR load sanction &amp; clearance
               </span>
             </div>
 
-            {/* Hybrid */}
-            <div className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-200 text-center flex flex-col justify-between">
-              <div>
-                <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-1">
-                  <Workflow className="w-4 h-4" />
-                </div>
-                <h5 className="font-extrabold text-slate-900 text-[9px]">Hybrid Solar</h5>
-                <p className="text-[7.5px] text-slate-600 mt-1 leading-snug">
-                  Combines grid connection with battery storage for reliable emergency backup &amp; peak shaving.
-                </p>
-              </div>
-              <span className="mt-2 inline-block text-[7px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                Best of Both Worlds
+            {/* Step 3 */}
+            <div className="p-1.5 bg-slate-50 rounded-lg border border-slate-200 text-center">
+              <span className="px-2 py-0.2 rounded-full text-[6px] font-black bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider inline-block">
+                Days 8&ndash;12
+              </span>
+              <strong className="text-[7.5px] font-black text-slate-900 block mt-0.5">
+                Hardware &amp; Rigging
+              </strong>
+              <span className="text-[6.5px] text-slate-500 block mt-0.2 leading-tight">
+                Elevated GI structure, TOPCon &amp; 3 pits
+              </span>
+            </div>
+
+            {/* Step 4 */}
+            <div className="p-1.5 bg-emerald-50/60 rounded-lg border border-emerald-300 text-center">
+              <span className="px-2 py-0.2 rounded-full text-[6px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase tracking-wider inline-block">
+                Days 13&ndash;15
+              </span>
+              <strong className="text-[7.5px] font-black text-emerald-950 block mt-0.5">
+                Net-Meter &amp; Sync
+              </strong>
+              <span className="text-[6.5px] text-emerald-700 block mt-0.2 leading-tight">
+                Bi-directional sync &amp; IoT app live
               </span>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* EPC QUALITY COMMITMENT & STATUTORY COMPLIANCE STRIP             */}
+        {/* 7. ENVIRONMENTAL & ROOF INTEGRITY METRICS STRIP               */}
         {/* ============================================================== */}
-        <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90 text-[7px] text-slate-600 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-1.5 font-bold text-slate-800">
-            <Award className="w-3.5 h-3.5 text-amber-500" />
-            <span>EPC QUALITY COMMITMENT:</span>
+        <div className="grid grid-cols-4 gap-2 shrink-0">
+          {/* Stat 1: CO2 */}
+          <div className="p-1.5 bg-white rounded-lg border border-slate-200/90 shadow-2xs flex items-center gap-1.5">
+            <Leaf className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <div className="min-w-0">
+              <span className="text-[6px] uppercase font-bold text-slate-400 block truncate">
+                CO&sub2; Eliminated
+              </span>
+              <strong className="text-[8px] font-black text-slate-900 font-mono block truncate">
+                ~{Math.round(annualKwh * 25 * 0.82 / 1000)} Tonnes
+              </strong>
+            </div>
           </div>
-          <span className="flex items-center gap-1">
-            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
-            Tier-1 ALMM / BIS Modules
-          </span>
-          <span className="flex items-center gap-1">
-            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
-            80&mu; Hot-Dip Galvanized Rigging
-          </span>
-          <span className="flex items-center gap-1">
-            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
-            DISCOM Net-Meter Synchronization
-          </span>
-          <span className="flex items-center gap-1">
-            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
-            Direct DBT Subsidy Crediting
-          </span>
+
+          {/* Stat 2: Trees */}
+          <div className="p-1.5 bg-white rounded-lg border border-slate-200/90 shadow-2xs flex items-center gap-1.5">
+            <Trees className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <div className="min-w-0">
+              <span className="text-[6px] uppercase font-bold text-slate-400 block truncate">
+                Trees Planted Eqv.
+              </span>
+              <strong className="text-[8px] font-black text-slate-900 font-mono block truncate">
+                ~{formatNumber(Math.round(annualKwh * 25 * 0.82 / 1000 * 16.5))} Trees
+              </strong>
+            </div>
+          </div>
+
+          {/* Stat 3: 25-Yr Green Yield */}
+          <div className="p-1.5 bg-white rounded-lg border border-slate-200/90 shadow-2xs flex items-center gap-1.5">
+            <SunMedium className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <div className="min-w-0">
+              <span className="text-[6px] uppercase font-bold text-slate-400 block truncate">
+                25-Yr Green Yield
+              </span>
+              <strong className="text-[8px] font-black text-slate-900 font-mono block truncate">
+                ~{formatNumber(annualKwh * 25)} kWh
+              </strong>
+            </div>
+          </div>
+
+          {/* Stat 4: Roof Integrity */}
+          <div className="p-1.5 bg-white rounded-lg border border-slate-200/90 shadow-2xs flex items-center gap-1.5">
+            <Home className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+            <div className="min-w-0">
+              <span className="text-[6px] uppercase font-bold text-slate-400 block truncate">
+                Roof Integrity
+              </span>
+              <strong className="text-[8px] font-black text-slate-900 block truncate">
+                Zero Puncture
+              </strong>
+            </div>
+          </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 7. PAGE 1 FOOTER                                               */}
+        {/* 8. PAGE 1 FOOTER                                               */}
         {/* ============================================================== */}
         <div className="mt-auto pt-1 shrink-0">
           <CustomerPageFooter pageNumber={1} totalPages={5} />
