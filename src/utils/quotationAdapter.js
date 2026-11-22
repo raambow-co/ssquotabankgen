@@ -78,7 +78,7 @@ export const srimaanCustomerSettings = {
   pricing: {
     defaultRatePerKw: 52000,
     commercialRatePerKw: 45000,
-    defaultGstRate: 13.8,
+    defaultGstRate: "70:30 (5% / 18%)",
     defaultTariffPerUnit: 8.0,
     tariffEscalationRate: 3.5,
     panelDegradationRate: 0.55,
@@ -227,7 +227,7 @@ export function convertToCustomerFormat(data) {
       baseCost: totalCost,
       discount: 0,
       priceAfterDiscount: totalCost,
-      gstRate: 13.8,
+      gstRate: "70:30 (5% / 18%)",
       gstAmount: Math.round(totalCost * 0.0825),
       totalGrossCost: totalCost,
       subsidyScheme: "PM Surya Ghar: Muft Bijli Yojana (CFA)",

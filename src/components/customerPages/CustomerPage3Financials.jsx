@@ -25,10 +25,11 @@ export default function CustomerPage3Financials({ quotation, settings }) {
   const dcKw = parseFloat(technical?.actualDcCapacityKw || technical?.systemCapacityKw || 5.5);
   const totalGrossCost = commercials?.totalGrossCost || 318640;
   
-  // Composite GST (13.8% composite EPC standard: 70% goods @ 5% / 12% + 30% services @ 18%)
-  const compositeGst = Math.round(totalGrossCost - totalGrossCost / 1.138);
-  const taxableSubTotal = totalGrossCost - compositeGst;
-  const discount = commercials?.discount || 6000;
+  // Statutory 70:30 GST Breakdown for official quotation table (70% Goods @ 5% + 30% Services @ 18%)
+  const gstBreakdown = calculateGSTBreakdown(totalGrossCost);
+  const compositeGst = gstBreakdown.totalGst;
+  const taxableSubTotal = gstBreakdown.totalBase;
+  const discount = commercials?.discount || 0;
   const baseCost = taxableSubTotal + discount;
   const ratePerKw = Math.round(baseCost / dcKw);
   
@@ -45,9 +46,6 @@ export default function CustomerPage3Financials({ quotation, settings }) {
   const paybackYears = annualSavings > 0 ? Number((netPayable / annualSavings).toFixed(1)) : 3.3;
   const gross25Yr = annualSavings * 25;
   const net25Yr = Math.max(0, gross25Yr - netPayable);
-
-  // Statutory 70:30 GST Breakdown for official quotation table
-  const gstBreakdown = calculateGSTBreakdown(totalGrossCost);
 
   return (
     <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
@@ -123,7 +121,7 @@ export default function CustomerPage3Financials({ quotation, settings }) {
 
                 <div className="flex items-center justify-between text-[7.2pt]">
                   <span className="text-slate-700 font-medium">
-                    Composite GST (13.8% as per MNRE 70:30 EPC norms)
+                    Statutory GST (as per MNRE 70:30 EPC norms)
                   </span>
                   <span className="font-mono font-bold text-slate-900">
                     ₹{formatNumber(compositeGst)}

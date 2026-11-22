@@ -133,7 +133,7 @@ export const SettingsModal = ({
       },
       pricing: {
         defaultRatePerKw: 52000,
-        compositeGstRate: 13.8,
+        statutoryGstBifurcation: "70% Goods (5%) + 30% Services (18%)",
         defaultDiscount: 6000,
         subsidy1kW: 30000,
         subsidy2kW: 60000,
@@ -1099,13 +1099,12 @@ export const SettingsModal = ({
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Composite GST Rate (%)</label>
+                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Statutory GST Bifurcation</label>
                     <input
-                      type="number"
-                      step="0.1"
-                      value={settings.pricing.compositeGstRate}
-                      onChange={(e) => updateSection('pricing', 'compositeGstRate', parseFloat(e.target.value) || 13.8)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold"
+                      type="text"
+                      value={settings.pricing.statutoryGstBifurcation || "70% Goods (5%) + 30% Services (18%)"}
+                      onChange={(e) => updateSection('pricing', 'statutoryGstBifurcation', e.target.value)}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold text-slate-800"
                     />
                     <span className="text-[10px] text-slate-400 mt-0.5 block">MNRE 70:30 Goods 5% / Services 18%</span>
                   </div>
