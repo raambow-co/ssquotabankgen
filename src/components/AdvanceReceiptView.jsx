@@ -210,7 +210,7 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
       {/* ============================================================== */}
       <div className="a4-preview-sheet p-6 sm:p-8 bg-white text-black font-sans relative overflow-hidden w-[210mm] min-h-[297mm] mx-auto shadow-lg flex flex-col justify-between">
         {/* Heavy Master Outer Border */}
-        <div className="border-[2.5px] border-black h-full flex flex-col justify-between p-0 overflow-hidden">
+        <div className="border-[2.5px] border-black h-full flex flex-col p-0 overflow-hidden">
           
           {/* Top Header Section */}
           <div>
@@ -255,9 +255,6 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
                     }}
                   />
                 </div>
-                <p className="text-[8.5pt] font-black text-[#0b1b3d] tracking-wide mt-1 font-serif">
-                  Think Smart, Think Solar
-                </p>
               </div>
             </div>
 
@@ -457,11 +454,10 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-black font-medium text-gray-900">
-                  {/* Total Project Cost (Bank PO Amount) */}
+                  {/* Total Project Cost */}
                   <tr>
                     <td className="p-2 border-r-2 border-black font-bold">
-                      <span>Total Project Cost</span>
-                      <span className="text-[7.5pt] text-slate-500 font-normal ml-2">(Bank Quotation Amount)</span>
+                      Total Project Cost
                     </td>
                     <td className="p-2 text-center border-r-2 border-black font-bold font-mono">
                       {capacityKw} KW
@@ -529,14 +525,12 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
                     </td>
                   </tr>
 
-                  {/* Amount Received */}
+                  {/* Amount Received in Rupees */}
                   <tr className="bg-slate-50 font-black text-black text-[9.5pt] border-t-2 border-black">
                     <td className="p-2 border-r-2 border-black uppercase tracking-wider">
-                      Amount Received
+                      Amount Received in Rupees
                     </td>
-                    <td className="p-2 text-center border-r-2 border-black font-mono font-bold text-emerald-800">
-                      ₹ {formatINR(advanceAmount)}
-                    </td>
+                    <td className="p-2 text-center border-r-2 border-black font-mono font-bold"></td>
                     <td className="p-2 text-right pr-4 font-mono font-black text-emerald-900">
                       ₹ {formatINR(advanceAmount)}
                     </td>
@@ -672,7 +666,7 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
           </div>
 
           {/* Bottom Signatures & Seal Section */}
-          <div className="grid grid-cols-12 text-[9pt]">
+          <div className="grid grid-cols-12 text-[9pt] flex-1">
             {/* Left: Receiver Name & Stamp (6 Cols) */}
             <div className="col-span-6 p-3 border-r-2 border-black flex flex-col justify-between relative min-h-[140px]">
               <div className="space-y-1">
@@ -921,7 +915,7 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
                 <div className="font-black text-amber-950 text-xs uppercase tracking-wide flex items-center justify-between border-b border-amber-200 pb-1.5">
                   <div className="flex items-center gap-1.5">
                     <Check size={14} className="text-amber-700" />
-                    <span>2. Financial Commercials (Bank Quotation Amount)</span>
+                    <span>2. Financial Commercials</span>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
                     Bank Amount Enabled
