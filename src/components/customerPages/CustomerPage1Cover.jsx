@@ -38,6 +38,22 @@ export default function CustomerPage1Cover({ quotation, settings }) {
   const rawRef = quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-SOL-2026-1048';
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
+  const formatCustomerName = (cust) => {
+    const rawName = cust?.name || '';
+    if (!rawName.trim()) return 'Valued Customer';
+    const trimmed = rawName.trim();
+    if (cust?.salutation) {
+      if (trimmed.toLowerCase().startsWith(cust.salutation.toLowerCase())) {
+        return trimmed;
+      }
+      return `${cust.salutation} ${trimmed}`;
+    }
+    if (/^(mr\.?|ms\.?|mrs\.?|dr\.?|shri\.?|smt\.?|prof\.?|m\/s\.?)/i.test(trimmed)) {
+      return trimmed;
+    }
+    return `Mr./Ms. ${trimmed}`;
+  };
+
   return (
     <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
       {/* Signature Multi-Tier Gold & Navy Top Accent */}
@@ -187,7 +203,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
                     Client Name
                   </span>
                   <strong className="text-sm font-black text-slate-900 block mt-0.5">
-                    {customer?.name || 'Valued Customer'}
+                    {formatCustomerName(customer)}
                   </strong>
                   <span className="text-[7.5px] text-slate-500 block truncate mt-0.2">
                     {customer?.facilityName || customer?.district || 'Telangana'}
@@ -255,7 +271,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
             {/* Left side: Letter */}
             <div className="flex-1 min-w-0 space-y-1.5">
               <h4 className="text-[10px] font-black text-slate-900">
-                Dear {customer?.name || 'Valued Customer'},
+                Dear {formatCustomerName(customer)},
               </h4>
               <p className="text-[8.5px] sm:text-[9px] text-slate-600 leading-relaxed">
                 Thank you for considering <strong>SRIMAAN SOLAR SOLUTIONS</strong> for your rooftop solar installation. We are dedicated to delivering top-tier engineering standards, uncompromising quality, and long-term performance assurance.

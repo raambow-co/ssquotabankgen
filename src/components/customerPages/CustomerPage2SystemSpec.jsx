@@ -37,6 +37,22 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
   const rawRef = quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-SOL-2026-1048';
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
+  const formatCustomerName = (cust) => {
+    const rawName = cust?.name || '';
+    if (!rawName.trim()) return 'Valued Customer';
+    const trimmed = rawName.trim();
+    if (cust?.salutation) {
+      if (trimmed.toLowerCase().startsWith(cust.salutation.toLowerCase())) {
+        return trimmed;
+      }
+      return `${cust.salutation} ${trimmed}`;
+    }
+    if (/^(mr\.?|ms\.?|mrs\.?|dr\.?|shri\.?|smt\.?|prof\.?|m\/s\.?)/i.test(trimmed)) {
+      return trimmed;
+    }
+    return `Mr./Ms. ${trimmed}`;
+  };
+
   // Month-by-month solar generation profile for Telangana / AP irradiance
   const monthlyFactors = [
     { month: 'JAN', factor: 0.92 },
@@ -101,7 +117,7 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
             </div>
             <div className="mt-0.5 text-slate-600">
               <span>Client: </span>
-              <strong className="text-slate-900">{customer?.name || 'Valued Customer'}</strong>
+              <strong className="text-slate-900">{formatCustomerName(customer)}</strong>
             </div>
           </div>
         </div>

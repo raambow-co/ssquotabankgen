@@ -6,6 +6,22 @@ export const Page1 = ({ data }) => {
   const { refNo, date, customer, company, system } = data;
   const capacity = system?.capacityKw || 5;
 
+  const formatCustomerName = (cust) => {
+    const rawName = cust?.name || '';
+    if (!rawName.trim()) return 'Mr./Ms. Valued Customer';
+    const trimmed = rawName.trim();
+    if (cust?.salutation) {
+      if (trimmed.toLowerCase().startsWith(cust.salutation.toLowerCase())) {
+        return trimmed;
+      }
+      return `${cust.salutation} ${trimmed}`;
+    }
+    if (/^(mr\.?|ms\.?|mrs\.?|dr\.?|shri\.?|smt\.?|prof\.?|m\/s\.?)/i.test(trimmed)) {
+      return trimmed;
+    }
+    return `Mr./Ms. ${trimmed}`;
+  };
+
   return (
     <div className="a4-page page-1 flex flex-col justify-start">
       {/* Official Header Banner */}
@@ -49,7 +65,7 @@ export const Page1 = ({ data }) => {
               CUSTOMER DETAILS:
             </h3>
             <div className="customer-info-text text-sm font-semibold text-gray-900 leading-relaxed space-y-0.5">
-              <p className="font-bold text-[10.5pt] text-black">{customer.name}</p>
+              <p className="font-bold text-[10.5pt] text-black">{formatCustomerName(customer)}</p>
               {customer.company && <p className="font-medium text-gray-800">{customer.company}</p>}
               <p>{customer.addressLine1}</p>
               <p>
@@ -87,14 +103,10 @@ export const Page1 = ({ data }) => {
                 <span>GSTNO: {company.gstNo}</span>
                 <span className="ml-6">PANNO: {company.panNo}</span>
               </p>
+              <p className="font-extrabold text-[#154360] text-xs tracking-wider mt-1 pt-0.5 border-t border-gray-100">
+                <span>VENDOR REG. NO: {company.vendorRegNo || "TSRE250511"}</span>
+              </p>
             </div>
-          </div>
-
-          {/* Vendor Reg No */}
-          <div className="vendor-reg-row mt-3 mb-1 text-left">
-            <p className="font-bold text-gray-900 text-sm tracking-wide">
-              VENDOR REG. No: {company.vendorRegNo}
-            </p>
           </div>
         </div>
       </div>

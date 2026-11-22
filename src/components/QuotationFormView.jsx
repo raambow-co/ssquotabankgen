@@ -560,13 +560,26 @@ export const QuotationFormView = ({
                   <label className="block font-semibold text-slate-700 mb-1">
                     Customer Full Name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.customer.name}
-                    onChange={(e) => updateField('customer', 'name', e.target.value)}
-                    placeholder="e.g. Mr. Rajesh Varma"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-                  />
+                  <div className="flex gap-2">
+                    <select
+                      value={formData.customer.salutation || "Mr."}
+                      onChange={(e) => updateField('customer', 'salutation', e.target.value)}
+                      className="w-24 px-2 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    >
+                      <option value="Mr.">Mr.</option>
+                      <option value="Ms.">Ms.</option>
+                      <option value="Mrs.">Mrs.</option>
+                      <option value="Dr.">Dr.</option>
+                      <option value="M/s.">M/s.</option>
+                    </select>
+                    <input
+                      type="text"
+                      value={formData.customer.name}
+                      onChange={(e) => updateField('customer', 'name', e.target.value)}
+                      placeholder="e.g. Rajesh Varma"
+                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    />
+                  </div>
                 </div>
 
                 <div>
