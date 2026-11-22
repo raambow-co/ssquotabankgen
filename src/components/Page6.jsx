@@ -191,11 +191,13 @@ export const Page6 = ({ data }) => {
             </p>
           </div>
 
-          {/* Bank Payment Terms (Green Box) */}
+          {/* Bank Account Details (Green Box) */}
           <div className="bank-details-box mt-2 p-2.5 border-2 border-emerald-600 rounded-xs bg-emerald-50/30 text-xs shadow-2xs">
-            <p className="font-extrabold text-gray-900 mb-1.5 tracking-wide text-xs">
-              Payment Terms: Account details for NEFT / RTGS / IMPS
-            </p>
+            <div className="border-b border-emerald-300 pb-1 mb-2">
+              <h4 className="font-black text-emerald-950 text-[10pt] uppercase tracking-wide">
+                Account Details for NEFT / RTGS / IMPS
+              </h4>
+            </div>
             <div className="grid grid-cols-2 gap-3 text-left">
               {/* Bank Account 1 */}
               <div className="border-r border-emerald-300 pr-3 font-bold text-emerald-900 space-y-0.5 text-[8.5pt]">
