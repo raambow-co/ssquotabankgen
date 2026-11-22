@@ -49,7 +49,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
   return (
-    <div className="a4-preview-sheet p-6 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
+    <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
       {/* Signature Multi-Tier Gold & Navy Top Accent */}
       <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
       <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
@@ -57,11 +57,11 @@ export default function CustomerPage1Cover({ quotation, settings }) {
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
+      <div className="relative z-10 flex flex-col h-full space-y-2.5">
         {/* ============================================================== */}
         {/* 1. TOP GOVERNMENT EMPANELMENT & ACCREDITATION STRIP            */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between pb-1 border-b border-slate-200 text-[7.5px] text-slate-600 font-semibold uppercase tracking-wider">
+        <div className="flex items-center justify-between pb-1 border-b border-slate-200 text-[7.5px] text-slate-600 font-semibold uppercase tracking-wider shrink-0">
           <span className="flex items-center gap-1.5 text-slate-700">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             MNRE Empanelled Channel Partner &bull; Govt. of India Certified
@@ -76,10 +76,10 @@ export default function CustomerPage1Cover({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 2. MASTER BRAND HEADER WITH CLEAN LOGO & OFFICIAL GSTIN        */}
         {/* ============================================================== */}
-        <div className="flex items-center justify-between gap-3 py-0.5">
+        <div className="flex items-center justify-between gap-3 py-0.5 shrink-0">
           {/* Logo + Company Identity */}
           <div className="flex items-center gap-3 min-w-0">
-            {/* Prominent Logo without ugly grey box */}
+            {/* Prominent Logo */}
             <div className="h-14 sm:h-16 w-48 sm:w-52 flex items-center shrink-0">
               <img 
                 src="/assets/srimaan_logo.jpeg" 
@@ -110,7 +110,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
             </div>
           </div>
 
-          {/* Official GSTIN, Contact & Proposal Ref as per Benchmark */}
+          {/* Official GSTIN, Contact & Proposal Ref */}
           <div className="text-right shrink-0">
             <div className="text-[10px] font-black text-slate-900 tracking-wider">
               GSTIN <span className="font-mono text-emerald-800 font-extrabold">{company.gstin || "36ADPPT2441N1ZW"}</span>
@@ -194,7 +194,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 4. CLIENT DOSSIER & INSTALLATION SUPPORT (Executive Grid)      */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-12 gap-2.5 items-stretch">
+        <div className="grid grid-cols-12 gap-2.5 items-stretch shrink-0">
           {/* Client Details (6 Cols) */}
           <div className="col-span-6 p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
             <div>
@@ -258,7 +258,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 5. ABOUT US SECTION (From Srimaan Solar Official Document)      */}
         {/* ============================================================== */}
-        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs shrink-0">
           <div className="flex items-center justify-between mb-1 pb-1 border-b border-slate-100">
             <h3 className="text-[9.5px] font-black text-slate-900 tracking-wide uppercase flex items-center gap-1.5">
               <SunMedium className="w-3.5 h-3.5 text-amber-500" />
@@ -276,7 +276,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 6. SOLAR SYSTEMS WE OFFER (3 Pillar Cards from Official PDF)    */}
         {/* ============================================================== */}
-        <div>
+        <div className="shrink-0">
           <h4 className="text-[9px] font-extrabold text-slate-900 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
             <Workflow className="w-3 h-3 text-blue-600" />
             Solar Systems We Offer
@@ -333,9 +333,37 @@ export default function CustomerPage1Cover({ quotation, settings }) {
         </div>
 
         {/* ============================================================== */}
+        {/* EPC QUALITY COMMITMENT & STATUTORY COMPLIANCE STRIP             */}
+        {/* ============================================================== */}
+        <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90 text-[7px] text-slate-600 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-1.5 font-bold text-slate-800">
+            <Award className="w-3.5 h-3.5 text-amber-500" />
+            <span>EPC QUALITY COMMITMENT:</span>
+          </div>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+            Tier-1 ALMM / BIS Modules
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+            80&mu; Hot-Dip Galvanized Rigging
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+            DISCOM Net-Meter Synchronization
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+            Direct DBT Subsidy Crediting
+          </span>
+        </div>
+
+        {/* ============================================================== */}
         {/* 7. PAGE 1 FOOTER                                               */}
         {/* ============================================================== */}
-        <CustomerPageFooter pageNumber={1} totalPages={5} />
+        <div className="mt-auto pt-1 shrink-0">
+          <CustomerPageFooter pageNumber={1} totalPages={5} />
+        </div>
       </div>
     </div>
   );
