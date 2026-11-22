@@ -67,13 +67,13 @@ export const Page6 = ({ data }) => {
                     <td className="py-1.5 px-2 text-center font-bold border-r border-black align-middle font-mono">
                       {gst.goodsBase}
                     </td>
-                    <td className="py-1 px-1.5 text-center border-r border-black align-middle font-mono text-[8pt]">
-                      <div className="font-bold">{gst.goodsCgst}</div>
-                      <div className="text-[7pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">2.5%</div>
+                    <td className="p-0 text-center border-r border-black align-middle font-mono text-[8pt]">
+                      <div className="w-full py-1 px-1 font-bold leading-tight">{gst.goodsCgst}</div>
+                      <div className="w-full py-0.5 px-1 text-[7pt] text-gray-700 font-bold border-t border-black leading-tight">2.5%</div>
                     </td>
-                    <td className="py-1 px-1.5 text-center border-r border-black align-middle font-mono text-[8pt]">
-                      <div className="font-bold">{gst.goodsSgst}</div>
-                      <div className="text-[7pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">2.5%</div>
+                    <td className="p-0 text-center border-r border-black align-middle font-mono text-[8pt]">
+                      <div className="w-full py-1 px-1 font-bold leading-tight">{gst.goodsSgst}</div>
+                      <div className="w-full py-0.5 px-1 text-[7pt] text-gray-700 font-bold border-t border-black leading-tight">2.5%</div>
                     </td>
                     <td className="py-1.5 px-2 text-center font-bold align-middle font-mono">
                       {gst.goodsTotal}
@@ -89,13 +89,13 @@ export const Page6 = ({ data }) => {
                     <td className="py-1.5 px-2 text-center font-bold border-r border-black align-middle font-mono">
                       {gst.servicesBase}
                     </td>
-                    <td className="py-1 px-1.5 text-center border-r border-black align-middle font-mono text-[8pt]">
-                      <div className="font-bold">{gst.servicesCgst}</div>
-                      <div className="text-[7pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">9%</div>
+                    <td className="p-0 text-center border-r border-black align-middle font-mono text-[8pt]">
+                      <div className="w-full py-1 px-1 font-bold leading-tight">{gst.servicesCgst}</div>
+                      <div className="w-full py-0.5 px-1 text-[7pt] text-gray-700 font-bold border-t border-black leading-tight">9%</div>
                     </td>
-                    <td className="py-1 px-1.5 text-center border-r border-black align-middle font-mono text-[8pt]">
-                      <div className="font-bold">{gst.servicesSgst}</div>
-                      <div className="text-[7pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">9%</div>
+                    <td className="p-0 text-center border-r border-black align-middle font-mono text-[8pt]">
+                      <div className="w-full py-1 px-1 font-bold leading-tight">{gst.servicesSgst}</div>
+                      <div className="w-full py-0.5 px-1 text-[7pt] text-gray-700 font-bold border-t border-black leading-tight">9%</div>
                     </td>
                     <td className="py-1.5 px-2 text-center font-bold align-middle font-mono">
                       {gst.servicesTotal}
@@ -199,7 +199,7 @@ export const Page6 = ({ data }) => {
             <div className="grid grid-cols-2 gap-3 text-left">
               {/* Bank Account 1 */}
               <div className="border-r border-emerald-300 pr-3 font-bold text-emerald-900 space-y-0.5 text-[8.5pt]">
-                <p className="font-extrabold text-gray-900 text-[8pt] uppercase tracking-wider mb-0.5 underline">Primary Bank Account (HDFC)</p>
+                <p className="font-extrabold text-gray-900 text-[8.5pt] uppercase tracking-wider mb-0.5 underline">HDFC Bank</p>
                 <p>Account Name: <span className="font-semibold text-black">{bankAccount1.accountName}</span></p>
                 <p>Account No.: <span className="font-mono font-bold text-black">{bankAccount1.accountNo}</span></p>
                 <p>IFSC Code: <span className="font-mono font-bold text-black">{bankAccount1.ifscCode}</span></p>
@@ -208,7 +208,7 @@ export const Page6 = ({ data }) => {
 
               {/* Bank Account 2 (Second Bank Account) */}
               <div className="font-bold text-emerald-900 space-y-0.5 text-[8.5pt]">
-                <p className="font-extrabold text-gray-900 text-[8pt] uppercase tracking-wider mb-0.5 underline">Second Bank Account (SBI)</p>
+                <p className="font-extrabold text-gray-900 text-[8.5pt] uppercase tracking-wider mb-0.5 underline">State Bank of India</p>
                 <p>Account Name: <span className="font-semibold text-black">{bankAccount2.accountName}</span></p>
                 <p>Account No.: <span className="font-mono font-bold text-black">{bankAccount2.accountNo}</span></p>
                 <p>IFSC Code: <span className="font-mono font-bold text-black">{bankAccount2.ifscCode}</span></p>

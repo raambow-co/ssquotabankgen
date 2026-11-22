@@ -357,13 +357,13 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 <td className="py-0.5 px-1 text-center font-mono font-bold border-r border-black align-middle">
                   {formatINR(gstBreakdown.goodsBase)}
                 </td>
-                <td className="py-0.5 px-1 text-center border-r border-black align-middle font-mono text-[7pt]">
-                  <div className="font-bold">{formatINR(gstBreakdown.goodsCgst)}</div>
-                  <div className="text-[6pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">2.5%</div>
+                <td className="p-0 text-center border-r border-black align-middle font-mono text-[7pt]">
+                  <div className="w-full py-0.5 px-0.5 font-bold leading-tight">{formatINR(gstBreakdown.goodsCgst)}</div>
+                  <div className="w-full py-0.5 px-0.5 text-[6pt] text-gray-700 font-bold border-t border-black leading-tight">2.5%</div>
                 </td>
-                <td className="py-0.5 px-1 text-center border-r border-black align-middle font-mono text-[7pt]">
-                  <div className="font-bold">{formatINR(gstBreakdown.goodsSgst)}</div>
-                  <div className="text-[6pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">2.5%</div>
+                <td className="p-0 text-center border-r border-black align-middle font-mono text-[7pt]">
+                  <div className="w-full py-0.5 px-0.5 font-bold leading-tight">{formatINR(gstBreakdown.goodsSgst)}</div>
+                  <div className="w-full py-0.5 px-0.5 text-[6pt] text-gray-700 font-bold border-t border-black leading-tight">2.5%</div>
                 </td>
                 <td className="py-0.5 px-1.5 text-center font-mono font-bold align-middle bg-slate-50/50">
                   {formatINR(gstBreakdown.goodsTotal)}
@@ -379,13 +379,13 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 <td className="py-0.5 px-1 text-center font-mono font-bold border-r border-black align-middle">
                   {formatINR(gstBreakdown.servicesBase)}
                 </td>
-                <td className="py-0.5 px-1 text-center border-r border-black align-middle font-mono text-[7pt]">
-                  <div className="font-bold">{formatINR(gstBreakdown.servicesCgst)}</div>
-                  <div className="text-[6pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">9%</div>
+                <td className="p-0 text-center border-r border-black align-middle font-mono text-[7pt]">
+                  <div className="w-full py-0.5 px-0.5 font-bold leading-tight">{formatINR(gstBreakdown.servicesCgst)}</div>
+                  <div className="w-full py-0.5 px-0.5 text-[6pt] text-gray-700 font-bold border-t border-black leading-tight">9%</div>
                 </td>
-                <td className="py-0.5 px-1 text-center border-r border-black align-middle font-mono text-[7pt]">
-                  <div className="font-bold">{formatINR(gstBreakdown.servicesSgst)}</div>
-                  <div className="text-[6pt] text-gray-700 font-bold border-t border-black mt-0.5 pt-0.5">9%</div>
+                <td className="p-0 text-center border-r border-black align-middle font-mono text-[7pt]">
+                  <div className="w-full py-0.5 px-0.5 font-bold leading-tight">{formatINR(gstBreakdown.servicesSgst)}</div>
+                  <div className="w-full py-0.5 px-0.5 text-[6pt] text-gray-700 font-bold border-t border-black leading-tight">9%</div>
                 </td>
                 <td className="py-0.5 px-1.5 text-center font-mono font-bold align-middle bg-slate-50/50">
                   {formatINR(gstBreakdown.servicesTotal)}
