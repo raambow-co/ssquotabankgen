@@ -274,20 +274,36 @@ export function convertToCustomerFormat(data) {
     preparedBy: "Srimaan Solar Solutions Engineering Team"
   };
 
+  let masterSettings = {};
+  try {
+    const raw = localStorage.getItem('srimaan_master_settings');
+    if (raw) masterSettings = JSON.parse(raw);
+  } catch (e) {
+    // ignore
+  }
+
   const settings = {
     ...srimaanCustomerSettings,
+    ...masterSettings,
     company: {
       ...srimaanCustomerSettings.company,
-      officeAddress: data.company?.officeAddress || srimaanCustomerSettings.company.address,
-      phone: data.company?.phone || srimaanCustomerSettings.company.phone,
-      email: data.company?.email || srimaanCustomerSettings.company.email,
-      gstin: data.company?.gstin || srimaanCustomerSettings.company.gstin,
-      pan: data.company?.pan || srimaanCustomerSettings.company.pan,
+      ...(masterSettings.company || {}),
+      officeAddress: data.company?.officeAddress || masterSettings.company?.address || srimaanCustomerSettings.company.address,
+      phone: data.company?.phone || masterSettings.company?.phone1 || srimaanCustomerSettings.company.phone,
+      email: data.company?.email || masterSettings.company?.email || srimaanCustomerSettings.company.email,
+      gstin: data.company?.gstin || masterSettings.company?.gstin || srimaanCustomerSettings.company.gstin,
+      pan: data.company?.pan || masterSettings.company?.pan || srimaanCustomerSettings.company.pan,
       bankName: data.company?.bankName || srimaanCustomerSettings.company.bankName,
       accountNumber: data.company?.accountNumber || srimaanCustomerSettings.company.accountNumber,
       ifscCode: data.company?.ifscCode || srimaanCustomerSettings.company.ifscCode,
       branch: data.company?.branch || srimaanCustomerSettings.company.branch
-    }
+    },
+    qrPortals: masterSettings.qrPortals || srimaanCustomerSettings.qrPortals,
+    coverPage: masterSettings.coverPage || srimaanCustomerSettings.coverPage,
+    technical: masterSettings.technical || srimaanCustomerSettings.technical,
+    pricing: masterSettings.pricing || srimaanCustomerSettings.pricing,
+    warranties: masterSettings.warranties || srimaanCustomerSettings.warranties,
+    portfolio: masterSettings.portfolio || srimaanCustomerSettings.portfolio
   };
 
   return { quotation, settings };

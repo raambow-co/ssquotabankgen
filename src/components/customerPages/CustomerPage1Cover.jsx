@@ -111,21 +111,21 @@ export default function CustomerPage1Cover({ quotation, settings }) {
             <div className="flex items-center gap-2.5">
               <span className="px-3 py-0.5 rounded-full text-[7.5px] font-black bg-white/10 text-slate-200 border border-white/20 uppercase tracking-wide flex items-center gap-1.5">
                 <SunMedium className="w-3 h-3 text-amber-400" />
-                Grid-Interactive Solar PV System
+                {settings?.coverPage?.badge1 || "Grid-Interactive Solar PV System"}
               </span>
               <span className="px-3 py-0.5 rounded-full text-[7.5px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
                 <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                DISCOM Empanelled EPC
+                {settings?.coverPage?.badge2 || "DISCOM Empanelled EPC"}
               </span>
             </div>
 
             {/* Title & Engineering Scope */}
             <div>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white font-sans drop-shadow-xs">
-                Techno-Commercial Solar Proposal
+                {settings?.coverPage?.heroTitle || "Techno-Commercial Solar Proposal"}
               </h1>
               <p className="text-[8.5px] sm:text-[9px] text-slate-200 font-medium mt-1 max-w-2xl leading-relaxed">
-                Tailored high-efficiency solar photovoltaic power generation system engineered for maximum energy yield, structural durability, and substantial utility bill savings.
+                {settings?.coverPage?.heroSubtitle || "Tailored high-efficiency solar photovoltaic power generation system engineered for maximum energy yield, structural durability, and substantial utility bill savings."}
               </p>
             </div>
 

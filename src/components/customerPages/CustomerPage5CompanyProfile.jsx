@@ -53,15 +53,15 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
             <div className="flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
               <h3 className="text-[8pt] font-black uppercase tracking-wide text-slate-900 font-sans">
-                ABOUT SRIMAAN SOLAR SOLUTIONS
+                ABOUT {company.tradeName || company.name || "SRIMAAN SOLAR SOLUTIONS"}
               </h3>
             </div>
             <span className="text-[6.8pt] text-slate-500 italic font-serif">
-              &ldquo;Built on Trust. Driven by Excellence.&rdquo;
+              &ldquo;{company.tagline || "Built on Trust. Driven by Excellence."}&rdquo;
             </span>
           </div>
           <p className="text-[6.8pt] text-slate-700 leading-relaxed font-sans">
-            <strong>M/s. SRIMAAN SOLAR SOLUTIONS</strong> is a premier clean energy EPC company specializing in high-performance rooftop solar installations across residential, commercial, institutional, and industrial facilities. Backed by certified civil and electrical engineers, we combine Tier-1 BloombergNEF hardware with precision structural design, seamless DISCOM net-metering facilitation, and lifetime IoT monitoring.
+            {company.aboutNarrative || company.about || "M/s. SRIMAAN SOLAR SOLUTIONS is a premier clean energy EPC company specializing in high-performance rooftop solar installations across residential, commercial, institutional, and industrial facilities. Backed by certified civil and electrical engineers, we combine Tier-1 BloombergNEF hardware with precision structural design, seamless DISCOM net-metering facilitation, and lifetime IoT monitoring."}
           </p>
         </div>
 
@@ -418,8 +418,8 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
           <div className="flex items-center gap-1.5 px-2 border-l border-slate-200">
             <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <div className="text-[6.5pt] font-bold text-slate-900 leading-tight">
-              <div>{company.phone || "+91 93474 16140"}</div>
-              <div>+91 99124 16140</div>
+              <div>{company.phone1 || company.phone || "+91 93474 16140"}</div>
+              <div>{company.phone2 || "+91 99124 16140"}</div>
             </div>
           </div>
 
@@ -431,7 +431,7 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
             </div>
             <div className="flex items-center gap-1 text-slate-700">
               <Globe className="w-3 h-3 text-slate-500 shrink-0" />
-              <span>www.srimaansolarsolutions.com</span>
+              <span>{company.website || "www.srimaansolarsolutions.com"}</span>
             </div>
           </div>
 
@@ -441,7 +441,7 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
               REGIONAL NETWORK HUBS
             </span>
             <span className="font-bold text-slate-800 text-[6.5pt] block mt-0.5">
-              Hyderabad &bull; Visakhapatnam &bull; Bangalore &bull; Vijayawada
+              {company.branches || "Hyderabad • Visakhapatnam • Bangalore • Vijayawada"}
             </span>
           </div>
         </div>
@@ -470,16 +470,16 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
                   <span className="w-3.5 h-3.5 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-[6pt]">
                     f
                   </span>
-                  <span className="font-extrabold text-[6.8pt] text-slate-900">Facebook</span>
+                  <span className="font-extrabold text-[6.8pt] text-slate-900">{settings?.qrPortals?.facebook?.title || "Facebook"}</span>
                 </div>
                 <span className="text-[5.2pt] font-bold text-blue-700 bg-blue-50 px-1 py-0.2 rounded">
-                  Social
+                  {settings?.qrPortals?.facebook?.badge || "Social"}
                 </span>
               </div>
-              <img src="/assets/qr/fb-qr.jpeg" alt="Facebook QR" className="w-14 h-14 object-contain my-1" />
+              <img src={settings?.qrPortals?.facebook?.image || "/assets/qr/fb-qr.jpeg"} alt="Facebook QR" className="w-14 h-14 object-contain my-1" />
               <div>
-                <span className="font-bold text-[6.2pt] text-slate-800 block">@srimaansolar</span>
-                <span className="text-[5.5pt] text-blue-600 font-medium block">Scan to Follow</span>
+                <span className="font-bold text-[6.2pt] text-slate-800 block">{settings?.qrPortals?.facebook?.handle || "@srimaansolar"}</span>
+                <span className="text-[5.5pt] text-blue-600 font-medium block">{settings?.qrPortals?.facebook?.actionText || "Scan to Follow"}</span>
               </div>
             </div>
 
@@ -490,16 +490,16 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
                   <span className="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white flex items-center justify-center font-bold text-[5.5pt]">
                     &bull;
                   </span>
-                  <span className="font-extrabold text-[6.8pt] text-slate-900">Instagram</span>
+                  <span className="font-extrabold text-[6.8pt] text-slate-900">{settings?.qrPortals?.instagram?.title || "Instagram"}</span>
                 </div>
                 <span className="text-[5.2pt] font-bold text-pink-700 bg-pink-50 px-1 py-0.2 rounded">
-                  Reels
+                  {settings?.qrPortals?.instagram?.badge || "Reels"}
                 </span>
               </div>
-              <img src="/assets/qr/insta-qr.jpeg" alt="Instagram QR" className="w-14 h-14 object-contain my-1" />
+              <img src={settings?.qrPortals?.instagram?.image || "/assets/qr/insta-qr.jpeg"} alt="Instagram QR" className="w-14 h-14 object-contain my-1" />
               <div>
-                <span className="font-bold text-[6.2pt] text-slate-800 block">@srimaansolar</span>
-                <span className="text-[5.5pt] text-pink-600 font-medium block">Scan to View</span>
+                <span className="font-bold text-[6.2pt] text-slate-800 block">{settings?.qrPortals?.instagram?.handle || "@srimaansolar"}</span>
+                <span className="text-[5.5pt] text-pink-600 font-medium block">{settings?.qrPortals?.instagram?.actionText || "Scan to View"}</span>
               </div>
             </div>
 
@@ -508,18 +508,18 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
               <div className="flex items-center justify-between w-full pb-0.5 border-b border-slate-100">
                 <div className="flex items-center gap-1">
                   <Globe className="w-3.5 h-3.5 text-amber-600" />
-                  <span className="font-extrabold text-[6.8pt] text-slate-900">Official Website</span>
+                  <span className="font-extrabold text-[6.8pt] text-slate-900">{settings?.qrPortals?.website?.title || "Official Website"}</span>
                 </div>
                 <span className="text-[5.2pt] font-bold text-amber-700 bg-amber-50 px-1 py-0.2 rounded">
-                  Portal
+                  {settings?.qrPortals?.website?.badge || "Portal"}
                 </span>
               </div>
-              <img src="/assets/qr/web-qr.jpeg" alt="Website QR" className="w-14 h-14 object-contain my-1" />
+              <img src={settings?.qrPortals?.website?.image || "/assets/qr/web-qr.jpeg"} alt="Website QR" className="w-14 h-14 object-contain my-1" />
               <div>
                 <span className="font-bold text-[6.2pt] text-slate-800 block truncate max-w-full">
-                  srimaansolarsolutions.com
+                  {settings?.qrPortals?.website?.handle || "srimaansolarsolutions.com"}
                 </span>
-                <span className="text-[5.5pt] text-amber-600 font-medium block">Scan to Visit</span>
+                <span className="text-[5.5pt] text-amber-600 font-medium block">{settings?.qrPortals?.website?.actionText || "Scan to Visit"}</span>
               </div>
             </div>
 
@@ -528,16 +528,16 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
               <div className="flex items-center justify-between w-full pb-0.5 border-b border-slate-100">
                 <div className="flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="font-extrabold text-[6.8pt] text-slate-900">Google Maps</span>
+                  <span className="font-extrabold text-[6.8pt] text-slate-900">{settings?.qrPortals?.googleMaps?.title || "Google Maps"}</span>
                 </div>
                 <span className="text-[5.2pt] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded">
-                  Location
+                  {settings?.qrPortals?.googleMaps?.badge || "Location"}
                 </span>
               </div>
-              <img src="/assets/qr/loc-qr.jpeg" alt="Location QR" className="w-14 h-14 object-contain my-1" />
+              <img src={settings?.qrPortals?.googleMaps?.image || "/assets/qr/loc-qr.jpeg"} alt="Location QR" className="w-14 h-14 object-contain my-1" />
               <div>
-                <span className="font-bold text-[6.2pt] text-slate-800 block">Khammam HQ</span>
-                <span className="text-[5.5pt] text-emerald-600 font-medium block">Scan for Route</span>
+                <span className="font-bold text-[6.2pt] text-slate-800 block">{settings?.qrPortals?.googleMaps?.handle || "Khammam HQ"}</span>
+                <span className="text-[5.5pt] text-emerald-600 font-medium block">{settings?.qrPortals?.googleMaps?.actionText || "Scan for Route"}</span>
               </div>
             </div>
           </div>
