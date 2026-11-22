@@ -272,7 +272,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
             <div className="w-44 sm:w-52 shrink-0">
               <div className="rounded-xl overflow-hidden border border-slate-200 shadow-xs relative">
                 <img 
-                  src={ASSETS.basic_structure || ASSETS.solar_hero_banner} 
+                  src="/assets/hardware/elevated-structure.jpg" 
                   alt="Srimaan Solar Engineering" 
                   className="w-full h-26 sm:h-28 object-cover"
                 />

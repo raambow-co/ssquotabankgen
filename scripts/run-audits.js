@@ -120,6 +120,10 @@ assert(fs.existsSync('public/assets/emblems/mnre-logo.png'), 'MNRE emblem exists
 assert(fs.existsSync('public/assets/emblems/pm-surya-ghar.png'), 'PM Surya Ghar emblem exists');
 assert(fs.existsSync('public/assets/srimaan_seal.jpeg'), 'Receipt official round seal exists');
 assert(fs.existsSync('public/assets/srimaan_receipt_logo.jpeg'), 'Receipt official logo exists');
+assert(fs.existsSync('public/assets/hardware/waaree-topcon-module.jpg'), 'Ultra-realistic Waaree TOPCon module image exists');
+assert(fs.existsSync('public/assets/hardware/smart-grid-inverter.jpg'), 'Ultra-realistic smart grid inverter image exists');
+assert(fs.existsSync('public/assets/hardware/elevated-structure.jpg'), 'Ultra-realistic elevated structure image exists');
+assert(fs.existsSync('public/assets/hardware/solar-dcdb-acdb-bos.jpg'), 'Ultra-realistic DCDB/ACDB BOS image exists');
 
 // 5. Component Files Audit
 console.log('\n--- 5. AUDITING REACT COMPONENT FILES ---');

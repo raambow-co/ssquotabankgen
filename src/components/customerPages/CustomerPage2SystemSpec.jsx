@@ -114,26 +114,25 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
           <div className="p-2.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
             <div>
               {/* Visual Graphic Container (Taller, Executive Proportion) */}
-              <div className="rounded-xl overflow-hidden border border-slate-800 bg-gradient-to-br from-[#060e24] via-[#0c1c3f] to-[#040816] relative h-32 p-2.5 flex flex-col justify-between shadow-xs">
-                {/* Visual Grid Lines resembling TOPCon Solar Panel */}
-                <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:8px_8px]" />
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <SunMedium className="w-4 h-4 text-amber-400" />
-                    <span className="text-[6.5px] font-bold text-amber-300">Waaree DCR</span>
-                  </div>
+              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative h-32 shadow-xs group">
+                <img 
+                  src="/assets/hardware/waaree-topcon-module.jpg" 
+                  alt={moduleBrandName} 
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+                  <SunMedium className="w-3 h-3 text-amber-400" />
+                  <span className="text-[6.5px] font-bold text-amber-300">Waaree DCR</span>
+                </div>
+                <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
                   <span className="text-[6.5px] font-bold text-sky-300 font-mono">16BB TOPCon</span>
                 </div>
-                <div className="relative z-10 text-center my-auto">
-                  <span className="text-[7.5px] font-mono font-black text-white/90 tracking-wider uppercase block">
-                    TOPCon Bifacial
-                  </span>
-                  <span className="text-[6px] text-slate-300 block">Dual Glass &bull; N-Type Cells</span>
-                </div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/60 text-white backdrop-blur-xs border border-white/10">
+                <div className="absolute bottom-2 left-2">
+                  <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/75 text-white backdrop-blur-xs border border-white/15">
                     Bifacial TOPCon
                   </span>
+                </div>
+                <div className="absolute bottom-2 right-2">
                   <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-emerald-600 text-white shadow-2xs">
                     21.5% Eff.
                   </span>
@@ -159,23 +158,25 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
           <div className="p-2.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
             <div>
               {/* Visual Graphic Container (Taller, Executive Proportion) */}
-              <div className="rounded-xl overflow-hidden border border-slate-800 bg-gradient-to-br from-[#060e24] via-[#0f244a] to-[#050b18] relative h-32 p-2.5 flex flex-col justify-between shadow-xs">
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[6.5px] font-bold text-emerald-400 font-mono">ONLINE</span>
-                  </div>
-                  <span className="text-[6.5px] font-bold text-sky-300 font-mono">50.0Hz &bull; 415V</span>
+              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative h-32 shadow-xs group">
+                <img 
+                  src="/assets/hardware/smart-grid-inverter.jpg" 
+                  alt={inverterBrandName} 
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[6.5px] font-bold text-emerald-400 font-mono">ONLINE</span>
                 </div>
-                {/* Central LCD Display */}
-                <div className="relative z-10 text-center bg-black/60 rounded-lg p-1.5 border border-white/15 my-auto">
-                  <span className="text-[6px] text-slate-300 uppercase tracking-wider block">Active Power</span>
-                  <span className="text-[12px] font-mono font-black text-sky-400 tracking-wide">{dcKw.toFixed(2)} kW</span>
+                <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+                  <span className="text-[6.5px] font-bold text-sky-300 font-mono">{dcKw.toFixed(2)} kW &bull; 415V</span>
                 </div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/60 text-white backdrop-blur-xs border border-white/10">
+                <div className="absolute bottom-2 left-2">
+                  <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/75 text-white backdrop-blur-xs border border-white/15">
                     &gt;98.4% Eff. &bull; Dual MPPT
                   </span>
+                </div>
+                <div className="absolute bottom-2 right-2">
                   <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-blue-600 text-white shadow-2xs">
                     IoT Cloud
                   </span>
@@ -201,11 +202,11 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
           <div className="p-2.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
             <div>
               {/* Visual Graphic Container (Taller, Executive Proportion) */}
-              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative h-32 shadow-xs">
+              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative h-32 shadow-xs group">
                 <img 
-                  src={ASSETS.basic_structure || ASSETS.solar_hero_banner} 
+                  src="/assets/hardware/elevated-structure.jpg" 
                   alt="Elevated GI Structure" 
-                  className="w-full h-full object-cover opacity-90"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-2 left-2">
                   <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/75 text-white backdrop-blur-xs border border-white/20">
@@ -238,22 +239,25 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
           <div className="p-2.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
             <div>
               {/* Visual Graphic Container (Taller, Executive Proportion) */}
-              <div className="rounded-xl overflow-hidden border border-slate-800 bg-gradient-to-br from-[#0c1c3f] via-[#060e24] to-[#040816] relative h-32 p-2.5 flex flex-col justify-between shadow-xs">
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Cpu className="w-4 h-4 text-emerald-400" />
-                    <span className="text-[6.5px] font-bold text-emerald-300">CEIG Compliant</span>
-                  </div>
+              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative h-32 shadow-xs group">
+                <img 
+                  src="/assets/hardware/solar-dcdb-acdb-bos.jpg" 
+                  alt="Polycab Cables & BOS" 
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+                  <Cpu className="w-3 h-3 text-emerald-400" />
+                  <span className="text-[6.5px] font-bold text-emerald-300">CEIG Compliant</span>
+                </div>
+                <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
                   <span className="text-[6.5px] font-bold text-amber-400 font-mono">1.5kV DC &bull; EN 50618</span>
                 </div>
-                <div className="relative z-10 text-center my-auto">
-                  <span className="text-[7.5px] text-white font-bold block">IP65 Distribution Enclosure</span>
-                  <span className="text-[6px] text-slate-300 block">Schneider/L&amp;T Switchgear &bull; RCD Protection</span>
-                </div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/60 text-white backdrop-blur-xs border border-white/10">
+                <div className="absolute bottom-2 left-2">
+                  <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-black/75 text-white backdrop-blur-xs border border-white/15">
                     Dual SPD &bull; IP65
                   </span>
+                </div>
+                <div className="absolute bottom-2 right-2">
                   <span className="px-2 py-0.5 rounded text-[6.5px] font-black bg-emerald-600 text-white shadow-2xs">
                     3 Pits IS 3043
                   </span>
