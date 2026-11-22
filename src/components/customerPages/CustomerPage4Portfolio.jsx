@@ -39,6 +39,11 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
   const minArea = Math.round(dcKw * 70);
   const maxArea = Math.round(dcKw * 100);
 
+  const mAdvance = Number(settings?.warranties?.milestoneAdvance || 20);
+  const mDispatch = Number(settings?.warranties?.milestoneDispatch || 70);
+  const mInstall = Number(settings?.warranties?.milestoneInstallation || 10);
+  const bank2 = settings?.bank2 || {};
+
   return (
     <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
       {/* Signature Multi-Tier Top Bar */}
@@ -162,15 +167,15 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
           <div className="flex items-center gap-1.5 mb-1">
             <Coins className="w-3.5 h-3.5 text-blue-600" />
             <h3 className="text-[7.8pt] font-black text-slate-900 tracking-wide uppercase font-sans">
-              Payment Terms &amp; Milestones (20 : 70 : 10)
+              Payment Terms &amp; Milestones ({mAdvance} : {mDispatch} : {mInstall})
             </h3>
           </div>
 
           <div className="grid grid-cols-3 gap-2 text-center">
-            {/* 20% Advance */}
+            {/* Advance */}
             <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
               <div>
-                <span className="text-2xl font-black text-blue-900 font-mono block">20%</span>
+                <span className="text-2xl font-black text-blue-900 font-mono block">{mAdvance}%</span>
                 <span className="text-[7.5pt] font-extrabold text-slate-900 uppercase tracking-wide block mt-0.5">
                   Advance with purchase order
                 </span>
@@ -179,14 +184,14 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
                 </p>
               </div>
               <div className="mt-1 pt-1 border-t border-slate-100 font-mono font-black text-blue-950 text-[8pt]">
-                {formatCurrency(netPayable * 0.20)}
+                {formatCurrency(netPayable * (mAdvance / 100))}
               </div>
             </div>
 
-            {/* 70% Before Dispatch */}
+            {/* Before Dispatch */}
             <div className="p-2 rounded-xl bg-slate-50 border border-slate-300 shadow-2xs flex flex-col justify-between">
               <div>
-                <span className="text-2xl font-black text-slate-900 font-mono block">70%</span>
+                <span className="text-2xl font-black text-slate-900 font-mono block">{mDispatch}%</span>
                 <span className="text-[7.5pt] font-extrabold text-slate-900 uppercase tracking-wide block mt-0.5">
                   Before dispatch of materials
                 </span>
@@ -195,14 +200,14 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
                 </p>
               </div>
               <div className="mt-1 pt-1 border-t border-slate-200 font-mono font-black text-slate-950 text-[8pt]">
-                {formatCurrency(netPayable * 0.70)}
+                {formatCurrency(netPayable * (mDispatch / 100))}
               </div>
             </div>
 
-            {/* 10% At Installation */}
+            {/* At Installation */}
             <div className="p-2 rounded-xl bg-emerald-50/70 border border-emerald-300 shadow-2xs flex flex-col justify-between">
               <div>
-                <span className="text-2xl font-black text-emerald-800 font-mono block">10%</span>
+                <span className="text-2xl font-black text-emerald-800 font-mono block">{mInstall}%</span>
                 <span className="text-[7.5pt] font-extrabold text-emerald-950 uppercase tracking-wide block mt-0.5">
                   At installation
                 </span>
@@ -211,7 +216,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
                 </p>
               </div>
               <div className="mt-1 pt-1 border-t border-emerald-200 font-mono font-black text-emerald-950 text-[8pt]">
-                {formatCurrency(netPayable * 0.10)}
+                {formatCurrency(netPayable * (mInstall / 100))}
               </div>
             </div>
           </div>
@@ -231,7 +236,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
               <div className="space-y-1 text-slate-600 leading-snug">
                 <div>
                   <strong className="text-slate-900 block text-[7pt]">Delivery Timeline:</strong>
-                  Materials will be delivered to site after receipt of <strong>90% of total project cost</strong>.
+                  Materials will be delivered to site after receipt of <strong>{mAdvance + mDispatch}% of total project cost</strong>.
                 </div>
                 <div>
                   <strong className="text-slate-900 block text-[7pt]">Plant Commissioning:</strong>
@@ -251,15 +256,15 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
               <div className="space-y-0.5 text-slate-600 leading-tight text-[6.5pt]">
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-800">PV Modules:</span>
-                  <span className="text-slate-700">25-Yr Linear Power Output (&le;0.55%/yr)</span>
+                  <span className="text-slate-700">{settings?.warranties?.modulePerformance || "25-Yr Linear Power Output (≤0.55%/yr)"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-800">Inverter:</span>
-                  <span className="text-slate-700">7-Year Comprehensive Warranty</span>
+                  <span className="text-slate-700">{settings?.warranties?.inverter || "7-Year Comprehensive Warranty"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-800">Workmanship:</span>
-                  <span className="text-slate-700">5-Year Turnkey EPC &amp; Yield Assurance</span>
+                  <span className="text-slate-700">{settings?.warranties?.workmanshipAmc || "5-Year Turnkey EPC & Yield Assurance"}</span>
                 </div>
                 <div className="text-[6pt] text-slate-500 pt-0.5 border-t border-slate-100 mt-0.5">
                   Advance payment constitutes official acceptance. Orders are non-cancellable once executed.
@@ -279,26 +284,34 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
               Official Bank Account for Payments
             </span>
             <span className="text-[6.5pt] font-black text-blue-800 bg-blue-100 px-1.5 py-0.2 rounded">
-              SBI Corporate Account
+              {bank2.bankName || "SBI Corporate Account"}
             </span>
           </div>
 
           <div className="grid grid-cols-4 gap-2 text-[7pt]">
             <div className="p-1 rounded bg-white border border-slate-200">
               <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">Account Name</span>
-              <strong className="text-slate-950 text-[7pt] block truncate">M/s. SRIMAAN SOLAR SOLUTIONS</strong>
+              <strong className="text-slate-950 text-[7pt] block truncate">
+                {bank2.accountName || company.legalName || "M/s. SRIMAAN SOLAR SOLUTIONS"}
+              </strong>
             </div>
             <div className="p-1 rounded bg-white border border-slate-200">
               <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">Bank &amp; Branch</span>
-              <strong className="text-slate-800 text-[7pt] block truncate">State Bank of India &bull; Khammam</strong>
+              <strong className="text-slate-800 text-[7pt] block truncate">
+                {bank2.bankName || "State Bank of India"} &bull; {bank2.branch || "Khammam"}
+              </strong>
             </div>
             <div className="p-1 rounded bg-white border border-slate-200">
               <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">Account Number</span>
-              <strong className="text-slate-950 font-mono text-[7pt] block">44813579950</strong>
+              <strong className="text-slate-950 font-mono text-[7pt] block">
+                {bank2.accountNumber || "44813579950"}
+              </strong>
             </div>
             <div className="p-1 rounded bg-white border border-slate-200">
               <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">IFSC Code</span>
-              <strong className="text-slate-950 font-mono text-[7pt] block">SBIN0065049</strong>
+              <strong className="text-slate-950 font-mono text-[7pt] block">
+                {bank2.ifscCode || "SBIN0065049"}
+              </strong>
             </div>
           </div>
         </div>

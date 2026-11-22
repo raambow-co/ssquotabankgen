@@ -268,20 +268,22 @@ export function AppContent() {
   };
 
   // Handler: Save Settings
-  const handleSaveSettings = ({ company, bank, bank2 }) => {
+  const handleSaveSettings = ({ company, bank, bank2, masterSettings }) => {
     setCompanySettings(company);
     setBankSettings(bank);
     if (bank2) setBank2Settings(bank2);
     localStorage.setItem('srimaan_company_settings', JSON.stringify(company));
     localStorage.setItem('srimaan_bank_settings', JSON.stringify(bank));
     if (bank2) localStorage.setItem('srimaan_bank2_settings', JSON.stringify(bank2));
+    if (masterSettings) localStorage.setItem('srimaan_master_settings', JSON.stringify(masterSettings));
 
     // Update active quotation company & bank if present
     setActiveQuotation(prev => ({
       ...prev,
       company,
       bank,
-      bank2: bank2 || prev.bank2 || DEFAULT_BANK2
+      bank2: bank2 || prev.bank2 || DEFAULT_BANK2,
+      masterSettings: masterSettings || prev.masterSettings
     }));
   };
 

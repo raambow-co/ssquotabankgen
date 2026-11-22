@@ -64,8 +64,8 @@ export const ProposalPreviewModal = ({
     { id: 1, title: 'P1: Cover & ROI', fullTitle: 'Page 1 of 5: Executive Cover & ROI Snapshot', component: CustomerPage1Cover },
     { id: 2, title: 'P2: Hardware & BOM', fullTitle: 'Page 2 of 5: Technical Specifications & BOM', component: CustomerPage2SystemSpec },
     { id: 3, title: 'P3: Financials & Cashflow', fullTitle: 'Page 3 of 5: Commercials & 25-Yr Cashflow', component: CustomerPage3Financials },
-    { id: 4, title: 'P4: Projects Portfolio', fullTitle: 'Page 4 of 5: Completed Works Showcase', component: CustomerPage4Portfolio },
-    { id: 5, title: 'P5: Company Profile', fullTitle: 'Page 5 of 5: Corporate Profile & Warranties', component: CustomerPage5CompanyProfile },
+    { id: 4, title: 'P4: Payment & Annexure', fullTitle: 'Page 4 of 5: Payment Terms, Technical Annexure & Acceptance', component: CustomerPage4Portfolio },
+    { id: 5, title: 'P5: Profile & Connect', fullTitle: 'Page 5 of 5: Corporate Profile, Credentials & Digital Connect', component: CustomerPage5CompanyProfile },
   ];
 
   const currentPagesList = formatMode === 'bank' ? bankPages : customerPages;

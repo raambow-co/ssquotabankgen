@@ -274,7 +274,7 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 </span>
               </div>
               <div className="font-black text-slate-950 text-[11pt] leading-tight my-0.5">
-                28% &ndash; 32% IRR
+                {settings?.pricing?.solarIrr || "28% – 32% IRR"}
               </div>
               <div className="text-slate-600 text-[6pt] leading-tight">
                 Tax-free avoided power cost &bull; Payback ~{paybackYears} Yrs
@@ -287,7 +287,7 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 Bank Fixed Deposit
               </div>
               <div className="font-black text-slate-700 text-[11pt] leading-tight my-0.5">
-                6.8% &ndash; 7.2%
+                {settings?.pricing?.bankFdYield || "6.8% – 7.2%"}
               </div>
               <div className="text-slate-500 text-[6pt] leading-tight">
                 Pre-tax interest &bull; Taxed at slab &bull; Payback 10+ Yrs
@@ -300,7 +300,7 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 Equity Mutual Funds
               </div>
               <div className="font-black text-slate-700 text-[11pt] leading-tight my-0.5">
-                12% &ndash; 14%
+                {settings?.pricing?.equityMfYield || "12% – 14%"}
               </div>
               <div className="text-slate-500 text-[6pt] leading-tight">
                 Subject to market risk &bull; 12.5% LTCG &bull; Volatile
@@ -313,7 +313,7 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                 Residential Property
               </div>
               <div className="font-black text-slate-700 text-[11pt] leading-tight my-0.5">
-                2.5% &ndash; 3.2%
+                {settings?.pricing?.propertyYield || "2.5% – 3.2%"}
               </div>
               <div className="text-slate-500 text-[6pt] leading-tight">
                 Gross rental yield &bull; Illiquid asset &bull; High upkeep
