@@ -21,7 +21,8 @@ import {
   Globe, 
   Phone, 
   Mail, 
-  Layers 
+  Layers,
+  Zap 
 } from 'lucide-react';
 import { DEFAULT_COMPANY, DEFAULT_BANK, DEFAULT_BANK2 } from '../data/defaultData';
 import { srimaanCustomerSettings } from '../utils/quotationAdapter';
@@ -39,15 +40,7 @@ export const SettingsModal = ({
 
   // Load master settings with fallback to Srimaan Solar benchmark defaults
   const getInitialSettings = () => {
-    try {
-      const saved = localStorage.getItem('srimaan_master_settings');
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.warn("Failed to parse saved master settings", e);
-    }
-    return {
+    const defaultSettings = {
       company: {
         tradeName: "SRIMAAN SOLAR SOLUTIONS",
         legalName: "M/s. SRIMAAN SOLAR SOLUTIONS",
@@ -114,21 +107,87 @@ export const SettingsModal = ({
         ]
       },
       technical: {
-        moduleBrand: "Waaree Energies",
-        cellTechnology: "TOPCon Bi-facial Dual Glass 16BB",
-        defaultWattage: 540,
-        moduleEfficiency: "21.5%",
+        // Solar PV Module Catalog (Tier-1 BloombergNEF)
+        modules: [
+          {
+            id: 1,
+            brandName: "Waaree Solar",
+            modelDescription: "Arka Series 550Wp Bi-facial Dual Glass TOPCon (WXS-550)",
+            ratedWattage: 550,
+            cellTech: "N-Type TOPCon 16BB",
+            efficiency: "22.3%"
+          },
+          {
+            id: 2,
+            brandName: "Adani Solar",
+            modelDescription: "Shine Series 545Wp Mono PERC Half-Cut Module",
+            ratedWattage: 545,
+            cellTech: "Mono PERC 10BB",
+            efficiency: "21.5%"
+          },
+          {
+            id: 3,
+            brandName: "Tata Power Solar",
+            modelDescription: "TP550 High-Efficiency Tier-1 Mono Module",
+            ratedWattage: 550,
+            cellTech: "Mono PERC Half-Cut",
+            efficiency: "21.4%"
+          }
+        ],
+
+        // Solar Grid Inverter Catalog
+        inverters: [
+          {
+            id: 1,
+            brandName: "Sungrow Power",
+            modelDescription: "SG5.0RS Multi-MPPT On-Grid Smart Inverter with Wi-Fi IoT",
+            efficiency: "98.4%"
+          },
+          {
+            id: 2,
+            brandName: "Growatt New Energy",
+            modelDescription: "MIN / MID Series Dual MPPT Smart Inverter with ShineWiFi",
+            efficiency: "98.4%"
+          },
+          {
+            id: 3,
+            brandName: "Solis Ginlong",
+            modelDescription: "S6 Pro Series Solar Grid-Tied Inverter with Remote Telemetry",
+            efficiency: "98.5%"
+          }
+        ],
+
+        // Mounting Structure & Electrical Balance of System (Page 2 BOM)
+        mmsMaterialType: "Hot-Dip Galvanized Iron (GI)",
+        galvanizationZincCoating: "80 Microns Zinc Coating (IS 4759)",
+        windRatingStandard: "Up to 150 km/h (IS 875 Part 3)",
+        dcSolarCableStandard: "Polycab / Siechem 4 / 6 sq.mm TUV Certified Solar DC Cable (EN 50618)",
+        earthingChemicalStandard: "3-Pit Chemical Earthing (Inverter, Structure, Lightning Arrester)",
+
+        // Mounting Structure Options (Form Dropdown)
+        structureOptions: [
+          "Hot-Dip Galvanized Iron (GI) — Elevated 7 to 9 ft Roof Clearance (IS 875 Compliant)",
+          "Anodized High-Strength Aluminum — Non-Elevated Flush Mount",
+          "Industrial Metal Sheet / Klip-Lok Bracket System",
+          "Super-Elevated Heavy Duty High-Clearance Gazebo / Pergola Design"
+        ],
+
+        // Backward compatibility
+        moduleBrand: "Waaree Solar",
+        cellTechnology: "N-Type TOPCon 16BB",
+        defaultWattage: 550,
+        moduleEfficiency: "22.3%",
         degradationRate: 0.55,
         moduleImage: "/assets/hardware/waaree-topcon-module.jpg",
         inverterBrand: "Sungrow Power",
-        inverterEfficiency: ">98.4% Dual MPPT",
+        inverterEfficiency: "98.4%",
         inverterImage: "/assets/hardware/smart-grid-inverter.jpg",
-        structureType: "Elevated Hot-Dip GI Structure (7 to 9 ft Roof Clearance)",
-        zincCoating: "80µ Zinc Coating (IS 4759)",
-        windSpeed: "158 km/h (IS 875 Part 3: 2015)",
+        structureType: "Hot-Dip Galvanized Iron (GI) — Elevated 7 to 9 ft Roof Clearance (IS 875 Compliant)",
+        zincCoating: "80 Microns Zinc Coating (IS 4759)",
+        windSpeed: "Up to 150 km/h (IS 875 Part 3)",
         structureImage: "/assets/hardware/elevated-structure.jpg",
-        cablesSpec: "Polycab 4 / 6 sq.mm Electron Cross-Linked UV Cable (EN 50618)",
-        earthingSpec: "3 Chemical Earthing Pits (IS 3043:2018) + Class A Lightning Arrester",
+        cablesSpec: "Polycab / Siechem 4 / 6 sq.mm TUV Certified Solar DC Cable (EN 50618)",
+        earthingSpec: "3-Pit Chemical Earthing (Inverter, Structure, Lightning Arrester)",
         bosImage: "/assets/hardware/solar-dcdb-acdb-bos.jpg"
       },
       pricing: {
@@ -163,6 +222,38 @@ export const SettingsModal = ({
         { id: 4, title: "Institutional Rooftop 15 kWp", location: "Vijayawada, Andhra Pradesh", image: "/assets/portfolio/project-4.jpg", type: "Institutional" }
       ]
     };
+
+    try {
+      const saved = localStorage.getItem('srimaan_master_settings');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...defaultSettings,
+          ...parsed,
+          technical: {
+            ...defaultSettings.technical,
+            ...(parsed.technical || {}),
+            modules: (parsed.technical?.modules && Array.isArray(parsed.technical.modules) && parsed.technical.modules.length > 0)
+              ? parsed.technical.modules
+              : defaultSettings.technical.modules,
+            inverters: (parsed.technical?.inverters && Array.isArray(parsed.technical.inverters) && parsed.technical.inverters.length > 0)
+              ? parsed.technical.inverters
+              : defaultSettings.technical.inverters,
+            structureOptions: (parsed.technical?.structureOptions && Array.isArray(parsed.technical.structureOptions) && parsed.technical.structureOptions.length > 0)
+              ? parsed.technical.structureOptions
+              : defaultSettings.technical.structureOptions,
+            mmsMaterialType: parsed.technical?.mmsMaterialType || defaultSettings.technical.mmsMaterialType,
+            galvanizationZincCoating: parsed.technical?.galvanizationZincCoating || defaultSettings.technical.galvanizationZincCoating,
+            windRatingStandard: parsed.technical?.windRatingStandard || defaultSettings.technical.windRatingStandard,
+            dcSolarCableStandard: parsed.technical?.dcSolarCableStandard || defaultSettings.technical.dcSolarCableStandard,
+            earthingChemicalStandard: parsed.technical?.earthingChemicalStandard || defaultSettings.technical.earthingChemicalStandard,
+          }
+        };
+      }
+    } catch (e) {
+      console.warn("Failed to parse saved master settings", e);
+    }
+    return defaultSettings;
   };
 
   const [settings, setSettings] = useState(getInitialSettings);
@@ -220,6 +311,158 @@ export const SettingsModal = ({
         }
       }
     }));
+  };
+
+  // Technical Modules management
+  const handleAddModule = () => {
+    setSettings(prev => {
+      const current = prev.technical?.modules || [];
+      const newOption = {
+        id: Date.now(),
+        brandName: "New Module Brand",
+        modelDescription: "Tier-1 High-Efficiency PV Module",
+        ratedWattage: 550,
+        cellTech: "N-Type TOPCon 16BB",
+        efficiency: "22.0%"
+      };
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          modules: [...current, newOption]
+        }
+      };
+    });
+  };
+
+  const handleUpdateModule = (index, field, value) => {
+    setSettings(prev => {
+      const current = [...(prev.technical?.modules || [])];
+      if (current[index]) {
+        current[index] = { ...current[index], [field]: value };
+      }
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          modules: current,
+          // Sync primary module if index 0
+          ...(index === 0 ? {
+            moduleBrand: current[0]?.brandName || prev.technical?.moduleBrand,
+            cellTechnology: current[0]?.cellTech || prev.technical?.cellTechnology,
+            defaultWattage: current[0]?.ratedWattage || prev.technical?.defaultWattage,
+            moduleEfficiency: current[0]?.efficiency || prev.technical?.moduleEfficiency
+          } : {})
+        }
+      };
+    });
+  };
+
+  const handleRemoveModule = (index) => {
+    setSettings(prev => {
+      const current = (prev.technical?.modules || []).filter((_, i) => i !== index);
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          modules: current
+        }
+      };
+    });
+  };
+
+  // Technical Inverters management
+  const handleAddInverter = () => {
+    setSettings(prev => {
+      const current = prev.technical?.inverters || [];
+      const newOption = {
+        id: Date.now(),
+        brandName: "New Inverter Brand",
+        modelDescription: "On-Grid String Smart Inverter with Wi-Fi",
+        efficiency: "98.4%"
+      };
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          inverters: [...current, newOption]
+        }
+      };
+    });
+  };
+
+  const handleUpdateInverter = (index, field, value) => {
+    setSettings(prev => {
+      const current = [...(prev.technical?.inverters || [])];
+      if (current[index]) {
+        current[index] = { ...current[index], [field]: value };
+      }
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          inverters: current,
+          ...(index === 0 ? {
+            inverterBrand: current[0]?.brandName || prev.technical?.inverterBrand,
+            inverterEfficiency: current[0]?.efficiency || prev.technical?.inverterEfficiency
+          } : {})
+        }
+      };
+    });
+  };
+
+  const handleRemoveInverter = (index) => {
+    setSettings(prev => {
+      const current = (prev.technical?.inverters || []).filter((_, i) => i !== index);
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          inverters: current
+        }
+      };
+    });
+  };
+
+  // Technical Structure Options management
+  const handleAddStructureOption = () => {
+    setSettings(prev => {
+      const current = prev.technical?.structureOptions || [];
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          structureOptions: [...current, "New Custom Mounting Structure Option (IS Compliant)"]
+        }
+      };
+    });
+  };
+
+  const handleUpdateStructureOption = (index, value) => {
+    setSettings(prev => {
+      const current = [...(prev.technical?.structureOptions || [])];
+      current[index] = value;
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          structureOptions: current
+        }
+      };
+    });
+  };
+
+  const handleRemoveStructureOption = (index) => {
+    setSettings(prev => {
+      const current = (prev.technical?.structureOptions || []).filter((_, i) => i !== index);
+      return {
+        ...prev,
+        technical: {
+          ...prev.technical,
+          structureOptions: current
+        }
+      };
+    });
   };
 
   // Save all settings to localStorage and trigger callback
@@ -958,115 +1201,322 @@ export const SettingsModal = ({
           {/* TAB 4: TECHNICAL & HARDWARE                                  */}
           {/* ------------------------------------------------------------ */}
           {activeTab === 'technical' && (
-            <div className="space-y-4 animate-fadeIn">
+            <div className="space-y-5 animate-fadeIn">
+              {/* SECTION 1: SOLAR PV MODULE CATALOG (TIER-1 BLOOMBERGNEF) */}
               <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                  <Cpu size={16} className="text-amber-500" />
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Cpu size={16} className="text-amber-500" />
+                    <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
+                      Solar PV Module Catalog (Tier-1 BloombergNEF)
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddModule}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition cursor-pointer"
+                  >
+                    <Plus size={13} className="text-slate-600" />
+                    <span>Add Module Model</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(settings.technical.modules || []).map((mod, idx) => (
+                    <div key={mod.id || idx} className="bg-white rounded-lg border border-slate-200 p-3 sm:p-3.5 space-y-2.5 shadow-2xs">
+                      <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span className="font-bold text-slate-800 text-xs">
+                          Module Option #{idx + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveModule(idx)}
+                          className="text-slate-400 hover:text-rose-500 p-1 rounded transition cursor-pointer"
+                          title="Delete Module Option"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
+                        <div className="md:col-span-2">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Brand Name
+                          </label>
+                          <input
+                            type="text"
+                            value={mod.brandName || ''}
+                            onChange={(e) => handleUpdateModule(idx, 'brandName', e.target.value)}
+                            placeholder="Waaree Solar"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-5">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Model Description
+                          </label>
+                          <input
+                            type="text"
+                            value={mod.modelDescription || ''}
+                            onChange={(e) => handleUpdateModule(idx, 'modelDescription', e.target.value)}
+                            placeholder="Arka Series 550Wp Bi-facial Dual Glass TOPCon (WXS-550)"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Rated Wattage (Wp)
+                          </label>
+                          <input
+                            type="number"
+                            value={mod.ratedWattage || ''}
+                            onChange={(e) => handleUpdateModule(idx, 'ratedWattage', parseInt(e.target.value, 10) || 0)}
+                            placeholder="550"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Cell Tech
+                          </label>
+                          <input
+                            type="text"
+                            value={mod.cellTech || ''}
+                            onChange={(e) => handleUpdateModule(idx, 'cellTech', e.target.value)}
+                            placeholder="N-Type TOPCon 16BB"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-1">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Efficiency
+                          </label>
+                          <input
+                            type="text"
+                            value={mod.efficiency || ''}
+                            onChange={(e) => handleUpdateModule(idx, 'efficiency', e.target.value)}
+                            placeholder="22.3%"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION 2: SOLAR GRID INVERTER CATALOG */}
+              <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Zap size={16} className="text-blue-500" />
+                    <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
+                      Solar Grid Inverter Catalog
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddInverter}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition cursor-pointer"
+                  >
+                    <Plus size={13} className="text-slate-600" />
+                    <span>Add Inverter Model</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(settings.technical.inverters || []).map((inv, idx) => (
+                    <div key={inv.id || idx} className="bg-white rounded-lg border border-slate-200 p-3 sm:p-3.5 space-y-2.5 shadow-2xs">
+                      <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span className="font-bold text-slate-800 text-xs">
+                          Inverter Option #{idx + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveInverter(idx)}
+                          className="text-slate-400 hover:text-rose-500 p-1 rounded transition cursor-pointer"
+                          title="Delete Inverter Option"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
+                        <div className="md:col-span-3">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Brand Name
+                          </label>
+                          <input
+                            type="text"
+                            value={inv.brandName || ''}
+                            onChange={(e) => handleUpdateInverter(idx, 'brandName', e.target.value)}
+                            placeholder="Sungrow Power"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-7">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Model Description
+                          </label>
+                          <input
+                            type="text"
+                            value={inv.modelDescription || ''}
+                            onChange={(e) => handleUpdateInverter(idx, 'modelDescription', e.target.value)}
+                            placeholder="SG5.0RS Multi-MPPT On-Grid Smart Inverter with Wi-Fi IoT"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                            Efficiency
+                          </label>
+                          <input
+                            type="text"
+                            value={inv.efficiency || ''}
+                            onChange={(e) => handleUpdateInverter(idx, 'efficiency', e.target.value)}
+                            placeholder="98.4%"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-md text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION 3: MOUNTING STRUCTURE & ELECTRICAL BALANCE OF SYSTEM (PAGE 2 BOM) */}
+              <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+                  <Layers size={16} className="text-emerald-500" />
                   <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
-                    Solar PV Modules &amp; Inverter Specifications
+                    Mounting Structure &amp; Electrical Balance of System (Page 2 BOM)
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Default Module Brand</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      MMS Material Type
+                    </label>
                     <input
                       type="text"
-                      value={settings.technical.moduleBrand}
-                      onChange={(e) => updateSection('technical', 'moduleBrand', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold"
+                      value={settings.technical.mmsMaterialType || settings.technical.structureType || "Hot-Dip Galvanized Iron (GI)"}
+                      onChange={(e) => {
+                        updateSection('technical', 'mmsMaterialType', e.target.value);
+                        updateSection('technical', 'structureType', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
+
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Cell Technology</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Galvanization Zinc Coating
+                    </label>
                     <input
                       type="text"
-                      value={settings.technical.cellTechnology}
-                      onChange={(e) => updateSection('technical', 'cellTechnology', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-medium"
+                      value={settings.technical.galvanizationZincCoating || settings.technical.zincCoating || "80 Microns Zinc Coating (IS 4759)"}
+                      onChange={(e) => {
+                        updateSection('technical', 'galvanizationZincCoating', e.target.value);
+                        updateSection('technical', 'zincCoating', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
+
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Default Module Wattage (Wp)</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Wind Rating Standard
+                    </label>
                     <input
-                      type="number"
-                      value={settings.technical.defaultWattage}
-                      onChange={(e) => updateSection('technical', 'defaultWattage', parseInt(e.target.value, 10) || 540)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold"
+                      type="text"
+                      value={settings.technical.windRatingStandard || settings.technical.windSpeed || "Up to 150 km/h (IS 875 Part 3)"}
+                      onChange={(e) => {
+                        updateSection('technical', 'windRatingStandard', e.target.value);
+                        updateSection('technical', 'windSpeed', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Inverter Brand</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      DC Solar Cable Standard
+                    </label>
                     <input
                       type="text"
-                      value={settings.technical.inverterBrand}
-                      onChange={(e) => updateSection('technical', 'inverterBrand', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold"
+                      value={settings.technical.dcSolarCableStandard || settings.technical.cablesSpec || "Polycab / Siechem 4 / 6 sq.mm TUV Certified Solar DC Cable (EN 50618)"}
+                      onChange={(e) => {
+                        updateSection('technical', 'dcSolarCableStandard', e.target.value);
+                        updateSection('technical', 'cablesSpec', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
+
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Inverter Peak Efficiency</label>
+                    <label className="block font-semibold text-slate-600 text-[11px] mb-1">
+                      Earthing Chemical Standard
+                    </label>
                     <input
                       type="text"
-                      value={settings.technical.inverterEfficiency}
-                      onChange={(e) => updateSection('technical', 'inverterEfficiency', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono font-bold"
+                      value={settings.technical.earthingChemicalStandard || settings.technical.earthingSpec || "3-Pit Chemical Earthing (Inverter, Structure, Lightning Arrester)"}
+                      onChange={(e) => {
+                        updateSection('technical', 'earthingChemicalStandard', e.target.value);
+                        updateSection('technical', 'earthingSpec', e.target.value);
+                      }}
+                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
                 </div>
               </div>
 
+              {/* SECTION 4: MOUNTING STRUCTURE OPTIONS (FORM DROPDOWN) */}
               <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                  <Layers size={16} className="text-blue-500" />
-                  <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
-                    Mounting Structure &amp; Balance of System (BOS)
-                  </h3>
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Layers size={16} className="text-emerald-500" />
+                    <h3 className="font-bold text-slate-900 uppercase tracking-wide text-xs">
+                      Mounting Structure Options (Form Dropdown)
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddStructureOption}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition cursor-pointer"
+                  >
+                    <Plus size={13} className="text-slate-600" />
+                    <span>Add Structure Option</span>
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="sm:col-span-2">
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Mounting Structure Standard</label>
-                    <input
-                      type="text"
-                      value={settings.technical.structureType}
-                      onChange={(e) => updateSection('technical', 'structureType', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Design Wind Speed</label>
-                    <input
-                      type="text"
-                      value={settings.technical.windSpeed}
-                      onChange={(e) => updateSection('technical', 'windSpeed', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">DC / AC Solar Cables</label>
-                    <input
-                      type="text"
-                      value={settings.technical.cablesSpec}
-                      onChange={(e) => updateSection('technical', 'cablesSpec', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Earthing &amp; Protection</label>
-                    <input
-                      type="text"
-                      value={settings.technical.earthingSpec}
-                      onChange={(e) => updateSection('technical', 'earthingSpec', e.target.value)}
-                      className="w-full px-3 py-1.5 border border-slate-300 rounded-lg"
-                    />
-                  </div>
+                <div className="space-y-2.5">
+                  {(settings.technical.structureOptions || []).map((opt, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={opt}
+                        onChange={(e) => handleUpdateStructureOption(idx, e.target.value)}
+                        className="flex-1 px-3 py-2 border border-slate-200 bg-white rounded-lg text-xs md:text-sm font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveStructureOption(idx)}
+                        className="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                        title="Delete Structure Option"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
