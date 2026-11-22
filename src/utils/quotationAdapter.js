@@ -8,8 +8,8 @@ export const srimaanCustomerSettings = {
     tagline: "Clean Green Renewable Energy EPC Partner",
     subheading: "State DISCOM Empanelled Solar EPC Vendor • Registered PM Surya Ghar Channel Partner",
     about: "M/s. SRIMAAN SOLAR SOLUTIONS is a premier clean-tech engineering and EPC enterprise delivering high-efficiency rooftop and ground-mount solar power systems across Telangana and Andhra Pradesh. Committed to engineering excellence, we deploy Tier-1 DCR solar modules, smart grid-tie inverters, heavy-duty hot-dip galvanized mounting structures, and seamless DISCOM net-metering synchronization.",
-    address: "#6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam 507003",
-    officeAddress: "#6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam 507003",
+    address: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
+    officeAddress: "#6-210,Sriramnagar,BehindAutonagar,Warangalxroad,khammamrural,KHAMMAMDIST-507003",
     branches: "Khammam HQ | Hyderabad | Vijayawada | Visakhapatnam | Warangal",
     phone: "9347416140 | 9912416140",
     email: "srimaansolarsolutions@gmail.com",
@@ -19,10 +19,10 @@ export const srimaanCustomerSettings = {
     cin: "U40106TG2020PTC142380",
     mnreEmpanelment: "SRI-DISCOM-TG-8421",
     msme: "UDYAM-TS-14-0028194",
-    bankName: "State Bank of India",
-    accountNumber: "40892716382",
-    ifscCode: "SBIN0020154",
-    branch: "Khammam Main Branch"
+    bankName: "STATE BANK OF INDIA",
+    accountNumber: "44813579950",
+    ifscCode: "SBIN0065049",
+    branch: "Khammam Branch"
   },
   
   qrPortals: {

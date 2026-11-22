@@ -897,14 +897,14 @@ export const Dashboard = ({
             </div>
 
             <div className="pt-2 border-t border-slate-700/60">
-              <h4 className="font-semibold text-amber-400 mb-2">NEFT / RTGS Bank Details (Page 6)</h4>
+              <h4 className="font-semibold text-amber-400 mb-2">Primary Bank Details - HDFC (Page 6)</h4>
               
               <div className="grid grid-cols-2 gap-3 mb-2">
                 <div>
                   <label className="text-slate-400 block mb-1">Bank Name</label>
                   <input
                     type="text"
-                    value={data.bank.bankName}
+                    value={data.bank?.bankName || ''}
                     onChange={(e) => updateField('bank', 'bankName', e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white text-xs focus:border-amber-500 outline-none"
                   />
@@ -913,19 +913,19 @@ export const Dashboard = ({
                   <label className="text-slate-400 block mb-1">Account Name</label>
                   <input
                     type="text"
-                    value={data.bank.accountName}
+                    value={data.bank?.accountName || ''}
                     onChange={(e) => updateField('bank', 'accountName', e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white text-xs focus:border-amber-500 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 <div>
                   <label className="text-slate-400 block mb-1">Account Number</label>
                   <input
                     type="text"
-                    value={data.bank.accountNo}
+                    value={data.bank?.accountNo || ''}
                     onChange={(e) => updateField('bank', 'accountNo', e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono text-xs focus:border-amber-500 outline-none"
                   />
@@ -934,8 +934,52 @@ export const Dashboard = ({
                   <label className="text-slate-400 block mb-1">IFSC Code</label>
                   <input
                     type="text"
-                    value={data.bank.ifscCode}
+                    value={data.bank?.ifscCode || ''}
                     onChange={(e) => updateField('bank', 'ifscCode', e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono text-xs focus:border-amber-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <h4 className="font-semibold text-amber-400 mb-2 pt-2 border-t border-slate-800">Second Bank Details - State Bank of India (Page 6)</h4>
+              
+              <div className="grid grid-cols-2 gap-3 mb-2">
+                <div>
+                  <label className="text-slate-400 block mb-1">Bank 2 Name</label>
+                  <input
+                    type="text"
+                    value={data.bank2?.bankName || ''}
+                    onChange={(e) => updateField('bank2', 'bankName', e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white text-xs focus:border-amber-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block mb-1">Bank 2 Account Name</label>
+                  <input
+                    type="text"
+                    value={data.bank2?.accountName || ''}
+                    onChange={(e) => updateField('bank2', 'accountName', e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white text-xs focus:border-amber-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-slate-400 block mb-1">Bank 2 Account Number</label>
+                  <input
+                    type="text"
+                    value={data.bank2?.accountNo || ''}
+                    onChange={(e) => updateField('bank2', 'accountNo', e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono text-xs focus:border-amber-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block mb-1">Bank 2 IFSC Code</label>
+                  <input
+                    type="text"
+                    value={data.bank2?.ifscCode || ''}
+                    onChange={(e) => updateField('bank2', 'ifscCode', e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono text-xs focus:border-amber-500 outline-none"
                   />
                 </div>

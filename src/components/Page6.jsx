@@ -3,8 +3,21 @@ import { PageHeader, PageFooter } from './PageHeader';
 import { formatINR, formatINRDecimal, calculateGSTBreakdown } from '../utils/calculations';
 
 export const Page6 = ({ data }) => {
-  const { company, bank, system, pricing, customer } = data;
+  const { company, bank, bank2, system, pricing, customer } = data;
   const capacity = system?.capacityKw || 5;
+
+  const bankAccount1 = bank || {
+    accountName: "SRIMAAN SOLAR SOLUTIONS",
+    accountNo: "50200095253784",
+    ifscCode: "HDFC0001631",
+    bankName: "HDFC BANK"
+  };
+  const bankAccount2 = bank2 || {
+    accountName: "SRIMAAN SOLAR SOLUTIONS",
+    accountNo: "44813579950",
+    ifscCode: "SBIN0065049",
+    bankName: "STATE BANK OF INDIA"
+  };
 
   const bankCost = pricing.bankCost || pricing.totalCost;
   const subsidyDisplay = pricing.subsidyAmount;
@@ -187,15 +200,28 @@ export const Page6 = ({ data }) => {
           </div>
 
           {/* Bank Payment Terms */}
-          <div className="bank-details-box mt-2 p-2.5 border-2 border-red-500 rounded-xs bg-red-50/20 text-xs max-w-lg">
-            <p className="font-extrabold text-gray-900 mb-0.5 tracking-wide">
+          <div className="bank-details-box mt-2 p-2.5 border-2 border-red-500 rounded-xs bg-red-50/20 text-xs">
+            <p className="font-extrabold text-gray-900 mb-1.5 tracking-wide text-xs">
               Payment Terms: Account details for NEFT / RTGS / IMPS
             </p>
-            <div className="font-bold text-[#c0392b] space-y-0.5 tracking-wide text-[9.5pt]">
-              <p>Account Name: {bank.accountName}</p>
-              <p>Account No.: {bank.accountNo}</p>
-              <p>IFSC Code: {bank.ifscCode}</p>
-              <p>Bank Name: {bank.bankName}</p>
+            <div className="grid grid-cols-2 gap-3 text-left">
+              {/* Bank Account 1 */}
+              <div className="border-r border-red-300 pr-3 font-bold text-[#c0392b] space-y-0.5 text-[8.5pt]">
+                <p className="font-extrabold text-gray-900 text-[8pt] uppercase tracking-wider mb-0.5 underline">Primary Bank Account (HDFC)</p>
+                <p>Account Name: {bankAccount1.accountName}</p>
+                <p>Account No.: {bankAccount1.accountNo}</p>
+                <p>IFSC Code: {bankAccount1.ifscCode}</p>
+                <p>Bank Name: {bankAccount1.bankName}</p>
+              </div>
+
+              {/* Bank Account 2 (Second Bank Account) */}
+              <div className="font-bold text-[#c0392b] space-y-0.5 text-[8.5pt]">
+                <p className="font-extrabold text-gray-900 text-[8pt] uppercase tracking-wider mb-0.5 underline">Second Bank Account (SBI)</p>
+                <p>Account Name: {bankAccount2.accountName}</p>
+                <p>Account No.: {bankAccount2.accountNo}</p>
+                <p>IFSC Code: {bankAccount2.ifscCode}</p>
+                <p>Bank Name: {bankAccount2.bankName}</p>
+              </div>
             </div>
           </div>
         </div>

@@ -159,7 +159,8 @@ export const DEFAULT_TERMS = [
 export const DEFAULT_COMPANY = {
   name: "M/s. SRIMAAN SOLAR SOLUTIONS",
   tagline: "GET YOUR OWN POWER STATION ON YOUR ROOFTOP",
-  addressLine1: "KHAMMAM , Telangana , India.",
+  registeredOffice: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
+  addressLine1: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
   phone1: "9347416140",
   phone2: "9912416140",
   email: "srimaansolarsolutions@gmail.com",
@@ -174,6 +175,13 @@ export const DEFAULT_BANK = {
   accountNo: "50200095253784",
   ifscCode: "HDFC0001631",
   bankName: "HDFC BANK"
+};
+
+export const DEFAULT_BANK2 = {
+  accountName: "SRIMAAN SOLAR SOLUTIONS",
+  accountNo: "44813579950",
+  ifscCode: "SBIN0065049",
+  bankName: "STATE BANK OF INDIA"
 };
 
 export const INITIAL_QUOTATION_DATA = {
@@ -201,6 +209,7 @@ export const INITIAL_QUOTATION_DATA = {
 
   company: DEFAULT_COMPANY,
   bank: DEFAULT_BANK,
+  bank2: DEFAULT_BANK2,
 
   system: {
     capacityKw: 5,

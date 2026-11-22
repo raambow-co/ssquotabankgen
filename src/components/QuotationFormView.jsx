@@ -18,7 +18,21 @@ export const QuotationFormView = ({
   onBack, 
   onLivePreview 
 }) => {
-  const [formData, setFormData] = useState(quotation);
+  const [formData, setFormData] = useState(() => ({
+    ...quotation,
+    bank: quotation.bank || {
+      bankName: "HDFC BANK",
+      accountName: "SRIMAAN SOLAR SOLUTIONS",
+      accountNo: "50200095253784",
+      ifscCode: "HDFC0001631"
+    },
+    bank2: quotation.bank2 || {
+      bankName: "STATE BANK OF INDIA",
+      accountName: "SRIMAAN SOLAR SOLUTIONS",
+      accountNo: "44813579950",
+      ifscCode: "SBIN0065049"
+    }
+  }));
   const [activeTab, setActiveTab] = useState('client'); // 'client', 'system', 'pricing', 'milestones'
   const [savedSuccessMsg, setSavedSuccessMsg] = useState(false);
 
@@ -1576,13 +1590,20 @@ export const QuotationFormView = ({
                   />
                 </div>
 
+                {/* Bank Account 1 */}
+                <div className="col-span-1 sm:col-span-2 pt-2 border-t border-slate-100">
+                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span>Primary Bank Account (HDFC Bank)</span>
+                  </h3>
+                </div>
+
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
                     Bank Name
                   </label>
                   <input
                     type="text"
-                    value={formData.bank.bankName}
+                    value={formData.bank?.bankName || ''}
                     onChange={(e) => updateField('bank', 'bankName', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
@@ -1594,7 +1615,7 @@ export const QuotationFormView = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.bank.accountName}
+                    value={formData.bank?.accountName || ''}
                     onChange={(e) => updateField('bank', 'accountName', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
@@ -1606,7 +1627,7 @@ export const QuotationFormView = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.bank.accountNo}
+                    value={formData.bank?.accountNo || ''}
                     onChange={(e) => updateField('bank', 'accountNo', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
@@ -1618,8 +1639,63 @@ export const QuotationFormView = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.bank.ifscCode}
+                    value={formData.bank?.ifscCode || ''}
                     onChange={(e) => updateField('bank', 'ifscCode', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                {/* Second Bank Account */}
+                <div className="col-span-1 sm:col-span-2 pt-3 border-t border-slate-100">
+                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span>Second Bank Account (State Bank of India)</span>
+                  </h3>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Bank 2 Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank2?.bankName || ''}
+                    onChange={(e) => updateField('bank2', 'bankName', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Bank 2 Account Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank2?.accountName || ''}
+                    onChange={(e) => updateField('bank2', 'accountName', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Bank 2 Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank2?.accountNo || ''}
+                    onChange={(e) => updateField('bank2', 'accountNo', e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Bank 2 IFSC Code
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bank2?.ifscCode || ''}
+                    onChange={(e) => updateField('bank2', 'ifscCode', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
                 </div>

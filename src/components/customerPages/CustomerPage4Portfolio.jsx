@@ -212,11 +212,11 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
             </div>
             <div className="p-1 rounded-lg bg-white border border-slate-200">
               <span className="text-slate-400 block text-[6px] uppercase font-bold">Account Number</span>
-              <strong className="text-slate-950 font-mono text-[7.5px] block">40892716382</strong>
+              <strong className="text-slate-950 font-mono text-[7.5px] block">44813579950</strong>
             </div>
             <div className="p-1 rounded-lg bg-white border border-slate-200">
               <span className="text-slate-400 block text-[6px] uppercase font-bold">IFSC Code</span>
-              <strong className="text-slate-950 font-mono text-[7.5px] block">SBIN0020154</strong>
+              <strong className="text-slate-950 font-mono text-[7.5px] block">SBIN0065049</strong>
             </div>
           </div>
         </div>

@@ -149,6 +149,18 @@ assert(sanitizeWattage('540') === 540, '540 correctly parsed');
 assert(sanitizeWattage('620') === 620, '620 correctly parsed');
 console.log('✅ [PASS] Wattage input freely accepts 0, empty string (backspace), 540, 620 without jumping');
 
+// 7. Audit Second Bank Account & Registered Office
+console.log('\n--- 7. AUDITING SECOND BANK ACCOUNT & REGISTERED OFFICE ---');
+import { DEFAULT_COMPANY, DEFAULT_BANK, DEFAULT_BANK2 } from '../src/data/defaultData.js';
+
+assert(DEFAULT_BANK.bankName === 'HDFC BANK', 'Primary bank is HDFC');
+assert(DEFAULT_BANK2.bankName === 'STATE BANK OF INDIA', 'Second bank is SBI');
+assert(DEFAULT_BANK2.accountNo === '44813579950', 'SBI account number is 44813579950');
+assert(DEFAULT_BANK2.ifscCode === 'SBIN0065049', 'SBI IFSC is SBIN0065049');
+assert(DEFAULT_COMPANY.registeredOffice.includes('Edulapuram Muncipalty'), 'Registered office includes Edulapuram Muncipalty');
+assert(DEFAULT_COMPANY.registeredOffice.includes('507003'), 'Registered office includes 507003');
+console.log('✅ [PASS] Second Bank (SBI: 44813579950, SBIN0065049) and Registered Office verified');
+
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');
 console.log('========================================');

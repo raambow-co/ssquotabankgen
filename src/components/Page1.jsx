@@ -66,13 +66,14 @@ export const Page1 = ({ data }) => {
             </h3>
 
             <div className="company-quote-box border-2 border-black p-3 text-center rounded-xs max-w-lg mx-auto bg-white shadow-xs">
-              <p className="font-extrabold text-[#006699] text-base leading-tight tracking-wide">
+              <p className="font-extrabold text-[#006699] text-base leading-tight tracking-wide uppercase">
                 {company.name}
               </p>
-              <p className="font-bold text-[#006699] text-xs leading-tight mt-0.5">
-                {company.addressLine1}
+              <p className="font-bold text-[#006699] text-xs leading-snug mt-1 max-w-md mx-auto">
+                <span className="font-extrabold text-gray-900">Registered Office: </span>
+                {company.registeredOffice || company.addressLine1 || "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003"}
               </p>
-              <p className="font-bold text-sky-600 text-xs leading-tight mt-0.5">
+              <p className="font-bold text-sky-600 text-xs leading-tight mt-1">
                 Ph: {company.phone1}{company.phone2 ? `, ${company.phone2}` : ''}
               </p>
               <p className="font-bold text-[#006699] text-xs leading-tight mt-0.5">

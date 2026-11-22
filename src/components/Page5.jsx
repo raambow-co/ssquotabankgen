@@ -8,7 +8,9 @@ export const Page5 = ({ data }) => {
 
   const bankCost = pricing.bankCost || pricing.totalCost;
   const totalCostDisplay = formatINR(bankCost);
-  const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - (pricing.subsidyAmount || 0)));
+  const subsidyVal = pricing.subsidyAmount !== undefined ? pricing.subsidyAmount : (pricing.subsidy !== undefined ? pricing.subsidy : 78000);
+  const subsidyDisplay = formatINR(subsidyVal);
+  const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - subsidyVal));
 
   return (
     <div className="a4-page page-5 flex flex-col justify-start">
@@ -71,23 +73,13 @@ export const Page5 = ({ data }) => {
                   </td>
                 </tr>
 
-                {/* Empty separator rows as in original */}
-                <tr className="border-b border-black h-3.5">
-                  <td colSpan={2} className="border-r border-black"></td>
-                  <td></td>
-                </tr>
-                <tr className="border-b border-black h-3.5">
-                  <td colSpan={2} className="border-r border-black"></td>
-                  <td></td>
-                </tr>
-
-                {/* Sub Total row (Red text) */}
-                <tr className="border-b border-black bg-red-50/40">
-                  <td colSpan={2} className="py-1.5 px-4 text-center font-extrabold text-[#c0392b] text-sm border-r border-black tracking-wide">
-                    + Sub Total
+                {/* Subsidy row (Replaced extra lines and subtotal per client request) */}
+                <tr className="border-b border-black bg-slate-50/30">
+                  <td colSpan={2} className="py-1.5 px-4 text-center font-extrabold text-gray-900 text-sm border-r border-black tracking-wide">
+                    Subsidy
                   </td>
-                  <td className="py-1.5 px-2 text-center font-extrabold text-[#c0392b] text-sm tracking-wide">
-                    {totalCostDisplay}
+                  <td className="py-1.5 px-2 text-center font-extrabold text-gray-900 text-sm tracking-wide font-mono">
+                    {subsidyDisplay}
                   </td>
                 </tr>
 

@@ -62,6 +62,18 @@ export const ProposalPreviewModal = ({
 
   const bankQuotation = {
     ...quotation,
+    bank: quotation.bank || {
+      accountName: "SRIMAAN SOLAR SOLUTIONS",
+      accountNo: "50200095253784",
+      ifscCode: "HDFC0001631",
+      bankName: "HDFC BANK"
+    },
+    bank2: quotation.bank2 || {
+      accountName: "SRIMAAN SOLAR SOLUTIONS",
+      accountNo: "44813579950",
+      ifscCode: "SBIN0065049",
+      bankName: "STATE BANK OF INDIA"
+    },
     pricing: {
       ...quotation.pricing,
       bankCost: bankCostVal,
@@ -132,13 +144,12 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
 • Annual Savings: ~₹${formatINR(quotation.pricing.annualSavings)}/year
 • Estimated Payback: ${quotation.pricing.paybackYears} Years
 
-🏦 *Bank Account for Advance / PO:*
-• Bank: ${quotation.bank?.bankName || quotation.company?.bankName || 'State Bank of India'}
-• A/C Name: ${quotation.bank?.accountName || quotation.company?.accountName || 'M/s. SRIMAAN SOLAR SOLUTIONS'}
-• A/C No: ${quotation.bank?.accountNo || quotation.company?.accountNumber || '40892716382'}
-• IFSC: ${quotation.bank?.ifscCode || quotation.company?.ifscCode || 'SBIN0020154'}
+🏦 *Bank Accounts for NEFT / RTGS / IMPS:*
+• Primary (HDFC): A/C 50200095253784 | IFSC: HDFC0001631
+• Secondary (SBI): A/C 44813579950 | IFSC: SBIN0065049
+• A/C Name: SRIMAAN SOLAR SOLUTIONS
 
-📞 Contact: ${quotation.company?.phone || '+91 94948 22356'}
+📞 Contact: ${quotation.company?.phone1 || quotation.company?.phone || '9347416140 / 9912416140'}
 📧 Email: ${quotation.company?.email || 'srimaansolarsolutions@gmail.com'}`;
 
     navigator.clipboard.writeText(summary);
