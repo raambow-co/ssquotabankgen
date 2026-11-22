@@ -366,7 +366,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
             </div>
 
             <div className="border-t border-dashed border-slate-300 pt-1 flex justify-between text-[6.5pt] text-slate-600">
-              <span className="font-bold text-slate-900">{auth.signatoryName || 'K. Murali Krishna'} (Managing Director)</span>
+              <span className="font-bold text-slate-900">{auth.signatoryName || 'T. Ravindra Chary'} (Managing Director)</span>
               <span>Date: {formatDate(quotation?.date || new Date())}</span>
             </div>
           </div>

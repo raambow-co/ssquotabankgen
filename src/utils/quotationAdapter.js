@@ -8,9 +8,9 @@ export const srimaanCustomerSettings = {
     tagline: "Clean Green Renewable Energy EPC Partner",
     subheading: "State DISCOM Empanelled Solar EPC Vendor • Registered PM Surya Ghar Channel Partner",
     about: "M/s. SRIMAAN SOLAR SOLUTIONS is a premier clean-tech engineering and EPC enterprise delivering high-efficiency rooftop and ground-mount solar power systems across Telangana and Andhra Pradesh. Committed to engineering excellence, we deploy Tier-1 DCR solar modules, smart grid-tie inverters, heavy-duty hot-dip galvanized mounting structures, and seamless DISCOM net-metering synchronization.",
-    address: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
-    officeAddress: "#6-210,Sriramnagar,BehindAutonagar,Warangalxroad,khammamrural,KHAMMAMDIST-507003",
-    branches: "Khammam HQ | Hyderabad | Vijayawada | Visakhapatnam | Warangal",
+    address: "6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003",
+    officeAddress: "#6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003",
+    branches: "Hyderabad HQ | Khammam | Suryapet | Warangal",
     phone: "9347416140 | 9912416140",
     email: "srimaansolarsolutions@gmail.com",
     website: "www.srimaansolarsolutions.com",
@@ -89,7 +89,7 @@ export const srimaanCustomerSettings = {
   },
 
   authorization: {
-    signatoryName: "K. Murali Krishna",
+    signatoryName: "T. Ravindra Chary",
     signatoryTitle: "Managing Director & Project Head",
     division: "Technical Engineering & Commercial EPC Division",
     stampTop: "★ SRIMAAN SOLAR SOLUTIONS ★",

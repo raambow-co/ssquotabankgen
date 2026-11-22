@@ -389,27 +389,27 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
                 Regional Hubs
               </span>
               <span className="text-slate-500 text-[5.8pt] block mt-0.5 leading-tight">
-                Hyd &bull; Vzg &bull; Vja &bull; Blr &bull; Chn
+                Hyderabad HQ &bull; Khammam &bull; Suryapet &bull; Warangal
               </span>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 7. CORPORATE CONTACT & HEADQUARTERS BAR                        */}
+        {/* 7. REGISTERED HEAD OFFICE & CONTACT COORDINATES BAR           */}
         {/* ============================================================== */}
         <div className="border border-slate-200 rounded-xl p-2 bg-white shadow-2xs flex items-center justify-between text-[6.8pt]">
-          {/* Col 1: Headquarters */}
+          {/* Col 1: Registered Head Office */}
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-[#07132c] text-white flex items-center justify-center shrink-0">
               <Building2 className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
               <span className="font-black text-slate-900 text-[7pt] uppercase tracking-wide block">
-                Corporate Headquarters
+                Registered Head Office
               </span>
               <span className="text-[6.2pt] text-slate-600 block leading-tight max-w-[170px]">
-                {company.address || "#6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam, Telangana - 507003"}
+                {company.address || "#6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003"}
               </span>
             </div>
           </div>
@@ -441,7 +441,7 @@ export default function CustomerPage5CompanyProfile({ quotation, settings }) {
               REGIONAL NETWORK HUBS
             </span>
             <span className="font-bold text-slate-800 text-[6.5pt] block mt-0.5">
-              {company.branches || "Hyderabad • Visakhapatnam • Bangalore • Vijayawada"}
+              {company.branches || "Hyderabad HQ | Khammam | Suryapet | Warangal"}
             </span>
           </div>
         </div>

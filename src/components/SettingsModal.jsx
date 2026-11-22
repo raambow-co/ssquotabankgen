@@ -55,8 +55,8 @@ export const SettingsModal = ({
         tagline: "Built on Trust. Driven by Excellence.",
         empanelmentSubheading: "State DISCOM Empanelled Solar EPC Vendor • Registered Channel Partner",
         aboutNarrative: "M/s. SRIMAAN SOLAR SOLUTIONS is a premier clean energy EPC company specializing in high-performance rooftop solar installations across residential, commercial, institutional, and industrial facilities. Backed by certified civil and electrical engineers, we combine Tier-1 BloombergNEF hardware with precision structural design, seamless DISCOM net-metering facilitation, and lifetime IoT monitoring.",
-        address: "#6-210, Sriramnagar, Behind Auto Nagar, Warangal X Road, Khammam, Telangana - 507003",
-        branches: "Hyderabad | Visakhapatnam | Bangalore | Vijayawada | Khammam",
+        address: "#6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003",
+        branches: "Hyderabad HQ | Khammam | Suryapet | Warangal",
         phone1: "+91 93474 16140",
         phone2: "+91 99124 16140",
         email: "srimaansolarsolutions@gmail.com",
@@ -457,7 +457,7 @@ export const SettingsModal = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Headquarters Full Address</label>
+                    <label className="block font-bold text-slate-700 text-[11px] mb-0.5">Registered Head Office Address</label>
                     <input
                       type="text"
                       value={settings.company.address}

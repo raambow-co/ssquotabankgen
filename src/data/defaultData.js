@@ -159,15 +159,16 @@ export const DEFAULT_TERMS = [
 export const DEFAULT_COMPANY = {
   name: "M/s. SRIMAAN SOLAR SOLUTIONS",
   tagline: "GET YOUR OWN POWER STATION ON YOUR ROOFTOP",
-  registeredOffice: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
-  addressLine1: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
+  registeredOffice: "#6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003",
+  addressLine1: "#6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003",
   phone1: "9347416140",
   phone2: "9912416140",
   email: "srimaansolarsolutions@gmail.com",
   gstNo: "36ADPPT2441N1ZW",
   panNo: "ADPPT2441N",
   vendorRegNo: "TSRE250511",
-  officeAddress: "#6-210,Sriramnagar,BehindAutonagar,Warangalxroad,khammamrural,KHAMMAMDIST-507003"
+  officeAddress: "#6-210, Sriramnagar, Behind Autonagar, Warangal X Road, Edulapuram Muncipalty, Khammam District, Telangana State 507003",
+  branches: "Hyderabad HQ | Khammam | Suryapet | Warangal"
 };
 
 export const DEFAULT_BANK = {
