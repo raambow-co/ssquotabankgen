@@ -1,34 +1,43 @@
 import React from 'react';
 import { 
   ShieldCheck, 
-  CalendarCheck, 
-  Truck, 
-  CheckCircle2, 
-  Clock, 
-  Building2, 
   Coins, 
-  Sparkles,
-  FileCheck2,
-  FileText,
-  AlertCircle,
-  Award
+  Truck, 
+  Building2, 
+  Zap, 
+  SunMedium, 
+  Cpu, 
+  Layers, 
+  ArrowRight, 
+  CheckCircle2, 
+  CalendarCheck, 
+  Clock, 
+  Award, 
+  FileText 
 } from 'lucide-react';
 import Watermark from '../common/Watermark';
 import CustomerPageHeader from './CustomerPageHeader';
 import CustomerPageFooter from './CustomerPageFooter';
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatCurrency, formatNumber, formatDate } from '../../utils/formatters';
 
 export default function CustomerPage4Portfolio({ quotation, settings }) {
   const company = settings?.company || {};
   const auth = settings?.authorization || {};
   const technical = quotation?.technical || {};
   const commercials = quotation?.commercials || {};
-  const customer = quotation?.customer || {};
 
   const dcKw = parseFloat(technical?.actualDcCapacityKw || technical?.systemCapacityKw || 5.0);
-  const totalCost = commercials?.totalGrossCost || 0;
-  const subsidy = commercials?.subsidyAmount !== undefined ? commercials.subsidyAmount : 78000;
+  const acKw = parseFloat(technical?.acInverterCapacityKw || (dcKw <= 3 ? 3.6 : (dcKw * 1.2).toFixed(1)));
+  const totalCost = commercials?.totalGrossCost || 318640;
+  const subsidy = commercials?.subsidyAmount !== undefined ? commercials.subsidyAmount : (dcKw >= 3 ? 78000 : (dcKw >= 2 ? 60000 : 30000));
   const netPayable = commercials?.netPayable !== undefined ? commercials.netPayable : Math.max(0, totalCost - subsidy);
+
+  // Technical Annexure Metrics (Transferred from previous Page 5)
+  const annualKwh = technical?.estimatedAnnualUnits || Math.round((technical?.estimatedDailyUnits || (dcKw * 4.25)) * 365) || 8541;
+  const dailyKwh = technical?.estimatedDailyUnits || Number((annualKwh / 365).toFixed(1));
+  const monthlyKwh = Math.round(annualKwh / 12);
+  const minArea = Math.round(dcKw * 70);
+  const maxArea = Math.round(dcKw * 100);
 
   return (
     <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
@@ -39,74 +48,169 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex-1 flex flex-col justify-between min-h-0 space-y-2.5">
+      <div className="relative z-10 flex-1 flex flex-col justify-between min-h-0 space-y-1.5">
         {/* ============================================================== */}
         {/* 1. MASTER EXECUTIVE BRAND HEADER                               */}
         {/* ============================================================== */}
         <CustomerPageHeader 
           quotation={quotation}
           settings={settings}
-          title="Payment, Delivery and Warranty"
-          subtitle="Milestone Disbursement Schedule, Site Logistics & Statutory Warranties"
+          title="Payment Terms, Technical Annexure & Acceptance"
+          subtitle="Milestone Disbursement Schedule, System Configuration & Bilateral Agreement"
           badgeText="20 : 70 : 10 SLA"
           badgeColor="emerald"
           capacityKw={dcKw}
         />
 
         {/* ============================================================== */}
-        {/* 2. PAYMENT MILESTONES (Exact 20% / 70% / 10% from Official PDF) */}
+        {/* 2. TECHNICAL ANNEXURE & ESTIMATED GENERATION (From Page 5)     */}
+        {/* ============================================================== */}
+        <div className="border border-slate-200/90 rounded-xl p-2 bg-white shadow-2xs space-y-1.5">
+          <div className="flex items-center justify-between pb-0.5 border-b border-slate-100">
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              <h3 className="text-[7.8pt] font-black text-slate-900 uppercase tracking-wide font-sans">
+                Technical Annexure &bull; Grid-Interactive Flow &amp; Sizing
+              </h3>
+            </div>
+            <span className="text-[6pt] text-slate-500 font-medium">
+              Bi-Directional Net-Metering Architecture
+            </span>
+          </div>
+
+          {/* Clean 4-Node Flow Schematic */}
+          <div className="p-1 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-center text-[6.5pt]">
+            <div className="flex-1 p-0.5 bg-white rounded border border-slate-200 shadow-2xs">
+              <SunMedium className="w-3 h-3 text-blue-600 mx-auto" />
+              <strong className="block text-slate-900 text-[6.8pt]">Solar Panels</strong>
+              <span className="text-[5.5pt] text-slate-500">DC Generation</span>
+            </div>
+            <ArrowRight className="w-3 h-3 text-slate-400 mx-1 shrink-0" />
+            <div className="flex-1 p-0.5 bg-white rounded border border-slate-200 shadow-2xs">
+              <Cpu className="w-3 h-3 text-amber-600 mx-auto" />
+              <strong className="block text-slate-900 text-[6.8pt]">Grid Inverter</strong>
+              <span className="text-[5.5pt] text-slate-500">AC Conversion</span>
+            </div>
+            <ArrowRight className="w-3 h-3 text-slate-400 mx-1 shrink-0" />
+            <div className="flex-1 p-0.5 bg-white rounded border border-slate-200 shadow-2xs">
+              <Layers className="w-3 h-3 text-emerald-600 mx-auto" />
+              <strong className="block text-slate-900 text-[6.8pt]">Bi-Directional Meter</strong>
+              <span className="text-[5.5pt] text-slate-500">Net Import/Export</span>
+            </div>
+            <ArrowRight className="w-3 h-3 text-slate-400 mx-1 shrink-0" />
+            <div className="flex-1 p-0.5 bg-white rounded border border-slate-200 shadow-2xs">
+              <Building2 className="w-3 h-3 text-purple-600 mx-auto" />
+              <strong className="block text-slate-900 text-[6.8pt]">Property &amp; Grid</strong>
+              <span className="text-[5.5pt] text-slate-500">Zero Bill Power</span>
+            </div>
+          </div>
+
+          {/* System Configuration & Estimated Generation Split (Two Columns) */}
+          <div className="grid grid-cols-12 gap-2 text-[6.5pt]">
+            {/* System Configuration (6 Cols) */}
+            <div className="col-span-6 p-1.5 rounded-lg bg-slate-50/70 border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span className="text-[7pt] font-black text-slate-900 uppercase tracking-wide block pb-0.5 border-b border-slate-200 mb-1">
+                  System Configuration
+                </span>
+                <div className="space-y-0.5 text-[6.5pt]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Solar Array:</span>
+                    <strong className="text-slate-900">{dcKw} kWp Tier-1 TOPCon Bifacial</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">On-Grid Inverter:</span>
+                    <strong className="text-slate-900">{acKw} kW AC Multi-MPPT Smart Wi-Fi</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Shade-Free Roof Area:</span>
+                    <strong className="text-slate-900">Approx. {minArea}&ndash;{maxArea} Sq.Ft</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Estimated Generation Table (6 Cols) */}
+            <div className="col-span-6 p-1.5 rounded-lg bg-slate-50/70 border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span className="text-[7pt] font-black text-slate-900 uppercase tracking-wide block pb-0.5 border-b border-slate-200 mb-1">
+                  Estimated Generation
+                </span>
+                <div className="space-y-0.5 text-[6.5pt]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Average Daily:</span>
+                    <strong className="font-mono font-bold text-slate-900">~{dailyKwh} kWh / day</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Average Monthly:</span>
+                    <strong className="font-mono font-bold text-slate-900">~{monthlyKwh} kWh / month</strong>
+                  </div>
+                  <div className="flex justify-between text-emerald-800 font-bold bg-emerald-50/80 px-1 py-0.2 rounded">
+                    <span>Annual Generation:</span>
+                    <span className="font-mono font-black">~{formatNumber(annualKwh)} kWh / year</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================== */}
+        {/* 3. PAYMENT MILESTONES (Exact 20% / 70% / 10% from Official PDF) */}
         {/* ============================================================== */}
         <div>
-          <h3 className="text-[10px] font-black text-slate-900 tracking-wide uppercase mb-1.5 flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 mb-1">
             <Coins className="w-3.5 h-3.5 text-blue-600" />
-            Payment Terms &amp; Milestones
-          </h3>
+            <h3 className="text-[7.8pt] font-black text-slate-900 tracking-wide uppercase font-sans">
+              Payment Terms &amp; Milestones (20 : 70 : 10)
+            </h3>
+          </div>
 
-          <div className="grid grid-cols-3 gap-2.5 text-center">
+          <div className="grid grid-cols-3 gap-2 text-center">
             {/* 20% Advance */}
-            <div className="p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+            <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
               <div>
-                <span className="text-3xl font-black text-blue-900 font-mono block">20%</span>
-                <span className="text-[8.5px] font-extrabold text-slate-900 uppercase tracking-wide block mt-1">
+                <span className="text-2xl font-black text-blue-900 font-mono block">20%</span>
+                <span className="text-[7.5pt] font-extrabold text-slate-900 uppercase tracking-wide block mt-0.5">
                   Advance with purchase order
                 </span>
-                <p className="text-[7px] text-slate-500 mt-1 leading-snug">
+                <p className="text-[6pt] text-slate-500 mt-0.5 leading-tight">
                   Along with work order sign-off to initiate engineering survey &amp; DISCOM net-meter filing.
                 </p>
               </div>
-              <div className="mt-2 pt-1 border-t border-slate-100 font-mono font-black text-blue-950 text-[9px]">
+              <div className="mt-1 pt-1 border-t border-slate-100 font-mono font-black text-blue-950 text-[8pt]">
                 {formatCurrency(netPayable * 0.20)}
               </div>
             </div>
 
             {/* 70% Before Dispatch */}
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-300 shadow-2xs flex flex-col justify-between">
+            <div className="p-2 rounded-xl bg-slate-50 border border-slate-300 shadow-2xs flex flex-col justify-between">
               <div>
-                <span className="text-3xl font-black text-slate-900 font-mono block">70%</span>
-                <span className="text-[8.5px] font-extrabold text-slate-900 uppercase tracking-wide block mt-1">
+                <span className="text-2xl font-black text-slate-900 font-mono block">70%</span>
+                <span className="text-[7.5pt] font-extrabold text-slate-900 uppercase tracking-wide block mt-0.5">
                   Before dispatch of materials
                 </span>
-                <p className="text-[7px] text-slate-500 mt-1 leading-snug">
+                <p className="text-[6pt] text-slate-500 mt-0.5 leading-tight">
                   Upon readiness of Tier-1 solar modules, inverter, structure and balance of materials.
                 </p>
               </div>
-              <div className="mt-2 pt-1 border-t border-slate-200 font-mono font-black text-slate-950 text-[9px]">
+              <div className="mt-1 pt-1 border-t border-slate-200 font-mono font-black text-slate-950 text-[8pt]">
                 {formatCurrency(netPayable * 0.70)}
               </div>
             </div>
 
             {/* 10% At Installation */}
-            <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-300 shadow-2xs flex flex-col justify-between">
+            <div className="p-2 rounded-xl bg-emerald-50/70 border border-emerald-300 shadow-2xs flex flex-col justify-between">
               <div>
-                <span className="text-3xl font-black text-emerald-800 font-mono block">10%</span>
-                <span className="text-[8.5px] font-extrabold text-emerald-950 uppercase tracking-wide block mt-1">
+                <span className="text-2xl font-black text-emerald-800 font-mono block">10%</span>
+                <span className="text-[7.5pt] font-extrabold text-emerald-950 uppercase tracking-wide block mt-0.5">
                   At installation
                 </span>
-                <p className="text-[7px] text-emerald-900 mt-1 leading-snug">
+                <p className="text-[6pt] text-emerald-900 mt-0.5 leading-tight">
                   Upon completion of mechanical &amp; electrical rooftop installation at site.
                 </p>
               </div>
-              <div className="mt-2 pt-1 border-t border-emerald-200 font-mono font-black text-emerald-950 text-[9px]">
+              <div className="mt-1 pt-1 border-t border-emerald-200 font-mono font-black text-emerald-950 text-[8pt]">
                 {formatCurrency(netPayable * 0.10)}
               </div>
             </div>
@@ -114,144 +218,122 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
         </div>
 
         {/* ============================================================== */}
-        {/* 3. DELIVERY AND COMMISSIONING (From Official PDF)               */}
+        {/* 4. DELIVERY & COMMISSIONING + WARRANTIES (Two Columns)         */}
         {/* ============================================================== */}
-        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <h4 className="text-[9px] font-black text-slate-900 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5 text-amber-600" />
-            Delivery and Commissioning
-          </h4>
-
-          <div className="grid grid-cols-2 gap-2 text-[7.5px]">
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-              <span className="font-extrabold text-slate-900 block text-[8px] mb-0.5">Delivery Timeline</span>
-              <p className="text-slate-600 leading-relaxed">
-                Materials will be delivered to the site after receipt of <strong>90% of the total project cost</strong>.
-              </p>
-            </div>
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-              <span className="font-extrabold text-slate-900 block text-[8px] mb-0.5">Plant Commissioning</span>
-              <p className="text-slate-600 leading-relaxed">
-                The system will be commissioned after net metering is completed. The estimated timeline is <strong>30 days from installation</strong>.
-              </p>
+        <div className="grid grid-cols-2 gap-2 text-[6.8pt]">
+          {/* Delivery & Commissioning */}
+          <div className="p-2 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-1 text-[7.5pt] font-black text-slate-900 uppercase tracking-wide pb-1 border-b border-slate-100 mb-1">
+                <Truck className="w-3 h-3 text-amber-600" />
+                <span>Delivery and Commissioning</span>
+              </div>
+              <div className="space-y-1 text-slate-600 leading-snug">
+                <div>
+                  <strong className="text-slate-900 block text-[7pt]">Delivery Timeline:</strong>
+                  Materials will be delivered to site after receipt of <strong>90% of total project cost</strong>.
+                </div>
+                <div>
+                  <strong className="text-slate-900 block text-[7pt]">Plant Commissioning:</strong>
+                  Commissioned after DISCOM net-metering synchronization within <strong>30 days of installation</strong>.
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* ============================================================== */}
-        {/* 4. WARRANTY AND SITE TERMS (From Official PDF)                  */}
-        {/* ============================================================== */}
-        <div className="p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <h4 className="text-[9px] font-black text-slate-900 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            Warranty and Site Terms
-          </h4>
-
-          <div className="border border-slate-200 rounded-xl overflow-hidden text-[7.5px]">
-            <table className="w-full border-collapse">
-              <tbody>
-                <tr className="border-b border-slate-200">
-                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
-                    PV modules
-                  </td>
-                  <td className="p-1.5 text-slate-700 font-semibold">
-                    25-year output power warranty (Linear degradation &le;0.55%/yr)
-                  </td>
-                </tr>
-                <tr className="border-b border-slate-200">
-                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
-                    Inverter
-                  </td>
-                  <td className="p-1.5 text-slate-700 font-semibold">
-                    7-year manufacturer's warranty
-                  </td>
-                </tr>
-                <tr className="border-b border-slate-200">
-                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
-                    Site terms
-                  </td>
-                  <td className="p-1.5 text-slate-700">
-                    The customer handles local installation issues, including those involving labour unions or local groups. Surplus materials remain the vendor's property.
-                  </td>
-                </tr>
-                <tr>
-                  <td className="w-1/4 p-1.5 font-bold text-slate-900 bg-slate-50 border-r border-slate-200">
-                    Order terms
-                  </td>
-                  <td className="p-1.5 text-slate-700">
-                    Advance payment constitutes acceptance. Orders cannot be cancelled once placed.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          {/* Warranties & Site Terms */}
+          <div className="p-2 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-1 text-[7.5pt] font-black text-slate-900 uppercase tracking-wide pb-1 border-b border-slate-100 mb-1">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                <span>Warranty &amp; Site Terms</span>
+              </div>
+              <div className="space-y-0.5 text-slate-600 leading-tight text-[6.5pt]">
+                <div className="flex justify-between">
+                  <span className="font-bold text-slate-800">PV Modules:</span>
+                  <span className="text-slate-700">25-Yr Linear Power Output (&le;0.55%/yr)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-bold text-slate-800">Inverter:</span>
+                  <span className="text-slate-700">7-Year Comprehensive Warranty</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-bold text-slate-800">Workmanship:</span>
+                  <span className="text-slate-700">5-Year Turnkey EPC &amp; Yield Assurance</span>
+                </div>
+                <div className="text-[6pt] text-slate-500 pt-0.5 border-t border-slate-100 mt-0.5">
+                  Advance payment constitutes official acceptance. Orders are non-cancellable once executed.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* ============================================================== */}
         {/* 5. OFFICIAL STATE BANK OF INDIA PAYMENT CARD                    */}
         {/* ============================================================== */}
-        <div className="p-2.5 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-amber-50/20 border border-slate-200 shadow-2xs">
-          <div className="flex items-center justify-between pb-1 border-b border-slate-200 mb-1">
-            <span className="text-[8.5px] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+        <div className="p-2 rounded-xl bg-gradient-to-br from-slate-50 via-white to-amber-50/20 border border-slate-200 shadow-2xs">
+          <div className="flex items-center justify-between pb-0.5 border-b border-slate-200 mb-1">
+            <span className="text-[7.5pt] font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5 font-sans">
               <Building2 className="w-3.5 h-3.5 text-amber-600" />
               Official Bank Account for Payments
             </span>
-            <span className="text-[7px] font-black text-blue-800 bg-blue-100 px-1.5 py-0.2 rounded">
+            <span className="text-[6.5pt] font-black text-blue-800 bg-blue-100 px-1.5 py-0.2 rounded">
               SBI Corporate Account
             </span>
           </div>
 
-          <div className="grid grid-cols-4 gap-2 text-[7.5px]">
-            <div className="p-1 rounded-lg bg-white border border-slate-200">
-              <span className="text-slate-400 block text-[6px] uppercase font-bold">Account Name</span>
-              <strong className="text-slate-950 text-[7.5px] block truncate">M/s. SRIMAAN SOLAR SOLUTIONS</strong>
+          <div className="grid grid-cols-4 gap-2 text-[7pt]">
+            <div className="p-1 rounded bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">Account Name</span>
+              <strong className="text-slate-950 text-[7pt] block truncate">M/s. SRIMAAN SOLAR SOLUTIONS</strong>
             </div>
-            <div className="p-1 rounded-lg bg-white border border-slate-200">
-              <span className="text-slate-400 block text-[6px] uppercase font-bold">Bank &amp; Branch</span>
-              <strong className="text-slate-800 text-[7.5px] block truncate">State Bank of India &bull; Khammam</strong>
+            <div className="p-1 rounded bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">Bank &amp; Branch</span>
+              <strong className="text-slate-800 text-[7pt] block truncate">State Bank of India &bull; Khammam</strong>
             </div>
-            <div className="p-1 rounded-lg bg-white border border-slate-200">
-              <span className="text-slate-400 block text-[6px] uppercase font-bold">Account Number</span>
-              <strong className="text-slate-950 font-mono text-[7.5px] block">44813579950</strong>
+            <div className="p-1 rounded bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">Account Number</span>
+              <strong className="text-slate-950 font-mono text-[7pt] block">44813579950</strong>
             </div>
-            <div className="p-1 rounded-lg bg-white border border-slate-200">
-              <span className="text-slate-400 block text-[6px] uppercase font-bold">IFSC Code</span>
-              <strong className="text-slate-950 font-mono text-[7.5px] block">SBIN0065049</strong>
+            <div className="p-1 rounded bg-white border border-slate-200">
+              <span className="text-slate-400 block text-[5.8pt] uppercase font-bold">IFSC Code</span>
+              <strong className="text-slate-950 font-mono text-[7pt] block">SBIN0065049</strong>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 6. ACCEPTANCE & BILATERAL AUTHORIZATION (From Official PDF)    */}
+        {/* 6. ACCEPTANCE & BILATERAL AUTHORIZATION                        */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-2 gap-2.5 text-xs">
+        <div className="grid grid-cols-2 gap-2 text-[6.8pt]">
           {/* Customer Acceptance */}
-          <div className="p-2.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-2xs">
+          <div className="p-2 bg-white border border-slate-200/90 rounded-xl flex flex-col justify-between shadow-2xs">
             <div>
-              <p className="font-black text-slate-900 text-[8.5px] mb-0.5">Acceptance</p>
-              <p className="text-[7px] text-slate-600 leading-snug mb-2">
+              <p className="font-black text-slate-900 text-[7.5pt] mb-0.5">Acceptance</p>
+              <p className="text-[6.2pt] text-slate-600 leading-snug mb-2">
                 I hereby accept the technical scope, payment terms, and delivery conditions of this quotation and confirm formal placement of the turnkey order.
               </p>
             </div>
-            <div className="border-t border-dashed border-slate-300 pt-1.5 flex justify-between text-[7px] text-slate-600">
-              <span>Customer signature: __________________________</span>
-              <span>Date: ______________</span>
+            <div className="border-t border-dashed border-slate-300 pt-1 flex justify-between text-[6.5pt] text-slate-600">
+              <span>Customer signature: ______________________</span>
+              <span>Date: __________</span>
             </div>
           </div>
 
           {/* Srimaan Solar Official Signatory & Stamp */}
-          <div className="p-2.5 bg-white border border-slate-200/90 rounded-2xl relative overflow-hidden flex flex-col justify-between shadow-2xs">
+          <div className="p-2 bg-white border border-slate-200/90 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-2xs">
             {/* Rubber Stamp Overlay */}
-            <div className="absolute right-3 top-1 pointer-events-none select-none opacity-85">
-              <div className="w-12 h-12 rounded-full border-2 border-[#060e24] p-0.5 flex items-center justify-center transform rotate-[-6deg]">
+            <div className="absolute right-2 top-0.5 pointer-events-none select-none opacity-85">
+              <div className="w-11 h-11 rounded-full border-2 border-[#060e24] p-0.5 flex items-center justify-center transform rotate-[-6deg]">
                 <div className="w-full h-full rounded-full border border-dashed border-amber-600 flex flex-col items-center justify-center p-0.5 text-center bg-amber-50/40">
-                  <span className="text-[3px] font-black uppercase text-slate-950 tracking-wider">
+                  <span className="text-[2.8pt] font-black uppercase text-slate-950 tracking-wider">
                     ★ SRIMAAN SOLAR SOLUTIONS ★
                   </span>
-                  <span className="text-[4.5px] font-extrabold text-blue-900 my-0.2">
+                  <span className="text-[4pt] font-extrabold text-blue-900 my-0.2">
                     AUTHORIZED
                   </span>
-                  <span className="text-[3px] font-bold uppercase text-emerald-800 tracking-wider">
+                  <span className="text-[2.8pt] font-bold uppercase text-emerald-800 tracking-wider">
                     TECHNICAL EPC
                   </span>
                 </div>
@@ -260,17 +342,17 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
 
             <div>
               <div className="flex items-center justify-between mb-0.5">
-                <p className="font-black text-slate-900 text-[8.5px]">For Srimaan Solar Solutions</p>
-                <span className="text-[6px] text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded font-extrabold border border-emerald-200">
+                <p className="font-black text-slate-900 text-[7.5pt]">For Srimaan Solar Solutions</p>
+                <span className="text-[5.5pt] text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded font-extrabold border border-emerald-200">
                   &#10003; Empanelled Partner
                 </span>
               </div>
-              <p className="text-[7px] text-slate-600 leading-snug mb-2">
+              <p className="text-[6.2pt] text-slate-600 leading-snug mb-1.5">
                 Technical Engineering &amp; Commercial EPC Projects Division. Registered Channel Partner.
               </p>
             </div>
 
-            <div className="border-t border-dashed border-slate-300 pt-1.5 flex justify-between text-[7px] text-slate-600">
+            <div className="border-t border-dashed border-slate-300 pt-1 flex justify-between text-[6.5pt] text-slate-600">
               <span className="font-bold text-slate-900">{auth.signatoryName || 'K. Murali Krishna'} (Managing Director)</span>
               <span>Date: {formatDate(quotation?.date || new Date())}</span>
             </div>
