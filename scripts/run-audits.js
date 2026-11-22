@@ -225,6 +225,19 @@ for (const file of allJsx) {
   );
 }
 
+// 9. Data Defaults Import Audit
+console.log('\n--- 9. AUDITING DATA DEFAULTS IMPORTS ---');
+const defaultConstants = ['DEFAULT_COMPANY', 'DEFAULT_BANK', 'DEFAULT_BANK2', 'INITIAL_QUOTATION_DATA', 'INITIAL_SAVED_QUOTATIONS'];
+for (const file of allJsx) {
+  const content = fs.readFileSync(file, 'utf8');
+  for (const c of defaultConstants) {
+    if (content.includes(c)) {
+      const isImportedOrExported = content.includes(`import`) && content.includes(c) || content.includes(`export const ${c}`);
+      assert(isImportedOrExported, `${c} in ${path.basename(file)} is properly imported or declared`);
+    }
+  }
+}
+
 console.log('\n========================================');
 console.log(`TOTAL TESTS: ${passCount + failCount} | PASSED: ${passCount} | FAILED: ${failCount}`);
 console.log('========================================');

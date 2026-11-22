@@ -9,6 +9,7 @@ import {
   INITIAL_SAVED_QUOTATIONS, 
   DEFAULT_COMPANY, 
   DEFAULT_BANK,
+  DEFAULT_BANK2,
   DEFAULT_BOM,
   DEFAULT_TERMS
 } from './data/defaultData';

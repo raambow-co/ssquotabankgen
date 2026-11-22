@@ -279,6 +279,7 @@ export const INITIAL_SAVED_QUOTATIONS = [
     },
     company: DEFAULT_COMPANY,
     bank: DEFAULT_BANK,
+    bank2: DEFAULT_BANK2,
     system: {
       capacityKw: 5.5,
       panelsCount: 10,
@@ -331,6 +332,7 @@ export const INITIAL_SAVED_QUOTATIONS = [
     },
     company: DEFAULT_COMPANY,
     bank: DEFAULT_BANK,
+    bank2: DEFAULT_BANK2,
     system: {
       capacityKw: 10,
       panelsCount: 20,
