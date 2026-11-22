@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { X, Save, RotateCcw, Building, CreditCard, DollarSign } from 'lucide-react';
-import { DEFAULT_COMPANY, DEFAULT_BANK } from '../data/defaultData';
+import { DEFAULT_COMPANY, DEFAULT_BANK, DEFAULT_BANK2 } from '../data/defaultData';
 
-export const SettingsModal = ({ isOpen, onClose, onSaveSettings, currentCompany, currentBank }) => {
+export const SettingsModal = ({ isOpen, onClose, onSaveSettings, currentCompany, currentBank, currentBank2 }) => {
   const [company, setCompany] = useState(currentCompany || DEFAULT_COMPANY);
   const [bank, setBank] = useState(currentBank || DEFAULT_BANK);
+  const [bank2, setBank2] = useState(currentBank2 || DEFAULT_BANK2);
   const [defaultTariff, setDefaultTariff] = useState(8);
 
   if (!isOpen) return null;
 
   const handleSave = () => {
-    onSaveSettings({ company, bank, defaultTariff });
+    onSaveSettings({ company, bank, bank2, defaultTariff });
     onClose();
   };
 
@@ -18,6 +19,7 @@ export const SettingsModal = ({ isOpen, onClose, onSaveSettings, currentCompany,
     if (window.confirm("Reset company and bank details to Srimaan Solar Solutions defaults?")) {
       setCompany(DEFAULT_COMPANY);
       setBank(DEFAULT_BANK);
+      setBank2(DEFAULT_BANK2);
       setDefaultTariff(8);
     }
   };
@@ -121,6 +123,16 @@ export const SettingsModal = ({ isOpen, onClose, onSaveSettings, currentCompany,
               </div>
 
               <div className="sm:col-span-2">
+                <label className="block text-slate-600 font-semibold mb-1">Registered Office Address (Page 1 Box)</label>
+                <input
+                  type="text"
+                  value={company.registeredOffice || company.addressLine1}
+                  onChange={(e) => setCompany({ ...company, registeredOffice: e.target.value, addressLine1: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
                 <label className="block text-slate-600 font-semibold mb-1">Office Address (Footer text)</label>
                 <input
                   type="text"
@@ -178,6 +190,54 @@ export const SettingsModal = ({ isOpen, onClose, onSaveSettings, currentCompany,
                   onChange={(e) => setBank({ ...bank, ifscCode: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono text-slate-900"
                 />
+              </div>
+            </div>
+
+            {/* Second Bank Account */}
+            <div className="pt-3 border-t border-slate-100">
+              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Second Bank Account - State Bank of India (Page 6)
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Bank 2 Name</label>
+                  <input
+                    type="text"
+                    value={bank2.bankName}
+                    onChange={(e) => setBank2({ ...bank2, bankName: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Bank 2 Account Name</label>
+                  <input
+                    type="text"
+                    value={bank2.accountName}
+                    onChange={(e) => setBank2({ ...bank2, accountName: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Bank 2 Account Number</label>
+                  <input
+                    type="text"
+                    value={bank2.accountNo}
+                    onChange={(e) => setBank2({ ...bank2, accountNo: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono text-slate-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Bank 2 IFSC Code</label>
+                  <input
+                    type="text"
+                    value={bank2.ifscCode}
+                    onChange={(e) => setBank2({ ...bank2, ifscCode: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono text-slate-900"
+                  />
+                </div>
               </div>
             </div>
           </div>

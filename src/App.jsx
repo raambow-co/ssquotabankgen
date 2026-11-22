@@ -59,11 +59,27 @@ export function AppContent() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [previewFormat, setPreviewFormat] = useState('bank'); // 'bank' | 'customer'
 
-  // Quotations list in database
+  // Quotations list in database (auto-migrating existing records to include latest bank2 & registered office)
   const [quotations, setQuotations] = useState(() => {
     try {
       const saved = localStorage.getItem('srimaan_solar_proposals_db');
-      return saved ? JSON.parse(saved) : INITIAL_SAVED_QUOTATIONS;
+      const list = saved ? JSON.parse(saved) : INITIAL_SAVED_QUOTATIONS;
+      if (Array.isArray(list) && list.length > 0) {
+        return list.map(q => ({
+          ...q,
+          company: {
+            ...DEFAULT_COMPANY,
+            ...(q.company || {}),
+            registeredOffice: "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003",
+            addressLine1: (q.company?.addressLine1 && q.company.addressLine1.includes('SRIRAMNAGAR')) 
+              ? q.company.addressLine1 
+              : "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003"
+          },
+          bank: q.bank || DEFAULT_BANK,
+          bank2: q.bank2 || DEFAULT_BANK2
+        }));
+      }
+      return INITIAL_SAVED_QUOTATIONS;
     } catch {
       return INITIAL_SAVED_QUOTATIONS;
     }
@@ -77,7 +93,13 @@ export function AppContent() {
   const [companySettings, setCompanySettings] = useState(() => {
     try {
       const saved = localStorage.getItem('srimaan_company_settings');
-      return saved ? JSON.parse(saved) : DEFAULT_COMPANY;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.registeredOffice && parsed.registeredOffice.includes('SRIRAMNAGAR')) {
+          return parsed;
+        }
+      }
+      return DEFAULT_COMPANY;
     } catch {
       return DEFAULT_COMPANY;
     }
@@ -88,6 +110,14 @@ export function AppContent() {
       return saved ? JSON.parse(saved) : DEFAULT_BANK;
     } catch {
       return DEFAULT_BANK;
+    }
+  });
+  const [bank2Settings, setBank2Settings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('srimaan_bank2_settings');
+      return saved ? JSON.parse(saved) : DEFAULT_BANK2;
+    } catch {
+      return DEFAULT_BANK2;
     }
   });
 
@@ -237,17 +267,20 @@ export function AppContent() {
   };
 
   // Handler: Save Settings
-  const handleSaveSettings = ({ company, bank }) => {
+  const handleSaveSettings = ({ company, bank, bank2 }) => {
     setCompanySettings(company);
     setBankSettings(bank);
+    if (bank2) setBank2Settings(bank2);
     localStorage.setItem('srimaan_company_settings', JSON.stringify(company));
     localStorage.setItem('srimaan_bank_settings', JSON.stringify(bank));
+    if (bank2) localStorage.setItem('srimaan_bank2_settings', JSON.stringify(bank2));
 
     // Update active quotation company & bank if present
     setActiveQuotation(prev => ({
       ...prev,
       company,
-      bank
+      bank,
+      bank2: bank2 || prev.bank2 || DEFAULT_BANK2
     }));
   };
 
@@ -312,6 +345,7 @@ export function AppContent() {
         onSaveSettings={handleSaveSettings}
         currentCompany={companySettings}
         currentBank={bankSettings}
+        currentBank2={bank2Settings}
       />
     </div>
   );

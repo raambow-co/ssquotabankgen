@@ -71,7 +71,11 @@ export const Page1 = ({ data }) => {
               </p>
               <p className="font-bold text-[#006699] text-xs leading-snug mt-1 max-w-md mx-auto">
                 <span className="font-extrabold text-gray-900">Registered Office: </span>
-                {company.registeredOffice || company.addressLine1 || "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003"}
+                {(company?.registeredOffice && company.registeredOffice.includes('SRIRAMNAGAR')) 
+                  ? company.registeredOffice 
+                  : (company?.addressLine1 && company.addressLine1.includes('SRIRAMNAGAR')) 
+                    ? company.addressLine1 
+                    : "6-210 SRIRAMNAGAR BEHIND AUTONAGAR WARANGAL X ROAD, Edulapuram Muncipalty, Khammam district, Telangana State 507003"}
               </p>
               <p className="font-bold text-sky-600 text-xs leading-tight mt-1">
                 Ph: {company.phone1}{company.phone2 ? `, ${company.phone2}` : ''}
