@@ -39,7 +39,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
   return (
-    <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
+    <div className="a4-preview-sheet p-6 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
       {/* Signature Multi-Tier Gold & Navy Top Accent */}
       <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
       <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
@@ -47,7 +47,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex flex-col h-full space-y-2.5">
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-2">
         {/* ============================================================== */}
         {/* 1. MASTER HEADER WITH LOGO, GOVT EMBLEMS & PROPOSAL BADGE     */}
         {/* ============================================================== */}
@@ -462,7 +462,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
         {/* ============================================================== */}
         {/* 8. PAGE 1 FOOTER                                               */}
         {/* ============================================================== */}
-        <div className="mt-auto pt-1 shrink-0">
+        <div className="pt-1 shrink-0">
           <CustomerPageFooter pageNumber={1} totalPages={5} />
         </div>
       </div>
