@@ -335,6 +335,7 @@ export function AppContent() {
             initialFormat={previewFormat}
             onBack={() => setCurrentView('form')}
             onEdit={() => setCurrentView('form')}
+            onUpdateQuotation={(updated) => setActiveQuotation(updated)}
           />
         )}
       </main>

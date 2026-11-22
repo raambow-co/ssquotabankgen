@@ -21,14 +21,32 @@ import { formatINR, numberToWordsINR } from '../utils/calculations';
 
 export const ProposalPreviewModal = ({ 
   quotation, 
-  initialFormat = 'bank', // 'bank' | 'customer'
+  initialFormat = 'bank', // 'bank' | 'customer' | 'receipt'
   onBack, 
-  onEdit 
+  onEdit,
+  onUpdateQuotation
 }) => {
-  const [formatMode, setFormatMode] = useState(initialFormat); // 'bank' | 'customer'
+  const [currentQuotation, setCurrentQuotation] = useState(quotation);
+  const [formatMode, setFormatMode] = useState(initialFormat); // 'bank' | 'customer' | 'receipt'
   const [selectedPage, setSelectedPage] = useState('all');
   const [zoomLevel, setZoomLevel] = useState(85);
   const [copiedNotification, setCopiedNotification] = useState(false);
+
+  // Synchronize state if incoming quotation prop changes
+  React.useEffect(() => {
+    setCurrentQuotation(quotation);
+  }, [quotation]);
+
+  const handleUpdateReceipt = (updatedReceipt) => {
+    const updated = {
+      ...currentQuotation,
+      receipt: updatedReceipt
+    };
+    setCurrentQuotation(updated);
+    if (onUpdateQuotation) {
+      onUpdateQuotation(updated);
+    }
+  };
 
   // Bank Proposal Pages (7 Pages)
   const bankPages = [
@@ -90,24 +108,24 @@ export const ProposalPreviewModal = ({
 
   const handleCopyWhatsApp = () => {
     if (formatMode === 'receipt') {
-      const rec = quotation.receipt || {};
-      const totalCost = Number(quotation.pricing?.customerCost || quotation.pricing?.totalCost || 220000);
+      const rec = currentQuotation.receipt || {};
+      const totalCost = Number(rec.projectCost !== undefined ? rec.projectCost : (currentQuotation.pricing?.bankCost || currentQuotation.pricing?.totalCost || 375000));
       const adv = Number(rec.advanceAmount !== undefined ? rec.advanceAmount : Math.round(totalCost * 0.1));
-      const bal = Math.max(0, totalCost - adv);
+      const bal = Number(rec.balanceAmount !== undefined ? rec.balanceAmount : Math.max(0, totalCost - adv));
       const summary = `🧾 *SRIMAAN SOLAR SOLUTIONS - ADVANCE PAYMENT RECEIPT*
 ----------------------------------------
-👤 *Customer:* ${quotation.customer?.name || 'Valued Customer'}
-📍 *Address:* ${quotation.customer?.addressLine1 || quotation.customer?.address || ''}, ${quotation.customer?.district || ''}, ${quotation.customer?.state || 'TELANGANA'}
-📱 *Mobile:* ${quotation.customer?.phone || quotation.customer?.mobile || ''}
-📑 *Receipt No:* ${rec.receiptNo || quotation.customer?.consumerNo || quotation.refNo || '32'}
-📅 *Date:* ${rec.receiptDate || quotation.date || ''}
-⚡ *System Capacity:* ${quotation.system?.capacityKw || 3} kWp
+👤 *Customer:* ${rec.customerName || currentQuotation.customer?.name || 'Valued Customer'}
+📍 *Address:* ${rec.addressLine1 || currentQuotation.customer?.addressLine1 || currentQuotation.customer?.address || ''}, ${rec.district || currentQuotation.customer?.district || ''}, ${rec.state || currentQuotation.customer?.state || 'TELANGANA'}
+📱 *Mobile:* ${rec.mobile || currentQuotation.customer?.phone || currentQuotation.customer?.mobile || ''}
+📑 *Receipt No:* ${rec.receiptNo || currentQuotation.customer?.consumerNo || currentQuotation.refNo || '32'}
+📅 *Date:* ${rec.receiptDate || currentQuotation.date || ''}
+⚡ *System Capacity:* ${rec.capacityKw || currentQuotation.system?.capacityKw || 5} kWp
 
-💰 *PAYMENT BREAKUP:*
+💰 *PAYMENT BREAKUP (BANK PO PRICING):*
 • Total Project Cost: ₹${formatINR(totalCost)}
 • Advance Payment Received: ₹${formatINR(adv)}
 • Balance Payable: ₹${formatINR(bal)}
-• Amount in Words: ${numberToWordsINR(adv)}
+• Amount in Words: ${rec.amountInWords || numberToWordsINR(adv)}
 • Payment Mode: ${rec.paymentMode || 'Bank Transfer / RTGS / NEFT / UPI'}
 ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: ${rec.reasonForPayment || 'Start work of contract load & feasibility permission'}
 
@@ -406,7 +424,10 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
           {/* ADVANCE PAYMENT RECEIPT (1 PAGE A4) */}
           {formatMode === 'receipt' && (
             <div className="document-page-wrapper shadow-2xl print:shadow-none">
-              <AdvanceReceiptView quotation={quotation} />
+              <AdvanceReceiptView 
+                quotation={currentQuotation} 
+                onUpdateReceipt={handleUpdateReceipt} 
+              />
             </div>
           )}
         </div>
