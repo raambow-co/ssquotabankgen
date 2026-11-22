@@ -96,8 +96,15 @@ export const Page5 = ({ data }) => {
             </table>
           </div>
 
+          {/* Statutory Subsidy Directly Credited Banner transferred from Page 6 */}
+          <div className="mt-2.5 mb-1.5 p-1.5 bg-emerald-50/80 border border-emerald-300 rounded-xs">
+            <h4 className="font-extrabold text-gray-900 text-[10pt] tracking-wide text-center">
+              SUBSIDY AMOUNT &nbsp;&nbsp;&nbsp;&nbsp; ₹{subsidyDisplay}/- directly credited to customer account
+            </h4>
+          </div>
+
           {/* Statutory GST Note */}
-          <div className="mt-2 text-[7.5pt] text-gray-700 italic text-left">
+          <div className="mt-1 text-[7.5pt] text-gray-700 italic text-left">
             <p>
               * Prices quoted are inclusive of all taxes. Statutory GST is bifurcated as 70% of system cost deemed goods (Solar PV Modules &amp; Inverter) taxable @ 5% and 30% deemed balance of system &amp; services taxable @ 18% as per MNRE/GST Council guidelines (Detailed GST Calculation table on Page 6).
             </p>

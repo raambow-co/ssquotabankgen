@@ -31,14 +31,14 @@ export const Page1 = ({ data }) => {
               <br />
               ONGRID POWER GENERATING SYSTEM
             </h1>
-            <h2 className="ref-number-text font-bold text-[#0099b8] mt-1 tracking-wide text-[11.5pt]">
-              REF: {customer?.consumerNo || refNo}
-            </h2>
           </div>
 
-          {/* Date */}
-          <div className="mt-2 mb-2 text-left">
-            <p className="font-bold text-gray-900 text-sm tracking-wide">
+          {/* Ref No (Left) and Date (Right) in a Single Line */}
+          <div className="flex items-center justify-between mt-2 mb-2 text-left">
+            <h2 className="ref-number-text font-bold text-[#0099b8] tracking-wide text-[11pt]">
+              REF: {customer?.consumerNo || refNo}
+            </h2>
+            <p className="font-bold text-gray-900 text-[11pt] tracking-wide text-right">
               DATE: {date}
             </p>
           </div>

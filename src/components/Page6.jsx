@@ -36,15 +36,8 @@ export const Page6 = ({ data }) => {
 
       <div className="page-content px-8 pt-2 pb-3 flex-1 flex flex-col justify-between">
         <div>
-          {/* Subsidy Amount Header */}
-          <div className="my-1.5 p-1.5 bg-emerald-50/80 border border-emerald-300 rounded-xs">
-            <h3 className="font-extrabold text-gray-900 text-[10.5pt] tracking-wide text-center">
-              SUBSIDY AMOUNT &nbsp;&nbsp;&nbsp;&nbsp; ₹{subsidyDisplay}/- directly credited to customer account
-            </h3>
-          </div>
-
           {/* PRICE OFFER TABLE (Statutory EPC GST Bifurcation) */}
-          <div className="price-offer-section my-2 text-left">
+          <div className="price-offer-section my-1 text-left">
             <h4 className="font-black text-[#c2410c] text-sm tracking-wide uppercase underline underline-offset-4 mb-1">
               PRICE OFFER
             </h4>
@@ -192,35 +185,34 @@ export const Page6 = ({ data }) => {
           {/* GST Clause & PO Terms */}
           <div className="space-y-1 text-xs text-gray-900 my-1.5">
             <p className="font-bold text-slate-900">• GST is Included in the Total Project Cost as per the statutory calculation table above.</p>
-            <p className="font-bold leading-tight">
-              Purchase Order (PO) is to be issued in the favor of:
-              <br />
-              <span className="text-[#006699] font-extrabold text-sm">{company.name}.</span>
+            <p className="font-bold leading-tight text-slate-900 text-xs">
+              Purchase Order (PO) is to be issued in the favor of:&nbsp;
+              <span className="text-[#006699] font-extrabold text-[10.5pt]">M/s. SRIMAAN SOLAR SOLUTIONS</span>
             </p>
           </div>
 
-          {/* Bank Payment Terms */}
-          <div className="bank-details-box mt-2 p-2.5 border-2 border-red-500 rounded-xs bg-red-50/20 text-xs">
+          {/* Bank Payment Terms (Green Box) */}
+          <div className="bank-details-box mt-2 p-2.5 border-2 border-emerald-600 rounded-xs bg-emerald-50/30 text-xs shadow-2xs">
             <p className="font-extrabold text-gray-900 mb-1.5 tracking-wide text-xs">
               Payment Terms: Account details for NEFT / RTGS / IMPS
             </p>
             <div className="grid grid-cols-2 gap-3 text-left">
               {/* Bank Account 1 */}
-              <div className="border-r border-red-300 pr-3 font-bold text-[#c0392b] space-y-0.5 text-[8.5pt]">
+              <div className="border-r border-emerald-300 pr-3 font-bold text-emerald-900 space-y-0.5 text-[8.5pt]">
                 <p className="font-extrabold text-gray-900 text-[8pt] uppercase tracking-wider mb-0.5 underline">Primary Bank Account (HDFC)</p>
-                <p>Account Name: {bankAccount1.accountName}</p>
-                <p>Account No.: {bankAccount1.accountNo}</p>
-                <p>IFSC Code: {bankAccount1.ifscCode}</p>
-                <p>Bank Name: {bankAccount1.bankName}</p>
+                <p>Account Name: <span className="font-semibold text-black">{bankAccount1.accountName}</span></p>
+                <p>Account No.: <span className="font-mono font-bold text-black">{bankAccount1.accountNo}</span></p>
+                <p>IFSC Code: <span className="font-mono font-bold text-black">{bankAccount1.ifscCode}</span></p>
+                <p>Bank Name: <span className="font-semibold text-black">{bankAccount1.bankName}</span></p>
               </div>
 
               {/* Bank Account 2 (Second Bank Account) */}
-              <div className="font-bold text-[#c0392b] space-y-0.5 text-[8.5pt]">
+              <div className="font-bold text-emerald-900 space-y-0.5 text-[8.5pt]">
                 <p className="font-extrabold text-gray-900 text-[8pt] uppercase tracking-wider mb-0.5 underline">Second Bank Account (SBI)</p>
-                <p>Account Name: {bankAccount2.accountName}</p>
-                <p>Account No.: {bankAccount2.accountNo}</p>
-                <p>IFSC Code: {bankAccount2.ifscCode}</p>
-                <p>Bank Name: {bankAccount2.bankName}</p>
+                <p>Account Name: <span className="font-semibold text-black">{bankAccount2.accountName}</span></p>
+                <p>Account No.: <span className="font-mono font-bold text-black">{bankAccount2.accountNo}</span></p>
+                <p>IFSC Code: <span className="font-mono font-bold text-black">{bankAccount2.ifscCode}</span></p>
+                <p>Bank Name: <span className="font-semibold text-black">{bankAccount2.bankName}</span></p>
               </div>
             </div>
           </div>
