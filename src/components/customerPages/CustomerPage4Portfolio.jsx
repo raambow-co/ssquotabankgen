@@ -31,7 +31,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
   const netPayable = commercials?.netPayable !== undefined ? commercials.netPayable : Math.max(0, totalCost - subsidy);
 
   return (
-    <div className="a4-preview-sheet p-6 flex flex-col justify-between text-slate-800 bg-white relative overflow-hidden h-[297mm]">
+    <div className="a4-preview-sheet p-6 flex flex-col text-slate-800 bg-white relative overflow-hidden h-[297mm]">
       {/* Signature Multi-Tier Top Bar */}
       <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#060e24] via-amber-500 via-emerald-500 to-[#0b1736] z-30" />
       <div className="absolute top-2 left-0 right-0 h-0.5 bg-amber-400/40 z-30" />
@@ -39,7 +39,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
       {/* Subtle Background Watermark */}
       <Watermark />
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
+      <div className="relative z-10 flex-1 flex flex-col justify-between min-h-0 space-y-2.5">
         {/* ============================================================== */}
         {/* 1. MASTER EXECUTIVE BRAND HEADER                               */}
         {/* ============================================================== */}

@@ -21,7 +21,7 @@ export const getCableLogo = (brandName) => {
 };
 
 export const EMBLEMS = {
-  mnre: '/assets/emblems/mnre-logo.png',
+  mnre: '/assets/emblems/mnre-logo.webp',
   pmSuryaGhar: '/assets/emblems/pm-surya-ghar.png',
   makeInIndia: '/assets/emblems/make-in-india.png',
   bis: '/assets/emblems/bis-certified.png',
