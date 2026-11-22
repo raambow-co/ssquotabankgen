@@ -141,18 +141,18 @@ export const DEFAULT_BOM = (capacity = 5, inverterBrand = null, moduleBrand = nu
 ];
 
 export const DEFAULT_TERMS = [
-  { term: "Validity of Offer", detail: "Proposal is valid for10 days from the date of quotation." },
-  { term: "Payment Terms", detail: "1) 80% Martial Dispatch Before\n2) 20% At the Time of Installation" },
-  { term: "Delivery", detail: "Delivery of Material at site will be done after the receipt of 80% amount." },
+  { term: "Validity of Offer", detail: "Proposal is valid for 10 days from the date of quotation." },
+  { term: "Payment Terms", detail: "1) 20% - Booking\n2) 70% - Material Dispatch\n3) 10% - At Completion" },
+  { term: "Delivery", detail: "Delivery of Material at site will be done after the receipt of 90% amount." },
   { term: "Plant Commissioning", detail: "Plant will be commissioned after Net Metering which usually takes 30 days after Installation." },
   { term: "CIVIL WORK AND\nEARTH PIT DIGGING", detail: "IT IS COMPANY (OUR) SCOPE." },
   { term: "Installation\nrequirement", detail: "During installation, the client needs to provide water and electricity required for installation work and a locked store for storage of material. Cost of the used water and electricity will not be paid by us." },
   { term: "Approach and Access", detail: "Approach of discussed roof for installation is to be arranged by Ladder/staircase by client for movement of man and material." },
   { term: "Extra Material", detail: "After Completion of installation work all rest material (eg-wire,nut bolts, etc.) is our property." },
-  { term: "Cleaning of\nSolar Panels", detail: "Cleaning of Solar Panelsisadvisedtobedoneevery10-15daysby clients to get maximum generation." },
-  { term: "Warranty", detail: "1).25yearsSPVoutputpowerwarranty\n2)7 years Manufacturer's warranty for Inverter" },
+  { term: "Cleaning of\nSolar Panels", detail: "Cleaning of Solar Panels is advised to be done every 10-15 days by clients to get maximum generation." },
+  { term: "Warranty", detail: "1)  25 Years SPV Output Power Warranty\n2)  7 Years Manufacturer's Warranty for Inverter" },
   { term: "Acceptance", detail: "Release of advance payment is considered as formal acceptance of all the terms and conditions mentioned in the Quotation." },
-  { term: "Exclusions", detail: "Local issues during installation(Labourunions /local groups etc.) if any shall be taken care of by the client" },
+  { term: "Exclusions", detail: "Local issues during installation (Labour unions / local groups etc.) if any shall be taken care of by the client" },
   { term: "Placement of order", detail: "Orders once placed with us cannot be cancelled by purchaser on any account what so ever" }
 ];
 
