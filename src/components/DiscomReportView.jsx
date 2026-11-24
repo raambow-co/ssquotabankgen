@@ -195,7 +195,7 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Annexure-V(b)
+            VB (Annexure-V(b))
           </button>
           <button
             type="button"
@@ -206,7 +206,7 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Part B
+            PARTB (Part B)
           </button>
           <button
             type="button"
@@ -217,7 +217,7 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Annexure-IV
+            IV (Annexure-IV)
           </button>
         </div>
 
