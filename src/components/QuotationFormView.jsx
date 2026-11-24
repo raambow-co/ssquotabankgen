@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Eye, Save, User, Zap, DollarSign, Clock, 
-  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2, Receipt
+  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2, Receipt, FileText
 } from 'lucide-react';
 import { 
   TELANGANA_DISTRICTS, ANDHRA_DISTRICTS, STATES_LIST, 
@@ -472,6 +472,16 @@ export const QuotationFormView = ({
           >
             <Receipt size={14} className="text-amber-100" />
             <span>Receipt (1P)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onLivePreview(formData, 'invoice')}
+            className="flex items-center space-x-1.5 px-3 py-2 border border-indigo-700 bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs hover:bg-indigo-800 transition cursor-pointer"
+            title="Preview Official 1-Page GST Tax Invoice"
+          >
+            <FileText size={14} className="text-indigo-200" />
+            <span>Invoice (1P)</span>
           </button>
 
           <button
@@ -1910,6 +1920,31 @@ export const QuotationFormView = ({
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 size={12} className="text-amber-700 shrink-0" />
                     <span>Advance vs Balance, Mode &amp; Words</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Official GST Tax Invoice (1 Page) */}
+              <div 
+                onClick={() => onLivePreview(formData, 'invoice')}
+                className="p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-200/90 cursor-pointer hover:bg-indigo-100/70 transition"
+                title="Click to preview 1-Page Official GST Tax Invoice"
+              >
+                <div className="flex items-center justify-between text-xs font-bold text-indigo-950 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <FileText size={13} className="text-indigo-700" />
+                    <span>📑 Official GST Tax Invoice</span>
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-200 text-indigo-900 font-mono font-bold">1 Page</span>
+                </div>
+                <ul className="text-[10.5px] space-y-1 text-indigo-950">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-indigo-700 shrink-0" />
+                    <span>Statutory 70:30 HSN 8504 &amp; SAC 9954</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-indigo-700 shrink-0" />
+                    <span>Exact Government Layout, Logo &amp; Seal</span>
                   </li>
                 </ul>
               </div>

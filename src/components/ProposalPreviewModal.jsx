@@ -16,8 +16,9 @@ import CustomerPage3Financials from './customerPages/CustomerPage3Financials';
 import CustomerPage4Portfolio from './customerPages/CustomerPage4Portfolio';
 import CustomerPage5CompanyProfile from './customerPages/CustomerPage5CompanyProfile';
 import { AdvanceReceiptView } from './AdvanceReceiptView';
+import { GstInvoiceView } from './GstInvoiceView';
 import { convertToCustomerFormat } from '../utils/quotationAdapter';
-import { formatINR, numberToWordsINR } from '../utils/calculations';
+import { formatINR, numberToWordsINR, calculateGSTBreakdown } from '../utils/calculations';
 
 export const ProposalPreviewModal = ({ 
   quotation, 
@@ -41,6 +42,17 @@ export const ProposalPreviewModal = ({
     const updated = {
       ...currentQuotation,
       receipt: updatedReceipt
+    };
+    setCurrentQuotation(updated);
+    if (onUpdateQuotation) {
+      onUpdateQuotation(updated);
+    }
+  };
+
+  const handleUpdateInvoice = (updatedInvoice) => {
+    const updated = {
+      ...currentQuotation,
+      invoice: updatedInvoice
     };
     setCurrentQuotation(updated);
     if (onUpdateQuotation) {
@@ -132,6 +144,37 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
 🏢 *Srimaan Solar Solutions*
 📍 #6-210, Sriramnagar, Auto nagar, Khammam-507003
 📞 Contact: ${rec.receiverPhone || '9347416140 / 9912416140'}`;
+
+      navigator.clipboard.writeText(summary);
+      setCopiedNotification(true);
+      setTimeout(() => setCopiedNotification(false), 3000);
+      return;
+    }
+
+    if (formatMode === 'invoice') {
+      const inv = currentQuotation.invoice || {};
+      const totalCost = Number(inv.totalCost !== undefined ? inv.totalCost : (currentQuotation.pricing?.bankCost || currentQuotation.pricing?.totalCost || 220000));
+      const gst = calculateGSTBreakdown(totalCost);
+      const summary = `🧾 *SRIMAAN SOLAR SOLUTIONS - OFFICIAL GST TAX INVOICE*
+----------------------------------------
+👤 *Customer:* ${inv.customerName || currentQuotation.customer?.name || 'Valued Customer'}
+📍 *Address:* ${inv.addressLine1 || currentQuotation.customer?.addressLine1 || currentQuotation.customer?.address || ''}, ${inv.district || currentQuotation.customer?.district || ''}, ${inv.state || currentQuotation.customer?.state || 'TELANGANA'}
+📱 *Mobile:* ${inv.mobile || currentQuotation.customer?.phone || currentQuotation.customer?.mobile || ''}
+📑 *Invoice No:* ${inv.invoiceNo || currentQuotation.customer?.consumerNo || currentQuotation.refNo || '32'}
+📅 *Date:* ${inv.invoiceDate || currentQuotation.date || ''}
+⚡ *System Capacity:* ${currentQuotation.system?.capacityKw || 5} kWp
+
+💰 *TAX INVOICE DETAILS (70:30 STATUTORY EPC):*
+• Goods (HSN 8504): ₹${formatINR(gst.goodsBase)}
+• CGST (2.5%): ₹${formatINR(gst.goodsCgst)} | SGST (2.5%): ₹${formatINR(gst.goodsSgst)}
+• Services (SAC 9954): ₹${formatINR(gst.servicesBase)}
+• CGST (9%): ₹${formatINR(gst.servicesCgst)} | SGST (9%): ₹${formatINR(gst.servicesSgst)}
+👉 *Total Invoice Amount:* ₹${formatINR(gst.totalProjectCost)}
+• Amount in Words: Inr ${numberToWordsINR(gst.totalProjectCost)}
+
+🏢 *Srimaan Solar Solutions*
+📍 #6-210, Sriramnagar, Auto nagar, Khammam-507003
+📞 Contact: 9347416140 / 9912416140`;
 
       navigator.clipboard.writeText(summary);
       setCopiedNotification(true);
@@ -268,13 +311,39 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
               1 Page
             </span>
           </button>
+
+          {/* GST Invoice Button */}
+          <button
+            onClick={() => {
+              setFormatMode('invoice');
+              setSelectedPage('all');
+            }}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              formatMode === 'invoice'
+                ? 'bg-indigo-700 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <FileText size={14} className={formatMode === 'invoice' ? 'text-indigo-200' : 'text-slate-500'} />
+            <span>GST Invoice</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+              formatMode === 'invoice' ? 'bg-indigo-300 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+            }`}>
+              1 Page
+            </span>
+          </button>
         </div>
 
-        {/* Center-Right: Page Jump Pills or Receipt Label */}
+        {/* Center-Right: Page Jump Pills or Receipt/Invoice Label */}
         {formatMode === 'receipt' ? (
           <div className="flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg text-xs font-bold">
             <Receipt size={13} className="text-amber-600" />
             <span>Official Advance Payment Voucher (1 Page A4)</span>
+          </div>
+        ) : formatMode === 'invoice' ? (
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-indigo-50 text-indigo-900 border border-indigo-200 rounded-lg text-xs font-bold">
+            <FileText size={13} className="text-indigo-600" />
+            <span>Official GST Tax Invoice (1 Page A4)</span>
           </div>
         ) : (
           <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5">
@@ -361,7 +430,7 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
             }`}
           >
             <Printer size={15} />
-            <span>Print / PDF ({formatMode === 'bank' ? '7P' : formatMode === 'customer' ? '5P' : '1P Receipt'})</span>
+            <span>Print / PDF ({formatMode === 'bank' ? '7P' : formatMode === 'customer' ? '5P' : formatMode === 'receipt' ? '1P Receipt' : '1P Invoice'})</span>
           </button>
         </div>
       </div>
@@ -427,6 +496,16 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
               <AdvanceReceiptView 
                 quotation={currentQuotation} 
                 onUpdateReceipt={handleUpdateReceipt} 
+              />
+            </div>
+          )}
+
+          {/* GST TAX INVOICE (1 PAGE A4) */}
+          {formatMode === 'invoice' && (
+            <div className="document-page-wrapper shadow-2xl print:shadow-none">
+              <GstInvoiceView 
+                quotation={currentQuotation} 
+                onUpdateInvoice={handleUpdateInvoice} 
               />
             </div>
           )}

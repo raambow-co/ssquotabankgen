@@ -271,6 +271,16 @@ export const DashboardView = ({
                         <span>Receipt</span>
                       </button>
 
+                      {/* GST Invoice Button (1-Page) */}
+                      <button
+                        onClick={() => onPreviewQuotation(quote, 'invoice')}
+                        className="px-2 py-1 bg-indigo-700 hover:bg-indigo-800 text-white rounded-md text-[10px] font-bold transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                        title="View & Print Official 1-Page GST Tax Invoice"
+                      >
+                        <FileText size={12} />
+                        <span>GST Invoice</span>
+                      </button>
+
                       {/* Edit Button */}
                       <button
                         onClick={() => onEditQuotation(quote)}

@@ -7,16 +7,17 @@
 
 ## 📑 Table of Contents
 1. [Executive Summary & Company Credentials](#-executive-summary--company-credentials)
-2. [Tri-Document Generation Architecture](#-tri-document-generation-architecture)
+2. [Quad-Document Generation Architecture](#-quad-document-generation-architecture)
    - [Document 1: 7-Page Official Bank Proposal](#1-7-page-official-bank-proposal)
    - [Document 2: 5-Page Customer Visual Proposal](#2-5-page-customer-visual-proposal)
    - [Document 3: 1-Page Advance Payment Receipt](#3-1-page-advance-payment-receipt)
+   - [Document 4: 1-Page Official GST Tax Invoice](#4-1-page-official-gst-tax-invoice)
 3. [Statutory Solar EPC GST (70:30 Bifurcation) Engine](#-statutory-solar-epc-gst-7030-bifurcation-engine)
 4. [Commercial Terms & Milestone Schedule (20 : 70 : 10)](#-commercial-terms--milestone-schedule-20--70--10)
 5. [Dual Commercial Pricing Architecture](#-dual-commercial-pricing-architecture)
 6. [Master Admin Panel & Quotation Settings](#-master-admin-panel--quotation-settings)
 7. [Technical Hardware Catalog & ALMM Standards](#-technical-hardware-catalog--almm-standards)
-8. [Automated Verification & Audit Test Suite (161 Tests)](#-automated-verification--audit-test-suite-161-tests)
+8. [Automated Verification & Audit Test Suite (164 Tests)](#-automated-verification--audit-test-suite-164-tests)
 9. [Project Directory & File Structure](#-project-directory--file-structure)
 10. [Quick Start & Standalone Deployment](#-quick-start--standalone-deployment)
 
@@ -42,9 +43,9 @@ All quotation documents, invoices, vouchers, and contracts strictly adhere to th
 
 ---
 
-## 🖨️ Tri-Document Generation Architecture
+## 🖨️ Quad-Document Generation Architecture
 
-The platform operates on a unified proposal state model that dynamically renders three distinct document formats:
+The platform operates on a unified proposal state model that dynamically renders four distinct document formats:
 
 ```mermaid
 flowchart TD
@@ -52,6 +53,7 @@ flowchart TD
     Engine --> Doc1[7-Page Bank Proposal<br/>Bank PO & Loan Sanction]
     Engine --> Doc2[5-Page Customer Proposal<br/>Visual EPC Commercials & ROI]
     Engine --> Doc3[1-Page Advance Receipt<br/>Voucher with Seal & Signatures]
+    Engine --> Doc4[1-Page GST Tax Invoice<br/>Statutory 70:30 HSN/SAC Billing]
 ```
 
 ---
@@ -109,6 +111,23 @@ Matches official Srimaan receipt voucher format (`RECEIPT_3KW.xlsx`) with authen
 - **Payment Verification**: Payment Mode checkboxes (Cash, Cheque, RTGS/NEFT/UPI), transaction reference, and purpose note.
 - **Official Signatory**: Receiver Name (`T.RAVINDRA CHARY`), Mobile (`9347416140`), date, signature line, and official circular rubber seal.
 - **Interactive Inline Editing**: Allows users to type directly on the voucher canvas or configure values via form modal controls.
+
+---
+
+### 4. 1-Page Official GST Tax Invoice
+Replicates the exact statutory 1-page A4 GST Tax Invoice layout conforming to Indian Ministry of New and Renewable Energy (MNRE) and GST Council composite turnkey EPC standards:
+
+- **Top Header**: Centered uppercase bold `GST INVOICE`.
+- **Vendor Credentials (Left Box)**: `SRIMAAN SOLAR SOLUTIONS`, `# 6-210,Sriramnagar Auto nagar,Warangal x road, Khammam-507003,Telangana,India`, Mob: `9347416140, 9912416140`, `GSTIN : 36ADPPT2441N1ZW`, `VENDOR REG.NO :TSRE250511`, `Email id :Ravindrachary1972@gmail.com`, `STATE NAME : TELANGANA  CODE : 36`.
+- **Right Header Grid**: Invoice No, Dated, official company logo with `Think Smart, Think Solar`, and dispatch grid lines.
+- **Consignee / Customer Block**: `Customer Name Consignee (ship to)`, site address, `Mobile`, `BILL TO :`, and consumer service connection strip (`NP-TSNPD26-10416694` / consumer UNC).
+- **Statutory 70:30 HSN/SAC Table**:
+  - **Item 1 (Goods)**: Modules (Brand & Wattage, Count Nos), Inverter (Brand, 1 Unit), HSN `8504`, Amount: 70% Goods Base Value.
+  - **Item 2 (Services)**: Galvanized Structure, Polycab Cables, ACDB/DCDB, Junction Boxes, Earthing Kit, Civil work, Transport, I&C Services (1 Job), SAC `9954`, Amount: 30% Services Base Value.
+  - **Tax Rows**: CGST @ 2.5% (HSN 8504), SGST @ 2.5% (HSN 8504), CGST @ 9% (SAC 9954), SGST @ 9% (SAC 9954), Round off (0), and Total Gross Cost.
+- **Amount in Words**: `Amount Charageble (in words) : Inr [Total in Words]`.
+- **Footer**: Dual Bank details (HDFC & SBI) & statutory conditions on the left; `FOR : SRIMAAN SOLAR SOLUTIONS` with rubber seal and `T.RAVINDRA CHARY` / `Authorised Signatory` on the right.
+- **Quick Inline Editing**: Click `Quick Inline Edit` to customize any invoice field directly on the preview sheet with real-time recalculation.
 
 ---
 
@@ -214,7 +233,7 @@ The platform supports all major Tier-1 Approved List of Models and Manufacturers
 
 ---
 
-## 🧪 Automated Verification & Audit Test Suite (161 Tests)
+## 🧪 Automated Verification & Audit Test Suite (164 Tests)
 
 The repository features comprehensive automated audit suites executed via Node.js before every release:
 
@@ -227,9 +246,10 @@ node scripts/run-audits.js && node scripts/audit-e2e.js
 - **Suite 2: Statutory GST EPC Module**: Goods Base, CGST (2.5%), SGST (2.5%), Services Base, CGST (9%), SGST (9%), and 100% total cost reconstruction across benchmark test amounts (₹2,25,000, ₹3,75,000, ₹4,10,000, and ₹4,75,000).
 - **Suite 3: Currency & Formatting**: Indian comma grouping (`formatINR`), two-decimal formatting (`formatINRDecimal`), and localized date formatting.
 - **Suite 4: Assets & Logos**: Embedded Base64 assets, official Srimaan logos, Waaree/Tata/Adani brand logos, PM Surya Ghar emblems, MNRE emblems, and high-res hardware photography.
-- **Suite 5 & 6: React Components**: Structural integrity of Page1 through Page7, CustomerPage1 through CustomerPage5, AdvanceReceiptView, SettingsModal, and QuotationFormView.
+- **Suite 5 & 6: React Components**: Structural integrity of Page1 through Page7, CustomerPage1 through CustomerPage5, AdvanceReceiptView, GstInvoiceView, SettingsModal, and QuotationFormView.
 - **Suite 7: Data Adapter**: Seamless conversion between unified Bank proposal state and 5-page Customer proposal format.
-- **Suite 8 & 9: Import Integrity & Data Defaults**: Verifies 100% of JSX tags, Lucide icons, and default parameters are cleanly resolved without runtime exceptions.
+- **Suite 8: Official GST Tax Invoice**: Audits 70:30 HSN 8504 & SAC 9954 bifurcation and dynamic currency wording.
+- **Suite 9: Import Integrity & Data Defaults**: Verifies 100% of JSX tags, Lucide icons, and default parameters are cleanly resolved without runtime exceptions.
 
 ---
 
@@ -242,7 +262,7 @@ ss-bank-quota/
 ├── vite.config.js                    # Vite bundler configuration
 ├── tailwind.config.js                # Custom Tailwind design system & print styles
 ├── scripts/
-│   ├── run-audits.js                 # 161-assertion core system audit harness
+│   ├── run-audits.js                 # 164-assertion core system audit harness
 │   ├── audit-e2e.js                  # End-to-end integration test harness
 │   └── bundle-standalone.js          # Inlines JS, CSS & assets into standalone HTML
 ├── public/
@@ -267,6 +287,7 @@ ss-bank-quota/
 │       ├── QuotationFormView.jsx     # Master 5-step interactive proposal editor
 │       ├── ProposalPreviewModal.jsx  # Live A4 print preview, WhatsApp share & zoom
 │       ├── AdvanceReceiptView.jsx    # Official 1-page advance payment receipt voucher
+│       ├── GstInvoiceView.jsx        # Official 1-page statutory 70:30 GST tax invoice
 │       ├── SettingsModal.jsx         # 7-tab master company & hardware settings panel
 │       ├── PageHeader.jsx            # Standardized 7-page proposal header
 │       ├── PageFooter.jsx            # Standardized 7-page proposal footer

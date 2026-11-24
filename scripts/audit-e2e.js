@@ -161,6 +161,20 @@ assert(DEFAULT_COMPANY.registeredOffice.includes('Edulapuram Muncipalty'), 'Regi
 assert(DEFAULT_COMPANY.registeredOffice.includes('507003'), 'Registered office includes 507003');
 console.log('✅ [PASS] Second Bank (SBI: 44813579950, SBIN0065049) and Registered Office verified');
 
+// 8. Audit Official GST Tax Invoice Generator
+console.log('\n--- 8. AUDITING GST TAX INVOICE GENERATOR ---');
+const invoiceGST = calculateGSTBreakdown(220000);
+assert(invoiceGST.goodsBase > 0, 'Goods Base HSN 8504 calculated');
+assert(invoiceGST.servicesBase > 0, 'Services Base SAC 9954 calculated');
+assert(invoiceGST.goodsCgst === Math.round(invoiceGST.goodsBase * 0.025), 'Invoice Goods CGST 2.5% matches');
+assert(invoiceGST.goodsSgst === Math.round(invoiceGST.goodsBase * 0.025), 'Invoice Goods SGST 2.5% matches');
+assert(invoiceGST.servicesCgst === Math.round(invoiceGST.servicesBase * 0.09), 'Invoice Services CGST 9% matches');
+assert(invoiceGST.servicesSgst === Math.round(invoiceGST.servicesBase * 0.09), 'Invoice Services SGST 9% matches');
+assert(invoiceGST.totalProjectCost === 220000, 'Invoice total matches 220000');
+const invoiceWords = numberToWordsINR(220000);
+assert(invoiceWords.includes('TWO LAKH TWENTY THOUSAND'), 'Invoice words include TWO LAKH TWENTY THOUSAND');
+console.log('✅ [PASS] GST Invoice HSN 8504 & SAC 9954 bifurcation strictly verified for ₹2,20,000');
+
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');
 console.log('========================================');
