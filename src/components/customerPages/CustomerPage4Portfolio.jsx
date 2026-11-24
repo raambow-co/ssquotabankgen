@@ -164,11 +164,16 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
         {/* 3. PAYMENT MILESTONES (Exact 20% / 70% / 10% from Official PDF) */}
         {/* ============================================================== */}
         <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <Coins className="w-3.5 h-3.5 text-blue-600" />
-            <h3 className="text-[7.8pt] font-black text-slate-900 tracking-wide uppercase font-sans">
-              Payment Terms &amp; Milestones ({mAdvance} : {mDispatch} : {mInstall})
-            </h3>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-1.5">
+              <Coins className="w-3.5 h-3.5 text-blue-600" />
+              <h3 className="text-[7.8pt] font-black text-slate-900 tracking-wide uppercase font-sans">
+                Payment Terms &amp; Milestones ({mAdvance} : {mDispatch} : {mInstall})
+              </h3>
+            </div>
+            <span className="text-[6.5pt] font-extrabold text-blue-900 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded">
+              Calculated on Full Gross Cost: ₹{formatNumber(totalCost)}
+            </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2 text-center">
@@ -184,7 +189,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
                 </p>
               </div>
               <div className="mt-1 pt-1 border-t border-slate-100 font-mono font-black text-blue-950 text-[8pt]">
-                {formatCurrency(netPayable * (mAdvance / 100))}
+                {formatCurrency(totalCost * (mAdvance / 100))}
               </div>
             </div>
 
@@ -200,7 +205,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
                 </p>
               </div>
               <div className="mt-1 pt-1 border-t border-slate-200 font-mono font-black text-slate-950 text-[8pt]">
-                {formatCurrency(netPayable * (mDispatch / 100))}
+                {formatCurrency(totalCost * (mDispatch / 100))}
               </div>
             </div>
 
@@ -216,7 +221,7 @@ export default function CustomerPage4Portfolio({ quotation, settings }) {
                 </p>
               </div>
               <div className="mt-1 pt-1 border-t border-emerald-200 font-mono font-black text-emerald-950 text-[8pt]">
-                {formatCurrency(netPayable * (mInstall / 100))}
+                {formatCurrency(totalCost * (mInstall / 100))}
               </div>
             </div>
           </div>

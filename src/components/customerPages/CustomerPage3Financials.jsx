@@ -330,11 +330,11 @@ export default function CustomerPage3Financials({ quotation, settings }) {
               PRICE OFFER
             </h4>
             <span className="text-[6.5pt] font-extrabold text-slate-900 bg-white/70 px-1.5 py-0.2 rounded">
-              Statutory 70:30 Bifurcation (5% Goods / 18% Services)
+              Statutory 70:30 GST on Full Project Cost (₹{formatINR(totalGrossCost)})
             </span>
           </div>
           <p className="text-[6.8pt] text-gray-800 font-medium px-2 py-0.5 bg-slate-50 border-b border-black">
-            Price quote for total &nbsp;Design, Engineering, Supply, Installation, Testing &amp; Commissioning of Solar Power Plant is as follows:
+            Price quote for total &nbsp;Design, Engineering, Supply, Installation, Testing &amp; Commissioning of Solar Power Plant (Statutory GST calculated on full gross value before central DBT subsidy):
           </p>
           <table className="w-full text-[7.2pt] border-collapse bg-white">
             <thead>

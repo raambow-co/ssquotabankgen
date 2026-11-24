@@ -184,7 +184,7 @@ export const Page6 = ({ data }) => {
 
           {/* GST Clause & PO Terms */}
           <div className="space-y-1 text-xs text-gray-900 my-1.5">
-            <p className="font-bold text-slate-900">• GST is Included in the Total Project Cost as per the statutory calculation table above.</p>
+            <p className="font-bold text-slate-900">• GST is Included in the Total Project Cost as per statutory 70:30 norms (calculated on full turnkey project cost including subsidy).</p>
             <p className="font-bold leading-tight text-slate-900 text-xs">
               Purchase Order (PO) is to be issued in the favor of:&nbsp;
               <span className="text-[#006699] font-extrabold text-[10.5pt]">M/s. SRIMAAN SOLAR SOLUTIONS</span>

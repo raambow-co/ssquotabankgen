@@ -591,8 +591,9 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
                       </p>
                     )}
                   </div>
-                  <div className="text-[7.5pt] text-slate-500 italic">
-                    * Official acknowledgment of advance token amount for solar rooftop EPC engineering.
+                  <div className="text-[7.5pt] text-slate-500 italic space-y-0.5">
+                    <p>* Official acknowledgment of advance token amount for solar rooftop EPC engineering.</p>
+                    <p>* Total Project Cost is inclusive of statutory GST (70:30 norms). Central DBT subsidy is directly credited to client account.</p>
                   </div>
                 </div>
 

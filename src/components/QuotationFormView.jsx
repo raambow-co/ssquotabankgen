@@ -412,7 +412,7 @@ export const QuotationFormView = ({
   const subsidy = formData.pricing.subsidyAmount || 0;
   const customerNet = Math.max(0, customerCost - subsidy);
   const bankNet = Math.max(0, bankCost - subsidy);
-  const gst = formData.pricing.gstBreakdown || calculateGSTBreakdown(bankCost);
+  const gst = calculateGSTBreakdown(bankCost);
   const customerGst = calculateGSTBreakdown(customerCost);
 
   return (
@@ -1227,9 +1227,12 @@ export const QuotationFormView = ({
                       <span>PRICE OFFER (Bank PO GST Bifurcation)</span>
                     </h3>
                     <p className="text-[11px] text-slate-500 mt-0.5">
-                      Price quote for total Design, Engineering, Supply, Installation, Testing &amp; Commissioning of Solar Power Plant (Appears on Page 6).
+                      Statutory GST (70% Goods @ 5% + 30% Services @ 18%) is strictly computed on the <strong>100% Full Project Cost</strong> (₹{formatINR(bankCost)}) including subsidy.
                     </p>
                   </div>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+                    GST on 100% Full Cost (Pre-Subsidy)
+                  </span>
                 </div>
 
                 <div className="border border-slate-300 rounded-lg overflow-hidden shadow-xs">
@@ -1382,19 +1385,19 @@ export const QuotationFormView = ({
                         <div className="flex gap-1">
                           <button
                             type="button"
-                            onClick={() => updateReceiptField('advanceAmount', Math.round(customerCost * 0.1))}
+                            onClick={() => updateReceiptField('advanceAmount', Math.round((formData.pricing.bankCost || customerCost) * 0.2))}
                             className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded"
-                            title="10% Advance Token"
+                            title="20% Booking Token (Full Cost)"
                           >
-                            10%
+                            20%
                           </button>
                           <button
                             type="button"
-                            onClick={() => updateReceiptField('advanceAmount', Math.round(customerCost * 0.2))}
+                            onClick={() => updateReceiptField('advanceAmount', Math.round((formData.pricing.bankCost || customerCost) * 0.1))}
                             className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded"
-                            title="20% Advance Token"
+                            title="10% Advance Token (Full Cost)"
                           >
-                            20%
+                            10%
                           </button>
                         </div>
                       </div>
@@ -1402,7 +1405,7 @@ export const QuotationFormView = ({
                         type="number"
                         min="0"
                         step="1000"
-                        value={formData.receipt?.advanceAmount !== undefined ? formData.receipt.advanceAmount : Math.round(customerCost * 0.1)}
+                        value={formData.receipt?.advanceAmount !== undefined ? formData.receipt.advanceAmount : Math.round((formData.pricing.bankCost || customerCost) * 0.1)}
                         onChange={(e) => {
                           const valStr = e.target.value;
                           updateReceiptField('advanceAmount', valStr === '' ? '' : parseFloat(valStr));
@@ -1411,7 +1414,7 @@ export const QuotationFormView = ({
                         className="w-full px-3 py-2 border-2 border-amber-300 focus:border-amber-600 rounded-lg text-slate-900 font-mono font-bold text-sm bg-white focus:outline-none"
                       />
                       <span className="text-[10px] text-slate-500 mt-1 block">
-                        Balance due: <strong className="font-mono text-slate-800">₹{formatINR(Math.max(0, customerCost - Number(formData.receipt?.advanceAmount !== undefined ? formData.receipt.advanceAmount : Math.round(customerCost * 0.1))))}</strong> (on/before material dispatch)
+                        Balance due: <strong className="font-mono text-slate-800">₹{formatINR(Math.max(0, (formData.pricing.bankCost || customerCost) - Number(formData.receipt?.advanceAmount !== undefined ? formData.receipt.advanceAmount : Math.round((formData.pricing.bankCost || customerCost) * 0.1))))}</strong> (computed on full project cost)
                       </span>
                     </div>
 
