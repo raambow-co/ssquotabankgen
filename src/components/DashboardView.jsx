@@ -281,6 +281,16 @@ export const DashboardView = ({
                         <span>GST Invoice</span>
                       </button>
 
+                      {/* DISCOM Report Button (3-Page) */}
+                      <button
+                        onClick={() => onPreviewQuotation(quote, 'discom')}
+                        className="px-2 py-1 bg-teal-700 hover:bg-teal-800 text-white rounded-md text-[10px] font-bold transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                        title="View & Print Official 3-Page DISCOM Synchronization Package (Annexure IV, V(b) & Part B)"
+                      >
+                        <Layers size={12} />
+                        <span>DISCOM</span>
+                      </button>
+
                       {/* Edit Button */}
                       <button
                         onClick={() => onEditQuotation(quote)}

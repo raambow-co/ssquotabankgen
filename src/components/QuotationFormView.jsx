@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Eye, Save, User, Zap, DollarSign, Clock, 
-  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2, Receipt, FileText
+  CheckCircle2, Plus, Trash2, RotateCcw, Sparkles, Building2, Receipt, FileText, Layers
 } from 'lucide-react';
 import { 
   TELANGANA_DISTRICTS, ANDHRA_DISTRICTS, STATES_LIST, 
@@ -482,6 +482,16 @@ export const QuotationFormView = ({
           >
             <FileText size={14} className="text-indigo-200" />
             <span>Invoice (1P)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onLivePreview(formData, 'discom')}
+            className="flex items-center space-x-1.5 px-3 py-2 border border-teal-700 bg-teal-700 text-white font-bold text-xs rounded-lg shadow-xs hover:bg-teal-800 transition cursor-pointer"
+            title="Preview Official 3-Page DISCOM Synchronization Package (Annexure IV, V(b) & Part B)"
+          >
+            <Layers size={14} className="text-teal-200" />
+            <span>DISCOM (3P)</span>
           </button>
 
           <button
@@ -1945,6 +1955,31 @@ export const QuotationFormView = ({
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 size={12} className="text-indigo-700 shrink-0" />
                     <span>Exact Government Layout, Logo &amp; Seal</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* DISCOM Synchronization Reports (3 Pages) */}
+              <div 
+                onClick={() => onLivePreview(formData, 'discom')}
+                className="p-2.5 rounded-xl bg-teal-50/70 border border-teal-200/90 cursor-pointer hover:bg-teal-100/70 transition"
+                title="Click to preview 3-Page Official DISCOM Synchronization Package"
+              >
+                <div className="flex items-center justify-between text-xs font-bold text-teal-950 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <Layers size={13} className="text-teal-700" />
+                    <span>⚡ DISCOM Synchronization Report</span>
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-200 text-teal-900 font-mono font-bold">3 Pages</span>
+                </div>
+                <ul className="text-[10.5px] space-y-1 text-teal-950">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-teal-700 shrink-0" />
+                    <span>Annexure-V(b), Part B &amp; Annexure-IV</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-teal-700 shrink-0" />
+                    <span>TSNPDCL / TSSPDCL Net-Meter Standards</span>
                   </li>
                 </ul>
               </div>

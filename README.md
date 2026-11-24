@@ -7,17 +7,18 @@
 
 ## 📑 Table of Contents
 1. [Executive Summary & Company Credentials](#-executive-summary--company-credentials)
-2. [Quad-Document Generation Architecture](#-quad-document-generation-architecture)
+2. [Penta-Document Generation Architecture](#-penta-document-generation-architecture)
    - [Document 1: 7-Page Official Bank Proposal](#1-7-page-official-bank-proposal)
    - [Document 2: 5-Page Customer Visual Proposal](#2-5-page-customer-visual-proposal)
    - [Document 3: 1-Page Advance Payment Receipt](#3-1-page-advance-payment-receipt)
    - [Document 4: 1-Page Official GST Tax Invoice](#4-1-page-official-gst-tax-invoice)
+   - [Document 5: 3-Page Official DISCOM Synchronization Package](#5-3-page-official-discom-synchronization-package)
 3. [Statutory Solar EPC GST (70:30 Bifurcation) Engine](#-statutory-solar-epc-gst-7030-bifurcation-engine)
 4. [Commercial Terms & Milestone Schedule (20 : 70 : 10)](#-commercial-terms--milestone-schedule-20--70--10)
 5. [Dual Commercial Pricing Architecture](#-dual-commercial-pricing-architecture)
 6. [Master Admin Panel & Quotation Settings](#-master-admin-panel--quotation-settings)
 7. [Technical Hardware Catalog & ALMM Standards](#-technical-hardware-catalog--almm-standards)
-8. [Automated Verification & Audit Test Suite (164 Tests)](#-automated-verification--audit-test-suite-164-tests)
+8. [Automated Verification & Audit Test Suite (167 Tests)](#-automated-verification--audit-test-suite-167-tests)
 9. [Project Directory & File Structure](#-project-directory--file-structure)
 10. [Quick Start & Standalone Deployment](#-quick-start--standalone-deployment)
 
@@ -43,9 +44,9 @@ All quotation documents, invoices, vouchers, and contracts strictly adhere to th
 
 ---
 
-## 🖨️ Quad-Document Generation Architecture
+## 🖨️ Penta-Document Generation Architecture
 
-The platform operates on a unified proposal state model that dynamically renders four distinct document formats:
+The platform operates on a unified proposal state model that dynamically renders five distinct document formats:
 
 ```mermaid
 flowchart TD
@@ -54,6 +55,7 @@ flowchart TD
     Engine --> Doc2[5-Page Customer Proposal<br/>Visual EPC Commercials & ROI]
     Engine --> Doc3[1-Page Advance Receipt<br/>Voucher with Seal & Signatures]
     Engine --> Doc4[1-Page GST Tax Invoice<br/>Statutory 70:30 HSN/SAC Billing]
+    Engine --> Doc5[3-Page DISCOM Report Package<br/>Annexure-IV, V-b & Part-B]
 ```
 
 ---
@@ -128,6 +130,36 @@ Replicates the exact statutory 1-page A4 GST Tax Invoice layout conforming to In
 - **Amount in Words**: `Amount Charageble (in words) : Inr [Total in Words]`.
 - **Footer**: Dual Bank details (HDFC & SBI) & statutory conditions on the left; `FOR : SRIMAAN SOLAR SOLUTIONS` with rubber seal and `T.RAVINDRA CHARY` / `Authorised Signatory` on the right.
 - **Quick Inline Editing**: Click `Quick Inline Edit` to customize any invoice field directly on the preview sheet with real-time recalculation.
+
+---
+
+### 5. 3-Page Official DISCOM Synchronization Package
+Replicates the three mandatory statutory technical inspection and synchronization reports required by State Power Distribution Companies (TSNPDCL / TSSPDCL) for solar rooftop net-metering synchronization and PM Surya Ghar subsidy DBT release:
+
+- **Sheet 1: ANNEXURE-V(b) (LT Net Meter Synchronization & Test Report)**:
+  - **Section A**: Applicant Details (Registration Number, Date, Name, Service Number / USC Number, Category, Load, Section, Pole number, Address, Mobile).
+  - **Section B**: Old Meter Details (Make, Serial No, Capacity, MF, Final Readings kWh & kVAh, Date of Replacement).
+  - **Section C**: New Net Meter Details (Make, Serial No, Capacity, Meter Constant, Initial Tri-Vector Import/Export kWh & kVAh).
+  - **Section D**: Protective equipment availability (`YES`).
+  - **Statutory Certificate**: Verification of no return voltage when incoming grid is disconnected and satisfactory synchronization.
+  - **4-Party Signatures**: Vendor Signature with rubber stamp (`SRIMAAN SOLAR SOLUTIONS`), Eligible Consumer Signature, ADE/M&P (Meters & Protection), and ADE/Op (Operations).
+
+- **Sheet 2: PART B (Project Completion Report for Grid-Connected Rooftop)**:
+  - Complete installation particulars grid: Category, Sub-Category, Plant Owner, Mobile, Email, Site Address, PIN, State, District.
+  - Commercial & Technical Model: `CAPEX`, Commissioning Date, Total Installation Cost (Rs.), Rooftop Only, Plant Capacity (kWp), Latitude & Longitude coordinates.
+  - Mandatory Document Attachments check: Plant Photo & DISCOM Electricity Bill.
+  - Statutory Certificate & 4-Party Signatures.
+
+- **Sheet 3: ANNEXURE-IV (Work Completion Report for Synchronization)**:
+  - **Section A**: Applicant / Consumer Details (Reg No, Date, Name, Service No / USC, Category, Load in kW).
+  - **Section B**: Empanelled Vendor Particulars (`SRIMAAN SOLAR SOLUTIONS`, `# 6-210, SRIRAM NAGAR, BEHIND AUTO NAGAR, WARANGAL X ROAD, KHAMMAM RURAL, 507003`, Mobile: `9347416140`, Email: `Ravindrachary1972@gmail.com`).
+  - **Section C**: Solar PV Module Details (Make, 6+ Module Serial Numbers Grid, Module Type, Capacity per module, Number of modules, Total kWp).
+  - **Section D**: Grid Tie Inverter / Connector (Make, Serial No, 550 VDC Capacity, Input Voltage, Output Voltage, Anti-Islanding Protection `YES`).
+  - **Section E & F**: Protective System Available (`YES`), CEIG Approval Reference (`N/A <= 75 kW`).
+  - **Enclosures**: Single Line Diagram (SLD) & CEIG approval copies.
+  - **2-Party Signatures**: Vendor Signature with Stamp (`T. Ravindra Chary`) & Eligible Consumer.
+
+- **Excel Export**: Single-click `Export Excel` button downloads `DISCOM_REPORT.xlsx` containing all 3 sheets formatted with borders, colors, and auto-populated quotation parameters.
 
 ---
 
@@ -233,7 +265,7 @@ The platform supports all major Tier-1 Approved List of Models and Manufacturers
 
 ---
 
-## 🧪 Automated Verification & Audit Test Suite (164 Tests)
+## 🧪 Automated Verification & Audit Test Suite (167 Tests)
 
 The repository features comprehensive automated audit suites executed via Node.js before every release:
 
@@ -246,10 +278,11 @@ node scripts/run-audits.js && node scripts/audit-e2e.js
 - **Suite 2: Statutory GST EPC Module**: Goods Base, CGST (2.5%), SGST (2.5%), Services Base, CGST (9%), SGST (9%), and 100% total cost reconstruction across benchmark test amounts (₹2,25,000, ₹3,75,000, ₹4,10,000, and ₹4,75,000).
 - **Suite 3: Currency & Formatting**: Indian comma grouping (`formatINR`), two-decimal formatting (`formatINRDecimal`), and localized date formatting.
 - **Suite 4: Assets & Logos**: Embedded Base64 assets, official Srimaan logos, Waaree/Tata/Adani brand logos, PM Surya Ghar emblems, MNRE emblems, and high-res hardware photography.
-- **Suite 5 & 6: React Components**: Structural integrity of Page1 through Page7, CustomerPage1 through CustomerPage5, AdvanceReceiptView, GstInvoiceView, SettingsModal, and QuotationFormView.
+- **Suite 5 & 6: React Components**: Structural integrity of Page1 through Page7, CustomerPage1 through CustomerPage5, AdvanceReceiptView, GstInvoiceView, DiscomReportView, SettingsModal, and QuotationFormView.
 - **Suite 7: Data Adapter**: Seamless conversion between unified Bank proposal state and 5-page Customer proposal format.
 - **Suite 8: Official GST Tax Invoice**: Audits 70:30 HSN 8504 & SAC 9954 bifurcation and dynamic currency wording.
-- **Suite 9: Import Integrity & Data Defaults**: Verifies 100% of JSX tags, Lucide icons, and default parameters are cleanly resolved without runtime exceptions.
+- **Suite 9: DISCOM Synchronization Package**: Verifies presence, layout, vendor credentials, and certificates across Annexure-V(b), Part B, and Annexure-IV.
+- **Suite 10: Import Integrity & Data Defaults**: Verifies 100% of JSX tags, Lucide icons, and default parameters are cleanly resolved without runtime exceptions.
 
 ---
 
@@ -261,12 +294,15 @@ ss-bank-quota/
 ├── package.json                      # Build scripts and project dependencies
 ├── vite.config.js                    # Vite bundler configuration
 ├── tailwind.config.js                # Custom Tailwind design system & print styles
+├── DISCOM_REPORT.xlsx                # 3-Sheet official DISCOM synchronization Excel workbook
 ├── scripts/
-│   ├── run-audits.js                 # 164-assertion core system audit harness
+│   ├── run-audits.js                 # 167-assertion core system audit harness
 │   ├── audit-e2e.js                  # End-to-end integration test harness
+│   ├── generate-discom-report.py     # Python openpyxl generator for DISCOM reports
 │   └── bundle-standalone.js          # Inlines JS, CSS & assets into standalone HTML
 ├── public/
 │   ├── logo.png                      # Application favicon & header logo
+│   ├── DISCOM_REPORT.xlsx            # Downloadable DISCOM Excel workbook
 │   └── assets/                       # High-resolution logos, emblems & photos
 ├── src/
 │   ├── main.jsx                      # React application mounting root
@@ -288,6 +324,7 @@ ss-bank-quota/
 │       ├── ProposalPreviewModal.jsx  # Live A4 print preview, WhatsApp share & zoom
 │       ├── AdvanceReceiptView.jsx    # Official 1-page advance payment receipt voucher
 │       ├── GstInvoiceView.jsx        # Official 1-page statutory 70:30 GST tax invoice
+│       ├── DiscomReportView.jsx      # Official 3-page DISCOM synchronization package
 │       ├── SettingsModal.jsx         # 7-tab master company & hardware settings panel
 │       ├── PageHeader.jsx            # Standardized 7-page proposal header
 │       ├── PageFooter.jsx            # Standardized 7-page proposal footer

@@ -17,6 +17,7 @@ import CustomerPage4Portfolio from './customerPages/CustomerPage4Portfolio';
 import CustomerPage5CompanyProfile from './customerPages/CustomerPage5CompanyProfile';
 import { AdvanceReceiptView } from './AdvanceReceiptView';
 import { GstInvoiceView } from './GstInvoiceView';
+import { DiscomReportView } from './DiscomReportView';
 import { convertToCustomerFormat } from '../utils/quotationAdapter';
 import { formatINR, numberToWordsINR, calculateGSTBreakdown } from '../utils/calculations';
 
@@ -53,6 +54,17 @@ export const ProposalPreviewModal = ({
     const updated = {
       ...currentQuotation,
       invoice: updatedInvoice
+    };
+    setCurrentQuotation(updated);
+    if (onUpdateQuotation) {
+      onUpdateQuotation(updated);
+    }
+  };
+
+  const handleUpdateDiscom = (updatedDiscom) => {
+    const updated = {
+      ...currentQuotation,
+      discom: updatedDiscom
     };
     setCurrentQuotation(updated);
     if (onUpdateQuotation) {
@@ -175,6 +187,33 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
 🏢 *Srimaan Solar Solutions*
 📍 #6-210, Sriramnagar, Auto nagar, Khammam-507003
 📞 Contact: 9347416140 / 9912416140`;
+
+      navigator.clipboard.writeText(summary);
+      setCopiedNotification(true);
+      setTimeout(() => setCopiedNotification(false), 3000);
+      return;
+    }
+
+    if (formatMode === 'discom') {
+      const disc = currentQuotation.discom || {};
+      const summary = `⚡ *SRIMAAN SOLAR SOLUTIONS - DISCOM SYNCHRONIZATION REPORT*
+----------------------------------------
+👤 *Applicant:* ${disc.applicantName || currentQuotation.customer?.name || 'Valued Customer'}
+📑 *USC/Service No:* ${disc.uscNo || currentQuotation.customer?.consumerNo || currentQuotation.refNo || ''}
+🔢 *Net Meter Reg No:* ${disc.regNo || 'TS-NPDCL-NM-2026-8491'}
+⚡ *Capacity:* ${disc.totalPlantCapacity || `${currentQuotation.system?.capacityKw || 3} kWp`}
+📅 *Synchronization Date:* ${disc.regDate || currentQuotation.date || ''}
+📍 *Section / Pole:* ${disc.distributionSection || ''} | ${disc.poleNumber || ''}
+
+📋 *INCLUDED DISCOM REPORTS (3 DOCUMENTS):*
+1. Annexure-V(b): LT Net Meter Synchronization & Test Report
+2. Part B: Project Completion Report for Grid-Connected Rooftop
+3. Annexure-IV: Work Completion Report for Synchronization
+
+🏢 *Empanelled Solar EPC Vendor:*
+M/s. SRIMAAN SOLAR SOLUTIONS
+📍 #6-210, Sriramnagar Auto Nagar, Warangal X Road, Khammam-507003
+📞 9347416140 / 9912416140`;
 
       navigator.clipboard.writeText(summary);
       setCopiedNotification(true);
@@ -332,9 +371,30 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
               1 Page
             </span>
           </button>
+
+          {/* DISCOM Synchronization Reports Button */}
+          <button
+            onClick={() => {
+              setFormatMode('discom');
+              setSelectedPage('all');
+            }}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              formatMode === 'discom'
+                ? 'bg-teal-700 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <Layers size={14} className={formatMode === 'discom' ? 'text-teal-200' : 'text-slate-500'} />
+            <span>DISCOM Report</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+              formatMode === 'discom' ? 'bg-teal-300 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+            }`}>
+              3 Pages
+            </span>
+          </button>
         </div>
 
-        {/* Center-Right: Page Jump Pills or Receipt/Invoice Label */}
+        {/* Center-Right: Page Jump Pills or Receipt/Invoice/DISCOM Label */}
         {formatMode === 'receipt' ? (
           <div className="flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg text-xs font-bold">
             <Receipt size={13} className="text-amber-600" />
@@ -344,6 +404,11 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
           <div className="flex items-center space-x-1.5 px-3 py-1 bg-indigo-50 text-indigo-900 border border-indigo-200 rounded-lg text-xs font-bold">
             <FileText size={13} className="text-indigo-600" />
             <span>Official GST Tax Invoice (1 Page A4)</span>
+          </div>
+        ) : formatMode === 'discom' ? (
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-teal-50 text-teal-900 border border-teal-200 rounded-lg text-xs font-bold">
+            <Layers size={13} className="text-teal-600" />
+            <span>Official DISCOM Synchronization Package (3 Pages A4 - Annexure IV, V(b) &amp; Part B)</span>
           </div>
         ) : (
           <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5">
@@ -426,11 +491,15 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
                 ? 'bg-[#0b132b] hover:bg-slate-800' 
                 : formatMode === 'customer' 
                   ? 'bg-[#064e3b] hover:bg-[#047857]' 
-                  : 'bg-amber-600 hover:bg-amber-700'
+                  : formatMode === 'receipt'
+                    ? 'bg-amber-600 hover:bg-amber-700'
+                    : formatMode === 'invoice'
+                      ? 'bg-indigo-700 hover:bg-indigo-800'
+                      : 'bg-teal-700 hover:bg-teal-800'
             }`}
           >
             <Printer size={15} />
-            <span>Print / PDF ({formatMode === 'bank' ? '7P' : formatMode === 'customer' ? '5P' : formatMode === 'receipt' ? '1P Receipt' : '1P Invoice'})</span>
+            <span>Print / PDF ({formatMode === 'bank' ? '7P' : formatMode === 'customer' ? '5P' : formatMode === 'receipt' ? '1P Receipt' : formatMode === 'invoice' ? '1P Invoice' : '3P DISCOM'})</span>
           </button>
         </div>
       </div>
@@ -506,6 +575,16 @@ ${rec.txnReference ? `• Ref/Txn No: ${rec.txnReference}\n` : ''}• Purpose: $
               <GstInvoiceView 
                 quotation={currentQuotation} 
                 onUpdateInvoice={handleUpdateInvoice} 
+              />
+            </div>
+          )}
+
+          {/* DISCOM SYNCHRONIZATION REPORTS (3 PAGES A4: ANNEXURE-V(b), PART B, ANNEXURE-IV) */}
+          {formatMode === 'discom' && (
+            <div className="document-page-wrapper shadow-2xl print:shadow-none">
+              <DiscomReportView 
+                quotation={currentQuotation} 
+                onUpdateDiscom={handleUpdateDiscom} 
               />
             </div>
           )}

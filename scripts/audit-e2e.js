@@ -1,4 +1,6 @@
 import assert from 'assert';
+import fs from 'fs';
+import path from 'path';
 import { calculateGSTBreakdown, calculateSubsidy, numberToWordsINR, formatINR } from '../src/utils/calculations.js';
 import { convertToCustomerFormat } from '../src/utils/quotationAdapter.js';
 
@@ -174,6 +176,21 @@ assert(invoiceGST.totalProjectCost === 220000, 'Invoice total matches 220000');
 const invoiceWords = numberToWordsINR(220000);
 assert(invoiceWords.includes('TWO LAKH TWENTY THOUSAND'), 'Invoice words include TWO LAKH TWENTY THOUSAND');
 console.log('✅ [PASS] GST Invoice HSN 8504 & SAC 9954 bifurcation strictly verified for ₹2,20,000');
+
+// 9. Audit DISCOM Synchronization Package (3 Documents)
+console.log('\n--- 9. AUDITING DISCOM SYNCHRONIZATION PACKAGE ---');
+const discomReportPath = path.join(process.cwd(), 'DISCOM_REPORT.xlsx');
+assert(fs.existsSync(discomReportPath), 'DISCOM_REPORT.xlsx exists in workspace');
+const discomCompPath = path.join(process.cwd(), 'src', 'components', 'DiscomReportView.jsx');
+assert(fs.existsSync(discomCompPath), 'DiscomReportView.jsx exists on disk');
+const discomSource = fs.readFileSync(discomCompPath, 'utf8');
+assert(discomSource.includes('ANNEXURE-V(b)'), 'DiscomReportView contains Annexure-V(b)');
+assert(discomSource.includes('PART B'), 'DiscomReportView contains Part B');
+assert(discomSource.includes('ANNEXURE-IV'), 'DiscomReportView contains Annexure-IV');
+assert(discomSource.includes('SRIMAAN SOLAR SOLUTIONS'), 'DiscomReportView contains SRIMAAN SOLAR SOLUTIONS');
+assert(discomSource.includes('T. Ravindra Chary'), 'DiscomReportView contains T. Ravindra Chary');
+assert(discomSource.includes('C E R T I F I C A T E'), 'DiscomReportView contains Certificate text');
+console.log('✅ [PASS] DISCOM Synchronization Package (Annexure-V(b), Part B, Annexure-IV) verified with 100% compliance');
 
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');

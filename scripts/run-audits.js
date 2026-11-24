@@ -132,7 +132,7 @@ const components = [
   'Page5.jsx', 'Page6.jsx', 'Page7.jsx', 'PageHeader.jsx',
   'Navbar.jsx', 'DashboardView.jsx', 'QuotationFormView.jsx',
   'ProposalPreviewModal.jsx', 'CustomerQuotationViewer.jsx', 'SettingsModal.jsx',
-  'AdvanceReceiptView.jsx', 'GstInvoiceView.jsx'
+  'AdvanceReceiptView.jsx', 'GstInvoiceView.jsx', 'DiscomReportView.jsx'
 ];
 
 for (const comp of components) {
