@@ -3,14 +3,10 @@ import { formatINR, formatDateToPDFStyle } from '../utils/calculations';
 import { 
   FileText, 
   RotateCcw, 
-  Pencil, 
-  Printer, 
-  Building2, 
   Download, 
-  CheckCircle2, 
-  ShieldCheck, 
   Layers, 
-  FileCheck
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
@@ -23,80 +19,78 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
   const panelsCount = Number(system.panelsCount || (capacity <= 3 ? 6 : Math.ceil((capacity * 1000) / 550)));
   const defaultPanelWattage = system.panelWattage || 550;
   const totalKwp = ((panelsCount * defaultPanelWattage) / 1000).toFixed(2);
-  const cost = Number(pricing.bankCost !== undefined ? pricing.bankCost : (pricing.totalCost || pricing.customerCost || 220000));
+  const cost = Number(pricing.bankCost !== undefined ? pricing.bankCost : (pricing.totalCost || pricing.customerCost || 0));
 
   const getInitialState = () => {
     return {
-      // General & Applicant
-      regNo: initialDiscom.regNo || (customer.consumerNo ? `TS-NPDCL-NM-${customer.consumerNo}` : 'TS-NPDCL-NM-2026-8491'),
-      regDate: initialDiscom.regDate || quotation?.date || '22-NOV-2026',
-      applicantName: initialDiscom.applicantName || customer.name || 'GURRAM ANITHA',
-      uscNo: initialDiscom.uscNo || customer.consumerNo || 'NP-TSNPD26-10416694',
+      // 1. REAL APPLICANT & QUOTATION PARTICULARS
+      regNo: initialDiscom.regNo || '',
+      regDate: initialDiscom.regDate || quotation?.date || '',
+      applicantName: initialDiscom.applicantName !== undefined ? initialDiscom.applicantName : (customer.name || ''),
+      uscNo: initialDiscom.uscNo !== undefined ? initialDiscom.uscNo : (customer.consumerNo || ''),
       category: initialDiscom.category || 'LT-I Domestic',
       subCategory: initialDiscom.subCategory || 'Individual Residential',
-      loadKw: initialDiscom.loadKw || `${capacity} kW`,
-      distributionSection: initialDiscom.distributionSection || `${customer.district || 'Khammam'} Rural / Auto Nagar`,
-      poleNumber: initialDiscom.poleNumber || 'KHM-TR-42/08',
-      address: initialDiscom.address || `${customer.addressLine1 || customer.address || 'HNO 5-1-4, BALAPETA'}, ${customer.district || 'Khammam'} - ${customer.pinCode || customer.pincode || '507003'}`,
-      mobile: initialDiscom.mobile || customer.phone || customer.mobile || '9347416140',
-      email: initialDiscom.email || customer.email || 'Ravindrachary1972@gmail.com',
-      district: initialDiscom.district || customer.district || 'Khammam',
+      loadKw: initialDiscom.loadKw || (system.capacityKw ? `${system.capacityKw} kW` : `${capacity} kW`),
+      distributionSection: initialDiscom.distributionSection || (customer.district ? `${customer.district} Section` : ''),
+      poleNumber: initialDiscom.poleNumber || '',
+      address: initialDiscom.address !== undefined ? initialDiscom.address : (customer.addressLine1 || customer.address || ''),
+      mobile: initialDiscom.mobile !== undefined ? initialDiscom.mobile : (customer.phone || customer.mobile || ''),
+      email: initialDiscom.email !== undefined ? initialDiscom.email : (customer.email || ''),
+      district: initialDiscom.district !== undefined ? initialDiscom.district : (customer.district || ''),
       state: initialDiscom.state || customer.state || 'TELANGANA',
-      pinCode: initialDiscom.pinCode || customer.pinCode || customer.pincode || '507003',
+      pinCode: initialDiscom.pinCode !== undefined ? initialDiscom.pinCode : (customer.pinCode || customer.pincode || ''),
       
-      // Part B Installation
-      projectModel: initialDiscom.projectModel || 'CAPEX',
-      commDate: initialDiscom.commDate || quotation?.date || '22-NOV-2026',
+      // 2. REAL PART B STATUTORY & SYSTEM CAPACITIES
+      projectModel: 'CAPEX',
+      commDate: initialDiscom.commDate || quotation?.date || '',
       totalCost: initialDiscom.totalCost !== undefined ? initialDiscom.totalCost : cost,
-      installationType: initialDiscom.installationType || 'ROOFTOP ONLY',
-      capacityRooftop: initialDiscom.capacityRooftop || `${totalKwp} kWp`,
-      capacityGround: initialDiscom.capacityGround || '0 kWp',
-      totalPlantCapacity: initialDiscom.totalPlantCapacity || `${totalKwp} kWp`,
-      latitude: initialDiscom.latitude || '17.2472° N',
-      longitude: initialDiscom.longitude || '80.1514° E',
+      installationType: 'ROOFTOP ONLY',
+      capacityRooftop: `${totalKwp} kWp`,
+      capacityGround: '0 kWp',
+      totalPlantCapacity: `${totalKwp} kWp`,
+      latitude: initialDiscom.latitude || '',
+      longitude: initialDiscom.longitude || '',
 
-      // Old Meter
-      oldMeterMake: initialDiscom.oldMeterMake || 'L&T / Secure',
-      oldMeterSerial: initialDiscom.oldMeterSerial || 'LT-8941204',
-      oldMeterCapacity: initialDiscom.oldMeterCapacity || '10-40 A, 240V',
-      oldMeterMf: initialDiscom.oldMeterMf || '1.0',
-      oldMeterKwh: initialDiscom.oldMeterKwh || '14820',
-      oldMeterKvah: initialDiscom.oldMeterKvah || '15110',
-      oldMeterDate: initialDiscom.oldMeterDate || quotation?.date || '22-NOV-2026',
+      // 3. OLD METER INSPECTION (Blank by default - filled post-inspection)
+      oldMeterMake: initialDiscom.oldMeterMake || '',
+      oldMeterSerial: initialDiscom.oldMeterSerial || '',
+      oldMeterCapacity: initialDiscom.oldMeterCapacity || '',
+      oldMeterMf: initialDiscom.oldMeterMf || '',
+      oldMeterKwh: initialDiscom.oldMeterKwh || '',
+      oldMeterKvah: initialDiscom.oldMeterKvah || '',
+      oldMeterDate: initialDiscom.oldMeterDate || '',
 
-      // New Net Meter
-      newMeterMake: initialDiscom.newMeterMake || 'Schneider / Secure Bi-Directional',
-      newMeterSerial: initialDiscom.newMeterSerial || 'SNM-2026-99214',
-      newMeterCapacity: initialDiscom.newMeterCapacity || '1-Phase 10-60A (Bi-Directional)',
-      newMeterConstant: initialDiscom.newMeterConstant || '3200 imp/kWh',
-      newMeterImportKwh: initialDiscom.newMeterImportKwh || '00000.0',
-      newMeterImportKvah: initialDiscom.newMeterImportKvah || '00000.0',
-      newMeterExportKwh: initialDiscom.newMeterExportKwh || '00000.0',
-      newMeterExportKvah: initialDiscom.newMeterExportKvah || '00000.0',
-      protectiveSystem: initialDiscom.protectiveSystem || 'YES',
+      // 4. NEW NET METER SYNCHRONIZATION (Blank by default - filled post-inspection)
+      newMeterMake: initialDiscom.newMeterMake || '',
+      newMeterSerial: initialDiscom.newMeterSerial || '',
+      newMeterCapacity: initialDiscom.newMeterCapacity || '',
+      newMeterConstant: initialDiscom.newMeterConstant || '',
+      newMeterImportKwh: initialDiscom.newMeterImportKwh || '',
+      newMeterImportKvah: initialDiscom.newMeterImportKvah || '',
+      newMeterExportKwh: initialDiscom.newMeterExportKwh || '',
+      newMeterExportKvah: initialDiscom.newMeterExportKvah || '',
+      protectiveSystem: 'YES',
 
-      // Modules
-      moduleMake: initialDiscom.moduleMake || system.moduleBrand || 'Waaree Energies Ltd (Tier-1 ALMM)',
-      moduleType: initialDiscom.moduleType || 'Mono PERC / N-Type TOPCon Bi-facial',
-      moduleWattage: initialDiscom.moduleWattage || `${defaultPanelWattage} Wp`,
-      moduleCount: initialDiscom.moduleCount || `${panelsCount} Nos`,
-      moduleCapacityTotal: initialDiscom.moduleCapacityTotal || `${totalKwp} kWp`,
-      moduleSerials: initialDiscom.moduleSerials || [
-        'WAA-550-26-8801', 'WAA-550-26-8802', 'WAA-550-26-8803',
-        'WAA-550-26-8804', 'WAA-550-26-8805', 'WAA-550-26-8806',
-        'WAA-550-26-8807', 'WAA-550-26-8808'
-      ],
+      // 5. SOLAR PV MODULE SPECIFICATIONS (Real Brand/Wp from Quotation; Serials filled post-delivery)
+      moduleMake: system.moduleBrand || 'Waaree Energies Ltd (Tier-1 ALMM)',
+      moduleType: system.moduleType || 'Mono PERC / N-Type TOPCon Bi-facial',
+      moduleWattage: `${defaultPanelWattage} Wp`,
+      moduleCount: `${panelsCount} Nos`,
+      moduleCapacityTotal: `${totalKwp} kWp`,
+      moduleSerials: initialDiscom.moduleSerials && Array.isArray(initialDiscom.moduleSerials)
+        ? initialDiscom.moduleSerials 
+        : Array(8).fill(''),
 
-      // Inverter
-      inverterMake: initialDiscom.inverterMake || system.inverterBrand || 'Sungrow / Growatt Smart Grid-Tied Inverter',
-      inverterSerial: initialDiscom.inverterSerial || 'SG-2026-INV-94021',
-      inverterCapacity: initialDiscom.inverterCapacity || '550 VDC',
-      inverterInputVolt: initialDiscom.inverterInputVolt || '160V - 550V DC',
-      inverterOutputVolt: initialDiscom.inverterOutputVolt || '240 V',
-      antiIslanding: initialDiscom.antiIslanding || 'YES',
-      ceigApproval: initialDiscom.ceigApproval || 'N/A (Exempted - Capacity <= 75 kW)',
+      // 6. GRID TIE INVERTER SPECIFICATIONS (Real Brand from Quotation; Serial filled post-delivery)
+      inverterMake: system.inverterBrand || 'Smart Grid-Tied Inverter',
+      inverterSerial: initialDiscom.inverterSerial || '',
+      inverterCapacity: '550 VDC',
+      inverterInputVolt: initialDiscom.inverterInputVolt || '',
+      inverterOutputVolt: '240 V',
+      antiIslanding: 'YES',
+      ceigApproval: initialDiscom.ceigApproval || (capacity <= 75 ? 'N/A (Exempted - Capacity <= 75 kW)' : ''),
 
-      // Vendor Credentials
+      // 7. REAL OFFICIAL VENDOR DETAILS (SRIMAAN SOLAR SOLUTIONS)
       vendorName: 'SRIMAAN SOLAR SOLUTIONS',
       vendorDoorNo: '# 6-210,SRIRAM NAGAR,',
       vendorStreet: 'BEHIND AUTO NAGAR',
@@ -112,11 +106,10 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
 
   const [discomData, setDiscomData] = useState(getInitialState);
   const [activeSheet, setActiveSheet] = useState('all'); // 'all', 'vb', 'partb', 'iv'
-  const [isInlineEditing, setIsInlineEditing] = useState(false);
 
   useEffect(() => {
     setDiscomData(getInitialState());
-  }, [quotation?.id, quotation?.date, pricing.bankCost, pricing.totalCost]);
+  }, [quotation?.id, quotation?.date, pricing.bankCost, pricing.totalCost, customer.name, customer.consumerNo]);
 
   const handleChange = (field, value) => {
     setDiscomData(prev => {
@@ -163,6 +156,11 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
     vendorPhone, vendorMobile, vendorEmail, signatoryName
   } = discomData;
 
+  // Shared input styling:
+  // - On Screen: Seamless inline input. When empty, shows light grey placeholder text.
+  // - On Print: placeholder becomes transparent so empty cells print completely clean and blank (zero fake text).
+  const inputClass = "w-full bg-transparent border-0 outline-none text-black font-inherit p-0 placeholder:text-gray-400 placeholder:italic placeholder:font-normal placeholder:text-[8pt] print:placeholder:text-transparent focus:bg-amber-50/70 focus:ring-1 focus:ring-amber-500 rounded-xs transition-colors";
+
   return (
     <div className="w-full flex flex-col items-center bg-slate-50 py-4 print:bg-white print:p-0">
       {/* ============================================================== */}
@@ -175,13 +173,14 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
           </span>
           <div>
             <div className="text-xs font-black text-slate-900 flex items-center gap-2">
-              <span>DISCOM Synchronization Report Package</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">
-                TSNPDCL / TSSPDCL Approved
+              <span>DISCOM Synchronization Package</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1">
+                <Sparkles size={11} className="text-emerald-700" />
+                <span>100% Real Quotation Data &bull; Blank Inspection Fields</span>
               </span>
             </div>
             <div className="text-[10px] text-slate-500 font-medium">
-              Matches uploaded &amp; modified Excel sheets: VB, PARTB, IV
+              Click any field to enter data post-inspection &bull; Prints completely blank without any fake values
             </div>
           </div>
         </div>
@@ -236,19 +235,6 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsInlineEditing(!isInlineEditing)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-              isInlineEditing 
-                ? 'bg-emerald-600 text-white shadow-xs' 
-                : 'bg-emerald-50 text-emerald-900 border border-emerald-300 hover:bg-emerald-100'
-            }`}
-          >
-            <Pencil size={13} />
-            <span>{isInlineEditing ? '✓ Inline Edit: ON' : 'Quick Inline Edit'}</span>
-          </button>
-
           <a
             href="/DISCOM_REPORT.xlsx"
             download="DISCOM_REPORT.xlsx"
@@ -263,7 +249,7 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
             type="button"
             onClick={handleReset}
             className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition cursor-pointer"
-            title="Reset to default parameters"
+            title="Reset to quotation defaults"
           >
             <RotateCcw size={12} />
             <span>Reset</span>
@@ -305,95 +291,105 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Net Meter Registration Number</td>
-                  <td className="border border-black p-1 px-2 font-bold">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={regNo}
-                        onChange={(e) => handleChange('regNo', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : regNo}
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={regNo}
+                      placeholder="Net Meter Registration Number"
+                      onChange={(e) => handleChange('regNo', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">2</td>
                   <td className="border border-black p-1 px-2 font-normal">Registration Date</td>
-                  <td className="border border-black p-1 px-2 font-bold">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={regDate}
-                        onChange={(e) => handleChange('regDate', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : regDate}
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={regDate}
+                      placeholder="Registration Date (DD-MM-YYYY)"
+                      onChange={(e) => handleChange('regDate', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">3</td>
                   <td className="border border-black p-1 px-2 font-normal">Name of the applicant</td>
                   <td className="border border-black p-1 px-2 font-bold uppercase">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={applicantName}
-                        onChange={(e) => handleChange('applicantName', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-bold uppercase px-1 outline-none"
-                      />
-                    ) : applicantName}
+                    <input
+                      type="text"
+                      value={applicantName}
+                      placeholder="Name of the applicant"
+                      onChange={(e) => handleChange('applicantName', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">4</td>
                   <td className="border border-black p-1 px-2 font-normal">Service Number /USC Number</td>
                   <td className="border border-black p-1 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={uscNo}
-                        onChange={(e) => handleChange('uscNo', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : uscNo}
+                    <input
+                      type="text"
+                      value={uscNo}
+                      placeholder="Service Number / USC Number"
+                      onChange={(e) => handleChange('uscNo', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">5</td>
                   <td className="border border-black p-1 px-2 font-normal">Category</td>
-                  <td className="border border-black p-1 px-2 font-bold">{category}</td>
+                  <td className="border border-black p-1 px-2 font-bold">
+                    <input
+                      type="text"
+                      value={category}
+                      placeholder="Category (e.g. LT-I Domestic)"
+                      onChange={(e) => handleChange('category', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">6</td>
                   <td className="border border-black p-1 px-2 font-normal">Load</td>
-                  <td className="border border-black p-1 px-2 font-bold">{loadKw}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={loadKw}
+                      placeholder="Load (e.g. 3 kW)"
+                      onChange={(e) => handleChange('loadKw', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">7</td>
                   <td className="border border-black p-1 px-2 font-normal">Distribution/Section</td>
                   <td className="border border-black p-1 px-2 font-bold">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={distributionSection}
-                        onChange={(e) => handleChange('distributionSection', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-bold px-1 outline-none"
-                      />
-                    ) : distributionSection}
+                    <input
+                      type="text"
+                      value={distributionSection}
+                      placeholder="Distribution / Section"
+                      onChange={(e) => handleChange('distributionSection', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">8</td>
                   <td className="border border-black p-1 px-2 font-normal">Pole number</td>
                   <td className="border border-black p-1 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={poleNumber}
-                        onChange={(e) => handleChange('poleNumber', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : poleNumber}
+                    <input
+                      type="text"
+                      value={poleNumber}
+                      placeholder="Pole number"
+                      onChange={(e) => handleChange('poleNumber', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
 
@@ -402,19 +398,18 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                   <td rowSpan={2} className="border border-black p-1 text-center font-bold align-top">9</td>
                   <td rowSpan={2} className="border border-black p-1 px-2 font-normal align-top">Address</td>
                   <td className="border border-black p-1 px-2 font-normal">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => handleChange('address', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black px-1 outline-none"
-                      />
-                    ) : address}
+                    <input
+                      type="text"
+                      value={address}
+                      placeholder="Address line"
+                      onChange={(e) => handleChange('address', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-2 font-normal">
-                    {district}, {state} - {pinCode}
+                    {district || state || pinCode ? `${district ? `${district}, ` : ''}${state}${pinCode ? ` - ${pinCode}` : ''}` : ''}
                   </td>
                 </tr>
 
@@ -422,7 +417,15 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">10</td>
                   <td className="border border-black p-1 px-2 font-normal">Mobile No</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{mobile}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={mobile}
+                      placeholder="Mobile No"
+                      onChange={(e) => handleChange('mobile', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
 
                 {/* Row 14: Section B Header */}
@@ -431,44 +434,58 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                   <td colSpan={2} className="border border-black p-1 px-2 font-bold text-[10pt]">Old&nbsp;Meter&nbsp;Details</td>
                 </tr>
 
-                {/* Rows 15-22: Old Meter Items */}
+                {/* Rows 15-22: Old Meter Items (Blank by default - filled post-inspection) */}
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Meter make</td>
-                  <td className="border border-black p-1 px-2 font-bold">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={oldMeterMake}
-                        onChange={(e) => handleChange('oldMeterMake', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black px-1 outline-none"
-                      />
-                    ) : oldMeterMake}
+                  <td className="border border-black p-1 px-2 font-normal">
+                    <input
+                      type="text"
+                      value={oldMeterMake}
+                      placeholder="Meter make"
+                      onChange={(e) => handleChange('oldMeterMake', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">2</td>
                   <td className="border border-black p-1 px-2 font-normal">Serial number</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={oldMeterSerial}
-                        onChange={(e) => handleChange('oldMeterSerial', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : oldMeterSerial}
+                  <td className="border border-black p-1 px-2 font-normal font-mono">
+                    <input
+                      type="text"
+                      value={oldMeterSerial}
+                      placeholder="Serial number"
+                      onChange={(e) => handleChange('oldMeterSerial', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">3</td>
                   <td className="border border-black p-1 px-2 font-normal">Capacity</td>
-                  <td className="border border-black p-1 px-2 font-normal">{oldMeterCapacity}</td>
+                  <td className="border border-black p-1 px-2 font-normal">
+                    <input
+                      type="text"
+                      value={oldMeterCapacity}
+                      placeholder="Capacity (e.g. 10-40 A, 240V)"
+                      onChange={(e) => handleChange('oldMeterCapacity', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">4</td>
                   <td className="border border-black p-1 px-2 font-normal">MF</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{oldMeterMf}</td>
+                  <td className="border border-black p-1 px-2 font-normal font-mono">
+                    <input
+                      type="text"
+                      value={oldMeterMf}
+                      placeholder="MF (e.g. 1.0)"
+                      onChange={(e) => handleChange('oldMeterMf', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td rowSpan={3} className="border border-black p-1 text-center font-bold align-top">5</td>
@@ -476,34 +493,40 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 </tr>
                 <tr>
                   <td className="border border-black p-0.5 px-4 font-normal">i) kWh</td>
-                  <td className="border border-black p-0.5 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={oldMeterKwh}
-                        onChange={(e) => handleChange('oldMeterKwh', e.target.value)}
-                        className="w-32 bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : oldMeterKwh}
+                  <td className="border border-black p-0.5 px-2 font-mono">
+                    <input
+                      type="text"
+                      value={oldMeterKwh}
+                      placeholder="kWh reading"
+                      onChange={(e) => handleChange('oldMeterKwh', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-0.5 px-4 font-normal">ii) kVAh</td>
-                  <td className="border border-black p-0.5 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={oldMeterKvah}
-                        onChange={(e) => handleChange('oldMeterKvah', e.target.value)}
-                        className="w-32 bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : oldMeterKvah}
+                  <td className="border border-black p-0.5 px-2 font-mono">
+                    <input
+                      type="text"
+                      value={oldMeterKvah}
+                      placeholder="kVAh reading"
+                      onChange={(e) => handleChange('oldMeterKvah', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">6</td>
                   <td className="border border-black p-1 px-2 font-normal">Date of replacement</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{oldMeterDate}</td>
+                  <td className="border border-black p-1 px-2 font-mono">
+                    <input
+                      type="text"
+                      value={oldMeterDate}
+                      placeholder="Date of replacement (DD-MM-YYYY)"
+                      onChange={(e) => handleChange('oldMeterDate', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
 
                 {/* Row 23: Section C Header */}
@@ -512,44 +535,58 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                   <td colSpan={2} className="border border-black p-1 px-2 font-bold text-[10pt]">New&nbsp;Net&nbsp;Meter&nbsp;Details</td>
                 </tr>
 
-                {/* Rows 24-30: New Net Meter Items */}
+                {/* Rows 24-30: New Net Meter Items (Blank by default - filled post-inspection) */}
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Meter make</td>
-                  <td className="border border-black p-1 px-2 font-bold">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={newMeterMake}
-                        onChange={(e) => handleChange('newMeterMake', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black px-1 outline-none"
-                      />
-                    ) : newMeterMake}
+                  <td className="border border-black p-1 px-2 font-normal">
+                    <input
+                      type="text"
+                      value={newMeterMake}
+                      placeholder="Meter make"
+                      onChange={(e) => handleChange('newMeterMake', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">2</td>
                   <td className="border border-black p-1 px-2 font-normal">Serial number</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={newMeterSerial}
-                        onChange={(e) => handleChange('newMeterSerial', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : newMeterSerial}
+                  <td className="border border-black p-1 px-2 font-normal font-mono">
+                    <input
+                      type="text"
+                      value={newMeterSerial}
+                      placeholder="Serial number"
+                      onChange={(e) => handleChange('newMeterSerial', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">3</td>
                   <td className="border border-black p-1 px-2 font-normal">Capacity</td>
-                  <td className="border border-black p-1 px-2 font-normal">{newMeterCapacity}</td>
+                  <td className="border border-black p-1 px-2 font-normal">
+                    <input
+                      type="text"
+                      value={newMeterCapacity}
+                      placeholder="Capacity (e.g. 1-Phase 10-60A)"
+                      onChange={(e) => handleChange('newMeterCapacity', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">4</td>
                   <td className="border border-black p-1 px-2 font-normal">Meter constant</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{newMeterConstant}</td>
+                  <td className="border border-black p-1 px-2 font-normal font-mono">
+                    <input
+                      type="text"
+                      value={newMeterConstant}
+                      placeholder="Meter constant (e.g. 3200 imp/kWh)"
+                      onChange={(e) => handleChange('newMeterConstant', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td rowSpan={3} className="border border-black p-1 text-center font-bold align-top">5</td>
@@ -558,13 +595,47 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-0.5 px-4 font-normal">i) Import (kWh/kVAh)</td>
                   <td className="border border-black p-0.5 px-2 font-normal">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{newMeterImportKwh} kWh, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{newMeterImportKvah} kVAh
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={newMeterImportKwh}
+                        placeholder="Import kWh"
+                        onChange={(e) => handleChange('newMeterImportKwh', e.target.value)}
+                        className="w-24 bg-transparent border-0 outline-none p-0 placeholder:text-gray-400 placeholder:italic print:placeholder:text-transparent text-black"
+                      />
+                      <span>kWh,</span>
+                      <input
+                        type="text"
+                        value={newMeterImportKvah}
+                        placeholder="Import kVAh"
+                        onChange={(e) => handleChange('newMeterImportKvah', e.target.value)}
+                        className="w-24 bg-transparent border-0 outline-none p-0 placeholder:text-gray-400 placeholder:italic print:placeholder:text-transparent text-black"
+                      />
+                      <span>kVAh</span>
+                    </div>
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-0.5 px-4 font-normal">ii) Export (kWh/kVAh)</td>
                   <td className="border border-black p-0.5 px-2 font-normal">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{newMeterExportKwh} kWh, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{newMeterExportKvah} kVAh
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={newMeterExportKwh}
+                        placeholder="Export kWh"
+                        onChange={(e) => handleChange('newMeterExportKwh', e.target.value)}
+                        className="w-24 bg-transparent border-0 outline-none p-0 placeholder:text-gray-400 placeholder:italic print:placeholder:text-transparent text-black"
+                      />
+                      <span>kWh,</span>
+                      <input
+                        type="text"
+                        value={newMeterExportKvah}
+                        placeholder="Export kVAh"
+                        onChange={(e) => handleChange('newMeterExportKvah', e.target.value)}
+                        className="w-24 bg-transparent border-0 outline-none p-0 placeholder:text-gray-400 placeholder:italic print:placeholder:text-transparent text-black"
+                      />
+                      <span>kVAh</span>
+                    </div>
                   </td>
                 </tr>
 
@@ -589,7 +660,10 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                     <div className="text-[8.5pt]">
                       It is certified that there is no return voltage from the inverter to the meter when incoming grid supply is switched off.<br />
                       It is further certified that the protective equipment is installed and functioning as prescribed.<br />
-                      The above Solar Rooftop PV system was synchronized as per DISCOM guidelines and the performance of the above plant is satisfactory. The date of synchronization of the plant is&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+                      The above Solar Rooftop PV system was synchronized as per DISCOM guidelines and the performance of the above plant is satisfactory. The date of synchronization of the plant is&nbsp;
+                      <span className="font-bold underline">
+                        {regDate || commDate || '...................................................'}
+                      </span>.
                     </div>
                   </td>
                 </tr>
@@ -704,9 +778,19 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 {/* Row 8 */}
                 <tr>
                   <td className="border border-black p-1.5 px-2 font-bold">Date of Commissioning of the plant:</td>
-                  <td className="border border-black p-1.5 px-2 font-bold font-mono">{commDate}</td>
+                  <td className="border border-black p-1.5 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={commDate}
+                      placeholder="Commissioning Date (DD-MM-YYYY)"
+                      onChange={(e) => handleChange('commDate', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                   <td className="border border-black p-1.5 px-2 font-bold">Total Cost of Installation (Rs.):</td>
-                  <td className="border border-black p-1.5 px-2 font-bold font-mono">₹{formatINR(totalCost)}</td>
+                  <td className="border border-black p-1.5 px-2 font-bold font-mono">
+                    {totalCost ? `₹${formatINR(totalCost)}` : ''}
+                  </td>
                 </tr>
 
                 {/* Row 9 */}
@@ -741,30 +825,28 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 {/* Row 13 */}
                 <tr>
                   <td className="border border-black p-1.5 px-2 font-bold">Latitude:</td>
-                  <td colSpan={3} className="border border-black p-1.5 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={latitude}
-                        onChange={(e) => handleChange('latitude', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : latitude}
+                  <td colSpan={3} className="border border-black p-1.5 px-2 font-mono">
+                    <input
+                      type="text"
+                      value={latitude}
+                      placeholder="Latitude (e.g. 17.2472° N)"
+                      onChange={(e) => handleChange('latitude', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
 
                 {/* Row 14 */}
                 <tr>
                   <td className="border border-black p-1.5 px-2 font-bold">Longitude:</td>
-                  <td colSpan={3} className="border border-black p-1.5 px-2 font-bold font-mono">
-                    {isInlineEditing ? (
-                      <input
-                        type="text"
-                        value={longitude}
-                        onChange={(e) => handleChange('longitude', e.target.value)}
-                        className="w-full bg-yellow-50 border-b border-black font-mono font-bold px-1 outline-none"
-                      />
-                    ) : longitude}
+                  <td colSpan={3} className="border border-black p-1.5 px-2 font-mono">
+                    <input
+                      type="text"
+                      value={longitude}
+                      placeholder="Longitude (e.g. 80.1514° E)"
+                      onChange={(e) => handleChange('longitude', e.target.value)}
+                      className={inputClass}
+                    />
                   </td>
                 </tr>
 
@@ -790,7 +872,10 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                     <div className="text-[8.5pt]">
                       It is certified that there is no return voltage from the inverter to the meter when incoming grid supply is switched off.<br />
                       It is further certified that the protective equipment is installed and functioning as prescribed.<br />
-                      The above Solar Rooftop PV system was synchronized as per DISCOM guidelines and the performance of the above plant is satisfactory.The date of synchronization of the plant is&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+                      The above Solar Rooftop PV system was synchronized as per DISCOM guidelines and the performance of the above plant is satisfactory.The date of synchronization of the plant is&nbsp;
+                      <span className="font-bold underline">
+                        {commDate || regDate || '...................................................'}
+                      </span>.
                     </div>
                   </td>
                 </tr>
@@ -868,32 +953,80 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Net Meter&nbsp;&nbsp;Registration&nbsp;&nbsp;Number</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{regNo}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={regNo}
+                      placeholder="Net Meter Registration Number"
+                      onChange={(e) => handleChange('regNo', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">2</td>
                   <td className="border border-black p-1 px-2 font-normal">Registration&nbsp;&nbsp;Date</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{regDate}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={regDate}
+                      placeholder="Registration Date (DD-MM-YYYY)"
+                      onChange={(e) => handleChange('regDate', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">3</td>
                   <td className="border border-black p-1 px-2 font-normal">Name of the&nbsp;&nbsp;applicant</td>
-                  <td className="border border-black p-1 px-2 font-bold uppercase">{applicantName}</td>
+                  <td className="border border-black p-1 px-2 font-bold uppercase">
+                    <input
+                      type="text"
+                      value={applicantName}
+                      placeholder="Name of the applicant"
+                      onChange={(e) => handleChange('applicantName', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">4</td>
                   <td className="border border-black p-1 px-2 font-normal">Service&nbsp;&nbsp;Number /USC NUMBER</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{uscNo}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={uscNo}
+                      placeholder="Service Number / USC NUMBER"
+                      onChange={(e) => handleChange('uscNo', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">5</td>
                   <td className="border border-black p-1 px-2 font-normal">Category</td>
-                  <td className="border border-black p-1 px-2 font-bold">{category}</td>
+                  <td className="border border-black p-1 px-2 font-bold">
+                    <input
+                      type="text"
+                      value={category}
+                      placeholder="Category"
+                      onChange={(e) => handleChange('category', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">6</td>
                   <td className="border border-black p-1 px-2 font-normal">Load in&nbsp;&nbsp;kW</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{loadKw}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={loadKw}
+                      placeholder="Load in kW"
+                      onChange={(e) => handleChange('loadKw', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
 
                 {/* Row 9: Section B Header */}
@@ -902,7 +1035,7 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                   <td colSpan={2} className="border border-black p-1 px-2 font-bold text-[9.5pt]">Vendor of the&nbsp;&nbsp;Rooftop Solar PV System&nbsp;&nbsp;Details:</td>
                 </tr>
 
-                {/* Rows 10-19: Vendor details */}
+                {/* Rows 10-19: Vendor details (100% Real from official template) */}
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Name of Vendor</td>
@@ -963,9 +1096,17 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Make</td>
-                  <td className="border border-black p-1 px-2 font-bold">{moduleMake}</td>
+                  <td className="border border-black p-1 px-2 font-bold">
+                    <input
+                      type="text"
+                      value={moduleMake}
+                      placeholder="Module Make"
+                      onChange={(e) => handleChange('moduleMake', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
-                {/* Rows 22-29: 8 Module Serial rows exactly matching Excel rows 22-29 */}
+                {/* Rows 22-29: 8 Module Serial rows (Blank by default - filled post-delivery) */}
                 {Array.from({ length: 8 }).map((_, idx) => (
                   <tr key={idx}>
                     <td className="border border-black p-0.5 text-center font-bold">
@@ -975,39 +1116,67 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                       {idx === 0 ? 'Module Numbers' : ''}
                     </td>
                     <td className="border border-black p-0.5 px-2 font-mono text-[8pt]">
-                      {isInlineEditing ? (
-                        <input
-                          type="text"
-                          value={moduleSerials[idx] || ''}
-                          placeholder={`Serial #${idx+1}`}
-                          onChange={(e) => handleSerialChange(idx, e.target.value)}
-                          className="w-full bg-yellow-50 border-b border-black font-mono px-1 outline-none"
-                        />
-                      ) : (
-                        moduleSerials[idx] || ''
-                      )}
+                      <input
+                        type="text"
+                        value={moduleSerials[idx] || ''}
+                        placeholder={`Serial #${idx+1}`}
+                        onChange={(e) => handleSerialChange(idx, e.target.value)}
+                        className={inputClass}
+                      />
                     </td>
                   </tr>
                 ))}
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">3</td>
                   <td className="border border-black p-1 px-2 font-normal">Type of module</td>
-                  <td className="border border-black p-1 px-2 font-normal">{moduleType}</td>
+                  <td className="border border-black p-1 px-2 font-normal">
+                    <input
+                      type="text"
+                      value={moduleType}
+                      placeholder="Type of module"
+                      onChange={(e) => handleChange('moduleType', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">4</td>
                   <td className="border border-black p-1 px-2 font-normal">Capacity of each module</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{moduleWattage}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={moduleWattage}
+                      placeholder="Capacity of each module"
+                      onChange={(e) => handleChange('moduleWattage', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">5</td>
                   <td className="border border-black p-1 px-2 font-normal">Number of modules</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{moduleCount}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={moduleCount}
+                      placeholder="Number of modules"
+                      onChange={(e) => handleChange('moduleCount', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">6</td>
                   <td className="border border-black p-1 px-2 font-normal">Total capacity</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono text-[9pt]">{moduleCapacityTotal}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono text-[9pt]">
+                    <input
+                      type="text"
+                      value={moduleCapacityTotal}
+                      placeholder="Total capacity (kWp)"
+                      onChange={(e) => handleChange('moduleCapacityTotal', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
 
                 {/* Row 34: Section D Header */}
@@ -1020,12 +1189,28 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">1</td>
                   <td className="border border-black p-1 px-2 font-normal">Make</td>
-                  <td className="border border-black p-1 px-2 font-bold">{inverterMake}</td>
+                  <td className="border border-black p-1 px-2 font-bold">
+                    <input
+                      type="text"
+                      value={inverterMake}
+                      placeholder="Inverter Make"
+                      onChange={(e) => handleChange('inverterMake', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">2</td>
                   <td className="border border-black p-1 px-2 font-normal">Serial number</td>
-                  <td className="border border-black p-1 px-2 font-bold font-mono">{inverterSerial}</td>
+                  <td className="border border-black p-1 px-2 font-bold font-mono">
+                    <input
+                      type="text"
+                      value={inverterSerial}
+                      placeholder="Inverter Serial number"
+                      onChange={(e) => handleChange('inverterSerial', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">3</td>
@@ -1035,7 +1220,15 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">4</td>
                   <td className="border border-black p-1 px-2 font-normal">Input voltage</td>
-                  <td className="border border-black p-1 px-2 font-normal">{inverterInputVolt}</td>
+                  <td className="border border-black p-1 px-2 font-normal">
+                    <input
+                      type="text"
+                      value={inverterInputVolt}
+                      placeholder="Input voltage (e.g. 160V - 550V DC)"
+                      onChange={(e) => handleChange('inverterInputVolt', e.target.value)}
+                      className={inputClass}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 text-center font-bold">5</td>
@@ -1067,7 +1260,13 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
                     CEIG Approval&nbsp;&nbsp;Ref&nbsp;&nbsp;Number&nbsp;&nbsp;(Rooftop Solar PV System having the capacity in excess of 75&nbsp;&nbsp;kW)
                   </td>
                   <td className="border border-black p-1 px-2 font-mono text-center align-middle">
-                    {ceigApproval}
+                    <input
+                      type="text"
+                      value={ceigApproval}
+                      placeholder="CEIG Ref No (if applicable)"
+                      onChange={(e) => handleChange('ceigApproval', e.target.value)}
+                      className="w-full text-center bg-transparent border-0 outline-none text-black placeholder:text-gray-400 placeholder:italic print:placeholder:text-transparent"
+                    />
                   </td>
                 </tr>
 
