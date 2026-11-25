@@ -36,7 +36,31 @@ export const generateRefNo = (sequence = 10, subSeq = 7) => {
   return `SRIMAAN SOLAR SOLUTIONS-${seqStr}/${subStr}-${year}-${nextYear}`;
 };
 
-export const calculateSubsidy = (capacityKw) => {
+export const isDomesticCategory = (category = '') => {
+  if (!category) return true;
+  const lower = String(category).toLowerCase();
+  if (
+    lower.includes('commercial') ||
+    lower.includes('industrial') ||
+    lower.includes('institutional') ||
+    lower.includes('non-domestic') ||
+    lower.includes('non domestic') ||
+    lower.includes('lt-2') ||
+    lower.includes('lt-ii') ||
+    lower.includes('lt-3') ||
+    lower.includes('lt-iii') ||
+    lower.includes('ht ') ||
+    lower.includes('c&i')
+  ) {
+    return false;
+  }
+  return true;
+};
+
+export const calculateSubsidy = (capacityKw, category = 'Domestic Category') => {
+  if (!isDomesticCategory(category)) {
+    return 0; // Commercial & Industrial connections are non-subsidized per MNRE
+  }
   const kw = Number(capacityKw) || 0;
   if (kw <= 0) return 0;
   if (kw === 1) return 30000;

@@ -9,7 +9,7 @@ import {
   CAPACITY_PRESETS, MODULE_BRANDS, INVERTER_BRANDS, STRUCTURE_OPTIONS 
 } from '../data/defaultData';
 import { 
-  formatINR, calculateSubsidy, calculateEnergyMetrics, 
+  formatINR, calculateSubsidy, isDomesticCategory, calculateEnergyMetrics, 
   calculateArea, calculatePayback, generateRefNo, formatDateToPDFStyle 
 } from '../utils/calculations';
 
@@ -30,6 +30,31 @@ export const Dashboard = ({
 
   // Helper updater
   const updateField = (section, field, value) => {
+    if (section === 'customer' && field === 'category') {
+      const isDomestic = isDomesticCategory(value);
+      const kw = parseFloat(data.system.capacityKw) || 0;
+      const newSubsidy = isDomestic ? calculateSubsidy(kw, value) : 0;
+      const totalCost = Number(data.pricing.totalCost) || 0;
+      const netCost = Math.max(0, totalCost - newSubsidy);
+      const annualUnits = Number(data.system.energyPerYear) || (kw * 1200);
+      const payback = calculatePayback(netCost, annualUnits, Number(data.pricing.electricityTariff) || 8);
+      onChange({
+        ...data,
+        customer: {
+          ...data.customer,
+          category: value
+        },
+        pricing: {
+          ...data.pricing,
+          subsidyAmount: newSubsidy,
+          afterSubsidyCost: netCost,
+          annualSavings: payback.annualSavings,
+          paybackYears: payback.paybackYears
+        }
+      });
+      return;
+    }
+
     if (section) {
       onChange({
         ...data,
@@ -48,10 +73,11 @@ export const Dashboard = ({
 
   // Preset capacity handler
   const handleApplyPreset = (preset) => {
+    const isDomestic = isDomesticCategory(data.customer?.category);
     const kw = preset.kw;
     const energy = calculateEnergyMetrics(kw);
     const area = calculateArea(kw);
-    const subsidy = preset.subsidy;
+    const subsidy = isDomestic ? preset.subsidy : 0;
     const totalCost = preset.cost;
     const netCost = totalCost - subsidy;
     const payback = calculatePayback(netCost, energy.energyPerYear, data.pricing.electricityTariff);
@@ -145,6 +171,7 @@ export const Dashboard = ({
 
   // Copy WhatsApp summary
   const handleCopyWhatsAppSummary = () => {
+    const isDomestic = isDomesticCategory(data.customer?.category);
     const summary = `☀️ *SRIMAAN SOLAR SOLUTIONS - QUOTATION SUMMARY*
 ----------------------------------------
 👤 *Customer:* ${data.customer.name}
@@ -155,7 +182,7 @@ export const Dashboard = ({
 
 💰 *COMMERCIAL SUMMARY:*
 • Total System Cost: ₹${formatINR(data.pricing.totalCost)}
-• PM Surya Ghar Subsidy: ₹${formatINR(data.pricing.subsidyAmount)}
+${isDomestic ? `• PM Surya Ghar Subsidy: ₹${formatINR(data.pricing.subsidyAmount)}` : `• Govt Subsidy: NIL (Commercial / Industrial - 40% AD Applies)`}
 👉 *Net Investment:* ₹${formatINR(data.pricing.afterSubsidyCost)}
 
 📊 *GENERATION & ROI:*
@@ -389,9 +416,10 @@ export const Dashboard = ({
                       }
                       const val = parseFloat(valStr);
                       if (isNaN(val)) return;
+                      const isDomestic = isDomesticCategory(data.customer?.category);
                       const energy = calculateEnergyMetrics(val);
                       const area = calculateArea(val);
-                      const subsidy = calculateSubsidy(val);
+                      const subsidy = isDomestic ? calculateSubsidy(val, data.customer?.category) : 0;
                       onChange({
                         ...data,
                         system: {
@@ -609,22 +637,33 @@ export const Dashboard = ({
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-slate-400">Govt. Subsidy (₹)</label>
-                    <button
-                      onClick={() => handlePriceChange('subsidyAmount', calculateSubsidy(data.system.capacityKw))}
-                      className="text-[10px] text-amber-400 hover:underline"
-                    >
-                      PM Surya Ghar
-                    </button>
+                    {isDomesticCategory(data.customer?.category) ? (
+                      <button
+                        onClick={() => handlePriceChange('subsidyAmount', calculateSubsidy(data.system.capacityKw, data.customer?.category))}
+                        className="text-[10px] text-amber-400 hover:underline"
+                      >
+                        PM Surya Ghar
+                      </button>
+                    ) : (
+                      <span className="text-[10px] text-amber-400 font-semibold">
+                        Non-Subsidized
+                      </span>
+                    )}
                   </div>
                   <input
                     type="number"
                     step="1000"
-                    value={data.pricing.subsidyAmount}
-                    onChange={(e) => handlePriceChange('subsidyAmount', e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-emerald-400 font-bold text-sm focus:border-amber-500 outline-none"
+                    disabled={!isDomesticCategory(data.customer?.category)}
+                    value={isDomesticCategory(data.customer?.category) ? data.pricing.subsidyAmount : 0}
+                    onChange={(e) => isDomesticCategory(data.customer?.category) && handlePriceChange('subsidyAmount', e.target.value)}
+                    className={`w-full bg-slate-900 border rounded px-2.5 py-1.5 font-bold text-sm outline-none ${
+                      isDomesticCategory(data.customer?.category)
+                        ? 'border-slate-700 text-emerald-400 focus:border-amber-500'
+                        : 'border-slate-800 text-slate-500 cursor-not-allowed'
+                    }`}
                   />
                   <span className="text-[10px] text-slate-400 mt-0.5 block">
-                    Directly to customer account
+                    {isDomesticCategory(data.customer?.category) ? 'Directly to customer account' : 'Commercial: 40% Accelerated Depreciation applies'}
                   </span>
                 </div>
               </div>

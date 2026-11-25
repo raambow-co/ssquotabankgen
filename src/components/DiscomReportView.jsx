@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatINR, formatDateToPDFStyle } from '../utils/calculations';
+import { formatINR, formatDateToPDFStyle, isDomesticCategory } from '../utils/calculations';
 import { 
   FileText, 
   RotateCcw, 
@@ -28,8 +28,8 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
       regDate: initialDiscom.regDate || quotation?.date || '',
       applicantName: initialDiscom.applicantName !== undefined ? initialDiscom.applicantName : (customer.name || ''),
       uscNo: initialDiscom.uscNo !== undefined ? initialDiscom.uscNo : (customer.consumerNo || ''),
-      category: initialDiscom.category || 'LT-I Domestic',
-      subCategory: initialDiscom.subCategory || 'Individual Residential',
+      category: initialDiscom.category || (isDomesticCategory(customer.category) ? 'LT-I Domestic' : (String(customer.category).toLowerCase().includes('indus') ? 'LT-III Industrial' : 'LT-II Commercial')),
+      subCategory: initialDiscom.subCategory || (isDomesticCategory(customer.category) ? 'Individual Residential' : (String(customer.category).toLowerCase().includes('indus') ? 'Industrial Unit' : 'Commercial Establishment')),
       loadKw: initialDiscom.loadKw || (system.capacityKw ? `${system.capacityKw} kW` : `${capacity} kW`),
       distributionSection: initialDiscom.distributionSection || (customer.district ? `${customer.district} Section` : ''),
       poleNumber: initialDiscom.poleNumber || '',

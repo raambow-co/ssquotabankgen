@@ -1,4 +1,4 @@
-import { calculateSubsidy, calculateEnergyMetrics, calculatePayback, calculateGSTBreakdown } from './calculations.js';
+import { calculateSubsidy, isDomesticCategory, calculateEnergyMetrics, calculatePayback, calculateGSTBreakdown } from './calculations.js';
 
 export const srimaanCustomerSettings = {
   company: {
@@ -137,7 +137,11 @@ export function convertToCustomerFormat(data) {
   const customerCost = parseFloat(data.pricing?.customerCost !== undefined ? data.pricing.customerCost : (data.pricing?.totalCost || 0));
   const bankCost = parseFloat(data.pricing?.bankCost !== undefined ? data.pricing.bankCost : (data.pricing?.totalCost || customerCost));
   const totalCost = customerCost;
-  const subsidy = data.pricing?.subsidyAmount !== undefined ? parseFloat(data.pricing.subsidyAmount) : calculateSubsidy(dcKw);
+  const category = data.customer?.category || 'Domestic Category';
+  const isDomestic = isDomesticCategory(category);
+  const subsidy = data.pricing?.subsidyAmount !== undefined 
+    ? parseFloat(data.pricing.subsidyAmount) 
+    : (isDomestic ? calculateSubsidy(dcKw, category) : 0);
   const netPayable = data.pricing?.afterSubsidyCost !== undefined ? parseFloat(data.pricing.afterSubsidyCost) : Math.max(0, totalCost - subsidy);
 
   // Calculate Payback

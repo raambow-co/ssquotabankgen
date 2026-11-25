@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatINR, numberToWordsINR } from '../utils/calculations';
+import { formatINR, numberToWordsINR, isDomesticCategory } from '../utils/calculations';
 import { 
   Edit3, 
   Check, 
@@ -593,7 +593,7 @@ export const AdvanceReceiptView = ({ quotation, onUpdateReceipt }) => {
                   </div>
                   <div className="text-[7.5pt] text-slate-500 italic space-y-0.5">
                     <p>* Official acknowledgment of advance token amount for solar rooftop EPC engineering.</p>
-                    <p>* Total Project Cost is inclusive of statutory GST (70:30 norms). Central DBT subsidy is directly credited to client account.</p>
+                    <p>* Total Project Cost is inclusive of statutory GST (70:30 norms). {isDomesticCategory(customer?.category) ? 'Central DBT subsidy is directly credited to client account.' : 'Commercial/Industrial installation: Non-subsidized (eligible for 40% Accelerated Depreciation).'}</p>
                   </div>
                 </div>
 

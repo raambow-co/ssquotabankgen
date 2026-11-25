@@ -353,12 +353,12 @@ export const INITIAL_SAVED_QUOTATIONS = [
       totalCost: 546240,
       customerCost: 546240,
       bankCost: 610000,
-      subsidyAmount: 78000,
-      afterSubsidyCost: 468240,
-      bankNetCost: 532000,
+      subsidyAmount: 0,
+      afterSubsidyCost: 546240,
+      bankNetCost: 610000,
       electricityTariff: 9,
       annualSavings: 108000,
-      paybackYears: "4.3"
+      paybackYears: "5.1"
     },
     bom: DEFAULT_BOM(10, "10 KW On-Grid Inverter (Growatt Solar Inverter with WiFi)", "Solar PV module: TOPCon / Mono PERC 550W (Tata Power Solar, DCR Module)", "Elevated GI Super Structure (Height 6FT to 8FT Walkable Rooftop)"),
     terms: DEFAULT_TERMS

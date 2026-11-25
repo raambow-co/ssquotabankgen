@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageHeader, PageFooter } from './PageHeader';
-import { formatINR, formatINRDecimal, calculateGSTBreakdown } from '../utils/calculations';
+import { formatINR, formatINRDecimal, calculateGSTBreakdown, isDomesticCategory } from '../utils/calculations';
 
 export const Page6 = ({ data }) => {
   const { company, bank, bank2, system, pricing, customer } = data;
@@ -19,10 +19,13 @@ export const Page6 = ({ data }) => {
     bankName: "STATE BANK OF INDIA"
   };
 
+  const isDomestic = isDomesticCategory(customer?.category);
   const bankCost = pricing.bankCost || pricing.totalCost;
-  const subsidyDisplay = pricing.subsidyAmount;
-  const subsidyFormatted = formatINR(pricing.subsidyAmount);
-  const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - (pricing.subsidyAmount || 0)));
+  const subsidyVal = isDomestic ? (Number(pricing.subsidyAmount) || 0) : 0;
+  const subsidyDisplay = subsidyVal;
+  const subsidyFormatted = formatINR(subsidyVal);
+  const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - subsidyVal));
+  const totalCostFormatted = formatINR(bankCost);
   const savingsDisplay = pricing.annualSavings ? formatINR(pricing.annualSavings) : "";
 
   // GST Calculation Breakdown based on statutory Solar EPC rules for Bank PO:
@@ -161,8 +164,12 @@ export const Page6 = ({ data }) => {
                   <td className="p-1.5 font-bold text-center">INR</td>
                 </tr>
                 <tr className="border-b border-black bg-emerald-50/20">
-                  <td className="p-1.5 font-bold text-gray-900 border-r border-black">Project Cost After Subsidy</td>
-                  <td className="p-1.5 font-bold text-center border-r border-black">{afterSubsidyDisplay}</td>
+                  <td className="p-1.5 font-bold text-gray-900 border-r border-black">
+                    {isDomestic ? "Project Cost After Subsidy" : "Net Turnkey Project Cost"}
+                  </td>
+                  <td className="p-1.5 font-bold text-center border-r border-black">
+                    {isDomestic ? afterSubsidyDisplay : totalCostFormatted}
+                  </td>
                   <td className="p-1.5 font-bold text-center">INR</td>
                 </tr>
                 <tr className="bg-amber-50/20">
@@ -178,7 +185,15 @@ export const Page6 = ({ data }) => {
           <div className="mt-2 mb-2 text-[8pt] text-gray-900 leading-relaxed text-justify p-2 bg-slate-50/60 rounded border border-slate-200">
             <p className="font-medium">
               <span className="font-extrabold text-black">Note : </span>
-              The Customer needs to register through the PM Surya Ghar National Portal to claim the central financial assistance. The indicated Subsidy (<span className="font-bold text-black">Rs. {subsidyFormatted}/-</span>) amount is tentative and can be modified by the Government of India / MNRE at any time. The concerned documents along with a scanned copy of a cancelled bank cheque are to be uploaded after installation of the Solar System. Then the eligible Subsidy will directly be credited via DBT to the customer’s bank account from the Government of India. (Electricity consumer service connection must be under <span className="font-bold">{customer?.category || "Domestic Category"}</span>).
+              {isDomestic ? (
+                <>
+                  The Customer needs to register through the PM Surya Ghar National Portal to claim the central financial assistance. The indicated Subsidy (<span className="font-bold text-black">Rs. {subsidyFormatted}/-</span>) amount is tentative and can be modified by the Government of India / MNRE at any time. The concerned documents along with a scanned copy of a cancelled bank cheque are to be uploaded after installation of the Solar System. Then the eligible Subsidy will directly be credited via DBT to the customer’s bank account from the Government of India. (Electricity consumer service connection must be under <span className="font-bold">{customer?.category || "Domestic Category"}</span>).
+                </>
+              ) : (
+                <>
+                  Central Government DBT Subsidy under PM Surya Ghar is applicable strictly to Domestic / Residential rooftop consumers only per MNRE guidelines. For Commercial &amp; Industrial connections (<span className="font-bold">{customer?.category || "Commercial Category"}</span>), central subsidy is <span className="font-bold">NIL (Not Applicable)</span>. Commercial consumers are eligible to claim <span className="font-bold">40% Accelerated Depreciation (AD)</span> tax benefits under Section 32 of the Income Tax Act along with commercial tariff electricity savings.
+                </>
+              )}
             </p>
           </div>
 

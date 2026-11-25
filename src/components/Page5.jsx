@@ -1,14 +1,17 @@
 import React from 'react';
 import { PageHeader, PageFooter } from './PageHeader';
-import { formatINR } from '../utils/calculations';
+import { formatINR, isDomesticCategory } from '../utils/calculations';
 
 export const Page5 = ({ data }) => {
-  const { company, system, pricing, bom } = data;
+  const { company, system, pricing, bom, customer } = data;
   const capacity = system?.capacityKw || 5;
 
+  const isDomestic = isDomesticCategory(customer?.category);
   const bankCost = pricing.bankCost || pricing.totalCost;
   const totalCostDisplay = formatINR(bankCost);
-  const subsidyVal = pricing.subsidyAmount !== undefined ? pricing.subsidyAmount : (pricing.subsidy !== undefined ? pricing.subsidy : 78000);
+  const subsidyVal = isDomestic
+    ? (pricing.subsidyAmount !== undefined ? pricing.subsidyAmount : (pricing.subsidy !== undefined ? pricing.subsidy : 78000))
+    : 0;
   const subsidyDisplay = formatINR(subsidyVal);
   const afterSubsidyDisplay = formatINR(Math.max(0, bankCost - subsidyVal));
 
@@ -73,23 +76,23 @@ export const Page5 = ({ data }) => {
                   </td>
                 </tr>
 
-                {/* Subsidy row (Replaced extra lines and subtotal per client request) */}
+                {/* Subsidy row */}
                 <tr className="border-b border-black bg-slate-50/30">
                   <td colSpan={2} className="py-1.5 px-4 text-center font-extrabold text-gray-900 text-sm border-r border-black tracking-wide">
-                    Subsidy
+                    {isDomestic ? 'Subsidy' : 'Central Govt Subsidy'}
                   </td>
                   <td className="py-1.5 px-2 text-center font-extrabold text-gray-900 text-sm tracking-wide font-mono">
-                    {subsidyDisplay}
+                    {isDomestic ? subsidyDisplay : 'NIL (Non-Subsidized)'}
                   </td>
                 </tr>
 
                 {/* After Subsidy Cost row */}
-                <tr className="bg-emerald-50/30">
+                <tr className={isDomestic ? "bg-emerald-50/30" : "bg-slate-50/50"}>
                   <td colSpan={2} className="py-1.5 px-4 text-center font-extrabold text-gray-900 text-sm border-r border-black tracking-wide">
-                    After Subsidy Cost:
+                    {isDomestic ? 'After Subsidy Cost:' : 'Net Turnkey Cost:'}
                   </td>
                   <td className="py-1.5 px-2 text-center font-extrabold text-gray-900 text-sm tracking-wide font-mono">
-                    {afterSubsidyDisplay}
+                    {isDomestic ? afterSubsidyDisplay : totalCostDisplay}
                   </td>
                 </tr>
               </tbody>
@@ -97,11 +100,19 @@ export const Page5 = ({ data }) => {
           </div>
 
           {/* Statutory Subsidy Directly Credited Banner transferred from Page 6 */}
-          <div className="mt-2.5 mb-1.5 p-1.5 bg-emerald-50/80 border border-emerald-300 rounded-xs">
-            <h4 className="font-extrabold text-gray-900 text-[10pt] tracking-wide text-center">
-              SUBSIDY AMOUNT &nbsp;&nbsp;&nbsp;&nbsp; ₹{subsidyDisplay}/- directly credited to customer account
-            </h4>
-          </div>
+          {isDomestic && subsidyVal > 0 ? (
+            <div className="mt-2.5 mb-1.5 p-1.5 bg-emerald-50/80 border border-emerald-300 rounded-xs">
+              <h4 className="font-extrabold text-gray-900 text-[10pt] tracking-wide text-center">
+                SUBSIDY AMOUNT &nbsp;&nbsp;&nbsp;&nbsp; ₹{subsidyDisplay}/- directly credited to customer account
+              </h4>
+            </div>
+          ) : (
+            <div className="mt-2.5 mb-1.5 p-1.5 bg-amber-50/80 border border-amber-300 rounded-xs">
+              <h4 className="font-extrabold text-gray-900 text-[9pt] tracking-wide text-center uppercase">
+                COMMERCIAL / INDUSTRIAL CONNECTION &bull; ELIGIBLE FOR 40% ACCELERATED DEPRECIATION (SEC 32 IT ACT)
+              </h4>
+            </div>
+          )}
 
           {/* Statutory GST Note */}
           <div className="mt-1 text-[7.5pt] text-gray-700 italic text-left">

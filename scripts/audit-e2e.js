@@ -1,7 +1,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { calculateGSTBreakdown, calculateSubsidy, numberToWordsINR, formatINR } from '../src/utils/calculations.js';
+import { calculateGSTBreakdown, calculateSubsidy, isDomesticCategory, numberToWordsINR, formatINR } from '../src/utils/calculations.js';
 import { convertToCustomerFormat } from '../src/utils/quotationAdapter.js';
 
 console.log('========================================');
@@ -191,6 +191,25 @@ assert(discomSource.includes('SRIMAAN SOLAR SOLUTIONS'), 'DiscomReportView conta
 assert(discomSource.includes('T. Ravindra Chary'), 'DiscomReportView contains T. Ravindra Chary');
 assert(discomSource.includes('C E R T I F I C A T E'), 'DiscomReportView contains Certificate text');
 console.log('✅ [PASS] DISCOM Synchronization Package (Annexure-V(b), Part B, Annexure-IV) verified with 100% compliance');
+
+// 10. Audit Category-Based Subsidy Logic (Domestic vs Commercial/Industrial)
+console.log('\n--- 10. AUDITING COMMERCIAL / INDUSTRIAL SUBSIDY ISOLATION ---');
+assert(isDomesticCategory('Domestic Category') === true, 'Domestic Category is recognized');
+assert(isDomesticCategory('Commercial Category') === false, 'Commercial is recognized as non-domestic');
+assert(isDomesticCategory('Industrial Category') === false, 'Industrial is recognized as non-domestic');
+assert(calculateSubsidy(5, 'Commercial Category') === 0, '5kW Commercial subsidy is 0');
+assert(calculateSubsidy(10, 'Industrial Category') === 0, '10kW Industrial subsidy is 0');
+assert(calculateSubsidy(5, 'Domestic Category') === 78000, '5kW Domestic subsidy is ₹78,000');
+
+const commercialQuote = {
+  ...mockQuotation,
+  customer: { ...mockQuotation.customer, category: 'Commercial Category' },
+  pricing: { ...mockQuotation.pricing, subsidyAmount: 0 }
+};
+const { quotation: convertedQuotation } = convertToCustomerFormat(commercialQuote);
+assert(convertedQuotation.commercials.subsidyAmount === 0, 'Converted commercial proposal has ₹0 subsidy');
+assert(convertedQuotation.commercials.netPayable === convertedQuotation.commercials.totalGrossCost, 'Commercial net payable equals 100% gross cost');
+console.log('✅ [PASS] Commercial & Industrial zero-subsidy and 100% net turnkey cost verified');
 
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');

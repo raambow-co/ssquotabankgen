@@ -20,7 +20,7 @@ function assert(condition, testName, details = '') {
 
 // 1. Calculations & Math Audit
 import {
-  formatINR, formatINRDecimal, calculateSubsidy,
+  formatINR, formatINRDecimal, calculateSubsidy, isDomesticCategory,
   calculateEnergyMetrics, calculateArea, calculatePayback,
   calculateGSTBreakdown, generateRefNo, numberToWordsINR
 } from '../src/utils/calculations.js';
@@ -32,6 +32,15 @@ assert(calculateSubsidy(2) === 60000, 'Subsidy for 2 kW is ₹60,000');
 assert(calculateSubsidy(3) === 78000, 'Subsidy for 3 kW is ₹78,000 (Max Cap)');
 assert(calculateSubsidy(5) === 78000, 'Subsidy for 5 kW is ₹78,000');
 assert(calculateSubsidy(10) === 78000, 'Subsidy for 10 kW is ₹78,000');
+
+// Category-based Subsidy Isolation (Domestic vs Commercial/Industrial)
+assert(isDomesticCategory('Domestic Category') === true, 'Domestic Category is identified as domestic');
+assert(isDomesticCategory('Commercial Category') === false, 'Commercial Category is identified as non-domestic');
+assert(isDomesticCategory('Industrial Category') === false, 'Industrial Category is identified as non-domestic');
+assert(calculateSubsidy(3, 'Commercial Category') === 0, 'Commercial Category receives ₹0 subsidy');
+assert(calculateSubsidy(5, 'Commercial Category') === 0, 'Commercial Category (5kW) receives ₹0 subsidy');
+assert(calculateSubsidy(10, 'Industrial Category') === 0, 'Industrial Category (10kW) receives ₹0 subsidy');
+assert(calculateSubsidy(3, 'Domestic Category') === 78000, 'Domestic Category retains PM Surya Ghar subsidy ₹78,000');
 
 assert(numberToWordsINR(22000) === 'TWENTY TWO THOUSAND ONLY', 'numberToWordsINR(22000) formats to TWENTY TWO THOUSAND ONLY');
 assert(numberToWordsINR(220000) === 'TWO LAKH TWENTY THOUSAND ONLY', 'numberToWordsINR(220000) formats to TWO LAKH TWENTY THOUSAND ONLY');

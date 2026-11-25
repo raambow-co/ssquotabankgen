@@ -1,10 +1,12 @@
 import React from 'react';
 import ASSETS from '../assets/assetsData';
 import { PageHeader, PageFooter } from './PageHeader';
+import { isDomesticCategory } from '../utils/calculations';
 
 export const Page4 = ({ data }) => {
-  const { company, system } = data;
+  const { company, system, customer } = data;
   const capacity = system?.capacityKw || 5;
+  const isDomestic = isDomesticCategory(customer?.category);
 
   return (
     <div className="a4-page page-4 flex flex-col justify-start">
@@ -32,7 +34,10 @@ export const Page4 = ({ data }) => {
                     Solar panels (at least 75% performance efficiency), solar mounting structure, solar inverter, solar batteries (optional), and the balance of system (cables, fuses, MCBs, and Distribution boxes).
                   </p>
                   <p className="italic text-[8.5pt] text-slate-600 font-semibold mt-1">
-                    * All components strictly comply with MNRE technical guidelines and ALMM standards to be eligible under the PM Surya Ghar national subsidy scheme.
+                    {isDomestic
+                      ? "* All components strictly comply with MNRE technical guidelines and ALMM standards to be eligible under the PM Surya Ghar national subsidy scheme."
+                      : "* All components strictly comply with MNRE technical guidelines, ALMM Tier-1 standards, and statutory CEA/DISCOM safety regulations for commercial & industrial net-metering grid synchronization."
+                    }
                   </p>
                 </td>
               </tr>

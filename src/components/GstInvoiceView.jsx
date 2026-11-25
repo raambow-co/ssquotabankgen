@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatINR, numberToWordsINR, calculateGSTBreakdown } from '../utils/calculations';
+import { formatINR, numberToWordsINR, calculateGSTBreakdown, isDomesticCategory } from '../utils/calculations';
 import { 
   FileText, 
   RotateCcw, 
@@ -520,7 +520,9 @@ export const GstInvoiceView = ({ quotation, onUpdateInvoice }) => {
                 Bank: <strong className="text-black">State Bank of India</strong> | A/c: <strong className="font-mono text-black">44813579950</strong> | IFSC: <strong className="font-mono text-black">SBIN0065049</strong>
               </div>
               <div className="p-1.5 text-gray-700 leading-tight">
-                1. Central Government DBT subsidy is directly credited to customer bank account.
+                {isDomesticCategory(customer?.category)
+                  ? '1. Central Government DBT subsidy is directly credited to customer bank account.'
+                  : '1. Commercial/Industrial EPC: Non-subsidized project eligible for 40% Accelerated Depreciation (Sec 32 IT Act).'}
               </div>
               <div className="p-1.5 text-gray-700 leading-tight">
                 2. Warranty &amp; Performance terms as per official manufacturer EPC contract.

@@ -14,12 +14,14 @@ import CustomerPageHeader from './CustomerPageHeader';
 import CustomerPageFooter from './CustomerPageFooter';
 import { EMBLEMS } from '../../utils/brandLogos';
 import { formatNumber, formatCurrency, formatDate } from '../../utils/formatters';
-import { calculateGSTBreakdown, formatINR } from '../../utils/calculations';
+import { calculateGSTBreakdown, formatINR, isDomesticCategory } from '../../utils/calculations';
 
 export default function CustomerPage3Financials({ quotation, settings }) {
   const company = settings?.company || {};
   const technical = quotation?.technical || {};
   const commercials = quotation?.commercials || {};
+  const customer = quotation?.customer || {};
+  const isDomestic = isDomesticCategory(customer?.category);
 
   // System capacities & financial metrics
   const dcKw = parseFloat(technical?.actualDcCapacityKw || technical?.systemCapacityKw || 5.5);
@@ -33,8 +35,10 @@ export default function CustomerPage3Financials({ quotation, settings }) {
   const baseCost = taxableSubTotal + discount;
   const ratePerKw = Math.round(baseCost / dcKw);
   
-  // Central Subsidy (PM Surya Ghar DBT)
-  const subsidy = commercials?.subsidyAmount || (dcKw >= 3 ? 78000 : (dcKw >= 2 ? 60000 : 30000));
+  // Central Subsidy (PM Surya Ghar DBT - Domestic only)
+  const subsidy = isDomestic 
+    ? (commercials?.subsidyAmount !== undefined ? commercials.subsidyAmount : (dcKw >= 3 ? 78000 : (dcKw >= 2 ? 60000 : 30000)))
+    : 0;
   const netPayable = Math.max(0, totalGrossCost - subsidy);
 
   // Generation & Electricity Savings
@@ -137,27 +141,44 @@ export default function CustomerPage3Financials({ quotation, settings }) {
                   </span>
                 </div>
 
-                {/* PM Surya Ghar Subsidy Callout Box */}
-                <div className="bg-[#fffbeb] border border-amber-200 rounded-lg p-1.5 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <img 
-                      src={EMBLEMS.pmSuryaGhar} 
-                      alt="PM Surya Ghar" 
-                      className="h-6 w-auto object-contain shrink-0" 
-                    />
-                    <div className="min-w-0">
-                      <div className="font-black text-amber-950 text-[7pt] leading-tight">
-                        PM Surya Ghar: Central Govt. Subsidy (CFA)
-                      </div>
-                      <div className="text-amber-800/90 text-[6pt] leading-tight">
-                        Direct Benefit Transfer (DBT) credited to bank account
+                {/* PM Surya Ghar Subsidy Callout Box / Commercial Non-Subsidized Box */}
+                {isDomestic && subsidy > 0 ? (
+                  <div className="bg-[#fffbeb] border border-amber-200 rounded-lg p-1.5 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <img 
+                        src={EMBLEMS.pmSuryaGhar} 
+                        alt="PM Surya Ghar" 
+                        className="h-6 w-auto object-contain shrink-0" 
+                      />
+                      <div className="min-w-0">
+                        <div className="font-black text-amber-950 text-[7pt] leading-tight">
+                          PM Surya Ghar: Central Govt. Subsidy (CFA)
+                        </div>
+                        <div className="text-amber-800/90 text-[6pt] leading-tight">
+                          Direct Benefit Transfer (DBT) credited to bank account
+                        </div>
                       </div>
                     </div>
+                    <div className="font-mono font-black text-amber-950 text-[10pt] shrink-0">
+                      - ₹{formatNumber(subsidy)}
+                    </div>
                   </div>
-                  <div className="font-mono font-black text-amber-950 text-[10pt] shrink-0">
-                    - ₹{formatNumber(subsidy)}
+                ) : (
+                  <div className="bg-slate-100 border border-slate-300 rounded-lg p-1.5 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-black text-slate-900 text-[7pt] leading-tight flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-500 shrink-0"></span>
+                        <span>Commercial / Industrial Connection (Non-Subsidized)</span>
+                      </div>
+                      <div className="text-slate-600 text-[6pt] leading-tight mt-0.5">
+                        Central DBT Subsidy is NIL per MNRE • Eligible for 40% Accelerated Depreciation (AD)
+                      </div>
+                    </div>
+                    <div className="font-mono font-bold text-slate-600 text-[9pt] shrink-0">
+                      ₹0 (NIL)
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -165,15 +186,15 @@ export default function CustomerPage3Financials({ quotation, settings }) {
             <div className="bg-[#07132c] text-white px-3 py-1.5 flex items-center justify-between">
               <div>
                 <div className="text-[7pt] font-black uppercase tracking-wider text-slate-100">
-                  Net Effective Customer Investment
+                  {isDomestic ? "Net Effective Customer Investment" : "Net Turnkey Commercial Investment"}
                 </div>
                 <div className="text-[6pt] text-slate-300 font-normal">
-                  Actual net out-of-pocket outlay post central DBT subsidy credit
+                  {isDomestic ? "Actual net out-of-pocket outlay post central DBT subsidy credit" : "Total turnkey commercial outlay (Accelerated Depreciation tax benefits available)"}
                 </div>
               </div>
               <div className="text-right">
                 <div className="font-mono font-black text-[13pt] text-white tracking-tight leading-none">
-                  ₹{formatNumber(netPayable)}
+                  ₹{formatNumber(isDomestic ? netPayable : totalGrossCost)}
                 </div>
                 <div className="flex items-center justify-end gap-1 text-[6.5pt] text-teal-300 font-bold mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />

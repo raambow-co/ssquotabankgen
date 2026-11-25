@@ -8,7 +8,7 @@ import {
   CAPACITY_PRESETS, MODULE_BRANDS, MODULE_WATTAGE_PRESETS, INVERTER_BRANDS, STRUCTURE_OPTIONS 
 } from '../data/defaultData';
 import { 
-  formatINR, formatINRDecimal, calculateSubsidy, calculateEnergyMetrics, 
+  formatINR, formatINRDecimal, calculateSubsidy, isDomesticCategory, calculateEnergyMetrics, 
   calculateArea, calculatePayback, calculateGSTBreakdown, generateRefNo, formatDateToPDFStyle 
 } from '../utils/calculations';
 
@@ -50,6 +50,35 @@ export const QuotationFormView = ({
       return;
     }
 
+    if (section === 'customer' && field === 'category') {
+      const isDomestic = isDomesticCategory(value);
+      const kw = parseFloat(formData.system.capacityKw) || 0;
+      const newSubsidy = isDomestic ? calculateSubsidy(kw, value) : 0;
+      setFormData(prev => {
+        const custCost = Number(prev.pricing.customerCost ?? prev.pricing.totalCost) || 0;
+        const bCost = Number(prev.pricing.bankCost ?? prev.pricing.totalCost) || 0;
+        const newCustNet = Math.max(0, custCost - newSubsidy);
+        const annualUnits = Number(prev.system.energyPerYear) || (kw * 1200);
+        const payback = calculatePayback(newCustNet, annualUnits, Number(prev.pricing.electricityTariff) || 8);
+        return {
+          ...prev,
+          customer: {
+            ...prev.customer,
+            category: value
+          },
+          pricing: {
+            ...prev.pricing,
+            subsidyAmount: newSubsidy,
+            afterSubsidyCost: newCustNet,
+            bankNetCost: Math.max(0, bCost - newSubsidy),
+            annualSavings: payback.annualSavings,
+            paybackYears: payback.paybackYears
+          }
+        };
+      });
+      return;
+    }
+
     if (section) {
       setFormData(prev => ({
         ...prev,
@@ -79,10 +108,11 @@ export const QuotationFormView = ({
 
   // Quick capacity preset handler
   const handleApplyPreset = (preset) => {
+    const isDomestic = isDomesticCategory(formData.customer?.category);
     const kw = preset.kw;
     const energy = calculateEnergyMetrics(kw);
     const area = calculateArea(kw);
-    const subsidy = preset.subsidy;
+    const subsidy = isDomestic ? preset.subsidy : 0;
     const customerCost = preset.cost;
     const bankCost = preset.bankCost || Math.round(preset.cost * 1.12);
     const totalCost = customerCost;
@@ -153,9 +183,10 @@ export const QuotationFormView = ({
     const val = parseFloat(valStr);
     if (isNaN(val)) return;
 
+    const isDomestic = isDomesticCategory(formData.customer?.category);
     const energy = calculateEnergyMetrics(val);
     const area = calculateArea(val);
-    const subsidy = calculateSubsidy(val);
+    const subsidy = isDomestic ? calculateSubsidy(val, formData.customer?.category) : 0;
     const panelWattage = parseFloat(formData.system.panelWattage) || 540;
     const recommendedPanels = Math.max(1, Math.round((val * 1000) / panelWattage));
     const moduleBrand = formData.system.moduleBrand || 'Adani Solar';
@@ -406,6 +437,7 @@ export const QuotationFormView = ({
   };
 
   const capacity = formData.system.capacityKw;
+  const isDomestic = isDomesticCategory(formData.customer?.category);
   const panels = formData.system.panelsCount || (capacity * 2);
   const bankCost = formData.pricing.bankCost !== undefined ? formData.pricing.bankCost : (formData.pricing.totalCost || 0);
   const customerCost = formData.pricing.customerCost !== undefined ? formData.pricing.customerCost : (formData.pricing.totalCost || 0);
@@ -1186,24 +1218,37 @@ export const QuotationFormView = ({
                     <label className="block font-semibold text-slate-700">
                       Government Subsidy (₹)
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => handlePriceChange('subsidyAmount', calculateSubsidy(formData.system.capacityKw))}
-                      className="text-[10px] text-amber-600 font-semibold hover:underline"
-                    >
-                      Apply PM Surya Ghar Rate
-                    </button>
+                    {isDomestic ? (
+                      <button
+                        type="button"
+                        onClick={() => handlePriceChange('subsidyAmount', calculateSubsidy(formData.system.capacityKw, formData.customer?.category))}
+                        className="text-[10px] text-amber-600 font-semibold hover:underline"
+                      >
+                        Apply PM Surya Ghar Rate
+                      </button>
+                    ) : (
+                      <span className="text-[10px] text-amber-700 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                        Non-Subsidized
+                      </span>
+                    )}
                   </div>
                   <input
                     type="number"
                     step="1000"
                     min="0"
-                    value={formData.pricing.subsidyAmount ?? ''}
-                    onChange={(e) => handlePriceChange('subsidyAmount', e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-emerald-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    disabled={!isDomestic}
+                    value={isDomestic ? (formData.pricing.subsidyAmount ?? '') : 0}
+                    onChange={(e) => isDomestic && handlePriceChange('subsidyAmount', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 ${
+                      isDomestic 
+                        ? 'border-slate-300 text-emerald-700 bg-white' 
+                        : 'border-slate-200 text-slate-400 bg-slate-100 cursor-not-allowed'
+                    }`}
                   />
                   <span className="text-[10px] text-slate-400 mt-1 block">
-                    Directly credited to customer bank account
+                    {isDomestic 
+                      ? 'Directly credited to customer bank account' 
+                      : 'Commercial / Industrial: ₹0 Subsidy (40% Accelerated Depreciation applies)'}
                   </span>
                 </div>
 
@@ -1797,9 +1842,16 @@ export const QuotationFormView = ({
               </div>
 
               <div className="flex items-center justify-between text-slate-600 pt-1 border-t border-slate-100">
-                <span>Government Subsidy:</span>
-                <span className="font-mono font-bold text-emerald-600">- ₹{formatINR(subsidy)}</span>
+                <span>{isDomestic ? 'Government Subsidy:' : 'Govt Subsidy (Commercial):'}</span>
+                <span className={`font-mono font-bold ${isDomestic ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {isDomestic ? `- ₹${formatINR(subsidy)}` : 'NIL (₹0)'}
+                </span>
               </div>
+              {!isDomestic && (
+                <div className="text-[10px] text-amber-700 bg-amber-50 rounded px-2 py-1 border border-amber-200 mt-1 leading-snug">
+                  40% Accelerated Depreciation (Sec 32 IT Act) applies
+                </div>
+              )}
             </div>
 
             {/* Net Investment Dark Box */}
