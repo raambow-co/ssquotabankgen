@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatINR, formatDateToPDFStyle, isDomesticCategory } from '../utils/calculations';
+import { formatINR, formatDateToPDFStyle, isDomesticCategory, getExportFileName } from '../utils/calculations';
 import { 
   FileText, 
   RotateCcw, 
@@ -237,12 +237,12 @@ export const DiscomReportView = ({ quotation, onUpdateDiscom }) => {
         <div className="flex items-center gap-2">
           <a
             href="/DISCOM_REPORT.xlsx"
-            download="DISCOM_REPORT.xlsx"
+            download={`${getExportFileName('discom', quotation)}.xlsx`}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
             title="Download authentic multi-sheet DISCOM Excel workbook"
           >
             <Download size={13} />
-            <span>Download Excel</span>
+            <span>Download Excel ({getExportFileName('discom', quotation)}.xlsx)</span>
           </a>
 
           <button

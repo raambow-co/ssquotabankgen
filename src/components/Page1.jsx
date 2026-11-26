@@ -52,7 +52,7 @@ export const Page1 = ({ data }) => {
           {/* Ref No (Left) and Date (Right) in a Single Line */}
           <div className="flex items-center justify-between mt-2 mb-2 text-left">
             <h2 className="ref-number-text font-bold text-[#0099b8] tracking-wide text-[11pt]">
-              REF: {customer?.consumerNo || refNo}
+              REF: {data.masterRefNo || customer?.consumerNo || refNo}
             </h2>
             <p className="font-bold text-gray-900 text-[11pt] tracking-wide text-right">
               DATE: {date}

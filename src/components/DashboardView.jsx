@@ -4,7 +4,7 @@ import {
   FileText, Zap, TrendingUp, Sun, ChevronRight, CheckCircle2,
   Building2, UserCheck, Layers, Receipt
 } from 'lucide-react';
-import { formatINR } from '../utils/calculations';
+import { formatINR, generateMasterRefNo, extractSequenceNumber } from '../utils/calculations';
 
 export const DashboardView = ({
   quotations,
@@ -182,12 +182,19 @@ export const DashboardView = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredQuotations.map((quote) => (
+              {filteredQuotations.map((quote, idx) => (
                 <tr key={quote.id} className="hover:bg-slate-50/60 transition-colors">
                   {/* Ref & Date */}
                   <td className="py-4 px-5 align-middle">
-                    <div className="font-bold text-slate-900 font-mono text-xs">{quote.refNo}</div>
-                    <div className="text-slate-400 text-[11px] mt-0.5">{quote.date}</div>
+                    <div className="font-bold text-amber-950 font-mono text-xs flex items-center gap-1.5">
+                      <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-extrabold text-[11px]">
+                        {quote.masterRefNo || generateMasterRefNo(extractSequenceNumber(quote, idx + 1))}
+                      </span>
+                    </div>
+                    <div className="text-slate-500 font-mono text-[10px] mt-1">
+                      USC: {quote.customer?.consumerNo || quote.refNo}
+                    </div>
+                    <div className="text-slate-400 text-[10px] mt-0.5">{quote.date}</div>
                   </td>
 
                   {/* Customer & Location */}

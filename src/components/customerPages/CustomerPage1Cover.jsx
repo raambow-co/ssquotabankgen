@@ -35,7 +35,7 @@ export default function CustomerPage1Cover({ quotation, settings }) {
   const maxArea = Math.round(dcKw * 100);
 
   // Format clean reference number
-  const rawRef = quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-SOL-2026-1048';
+  const rawRef = quotation?.masterRefNo || quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-2026-27-001';
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
   const formatCustomerName = (cust) => {

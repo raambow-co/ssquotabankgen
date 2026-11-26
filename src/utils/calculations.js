@@ -27,13 +27,74 @@ export const formatDateToPDFStyle = (dateInput = new Date()) => {
   return `${day}-${month}-${year}`;
 };
 
-export const generateRefNo = (sequence = 10, subSeq = 7) => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const nextYear = year + 1;
-  const seqStr = String(sequence).padStart(2, '0');
-  const subStr = String(subSeq).padStart(2, '0');
-  return `SRIMAAN SOLAR SOLUTIONS-${seqStr}/${subStr}-${year}-${nextYear}`;
+export const getFinancialYearString = (date = new Date()) => {
+  const d = new Date(date);
+  const month = d.getMonth() + 1; // 1 to 12
+  const fullYear = d.getFullYear();
+  // Financial Year in India runs from April 1 to March 31
+  const startYear = month >= 4 ? fullYear : fullYear - 1;
+  const endYearShort = String((startYear + 1) % 100).padStart(2, '0');
+  return `${startYear}-${endYearShort}`;
+};
+
+export const extractSequenceNumber = (quotation, fallbackIndex = 1) => {
+  if (quotation === undefined || quotation === null) return String(fallbackIndex).padStart(3, '0');
+  if (typeof quotation === 'number') return String(quotation).padStart(3, '0');
+  if (typeof quotation === 'string') {
+    const trimmed = quotation.trim();
+    if (/^\d+$/.test(trimmed)) {
+      return String(parseInt(trimmed, 10)).padStart(3, '0');
+    }
+  }
+  if (quotation.sequenceNumber !== undefined && quotation.sequenceNumber !== null) {
+    return String(quotation.sequenceNumber).padStart(3, '0');
+  }
+  if (quotation.masterRefNo) {
+    const match = String(quotation.masterRefNo).match(/(\d{1,4})$/);
+    if (match) return String(parseInt(match[1], 10)).padStart(3, '0');
+  }
+  const idStr = String(quotation.id || '');
+  const idMatch = idStr.match(/quote-(\d+)$/i);
+  if (idMatch) {
+    return String(parseInt(idMatch[1], 10)).padStart(3, '0');
+  }
+  const refMatch = String(quotation.refNo || '').match(/(\d{1,4})$/);
+  if (refMatch && parseInt(refMatch[1], 10) < 1000) {
+    return String(parseInt(refMatch[1], 10)).padStart(3, '0');
+  }
+  return String(fallbackIndex || 1).padStart(3, '0');
+};
+
+export const generateMasterRefNo = (sequence = 1, date = new Date()) => {
+  const fy = getFinancialYearString(date);
+  const seqStr = String(sequence).padStart(3, '0');
+  return `SSS-${fy}-${seqStr}`;
+};
+
+export const getExportFileName = (formatMode = 'bank', quotation = null, fallbackIndex = 1) => {
+  const seqStr = extractSequenceNumber(quotation, fallbackIndex);
+  const mode = String(formatMode).toLowerCase();
+
+  if (mode === 'bank' || mode === 'bpo') {
+    return `SSS-BPO-${seqStr}`;
+  }
+  if (mode === 'customer' || mode === 'cpo') {
+    return `SSS-CPO-${seqStr}`;
+  }
+  if (mode === 'receipt' || mode === 'rec') {
+    return `SSS-REC-${seqStr}`;
+  }
+  if (mode === 'invoice' || mode === 'gst') {
+    return `SSS-GST-${seqStr}`;
+  }
+  if (mode === 'discom' || mode === 'dis') {
+    return `SSS-DIS-${seqStr}`;
+  }
+  return `SSS-DOC-${seqStr}`;
+};
+
+export const generateRefNo = (sequence = 1, date = new Date()) => {
+  return generateMasterRefNo(sequence, date);
 };
 
 export const isDomesticCategory = (category = '') => {

@@ -19,7 +19,7 @@ import { AdvanceReceiptView } from './AdvanceReceiptView';
 import { GstInvoiceView } from './GstInvoiceView';
 import { DiscomReportView } from './DiscomReportView';
 import { convertToCustomerFormat } from '../utils/quotationAdapter';
-import { formatINR, numberToWordsINR, calculateGSTBreakdown } from '../utils/calculations';
+import { formatINR, numberToWordsINR, calculateGSTBreakdown, getExportFileName, generateMasterRefNo, extractSequenceNumber } from '../utils/calculations';
 
 export const ProposalPreviewModal = ({ 
   quotation, 
@@ -126,8 +126,16 @@ export const ProposalPreviewModal = ({
     }
   };
 
+  const masterRef = currentQuotation.masterRefNo || generateMasterRefNo(extractSequenceNumber(currentQuotation));
+  const currentFileName = getExportFileName(formatMode, currentQuotation);
+
   const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = currentFileName;
     window.print();
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1200);
   };
 
   const handleCopyWhatsApp = () => {
@@ -273,14 +281,17 @@ M/s. SRIMAAN SOLAR SOLUTIONS
           </button>
           
           <div>
-            <div className="font-bold text-slate-900 text-xs flex items-center gap-2">
+            <div className="font-bold text-slate-900 text-xs flex flex-wrap items-center gap-1.5">
               <span>{quotation.customer.name || 'Valued Customer'}</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 font-bold">
-                {quotation.refNo}
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-300 font-bold" title="Master Project Reference / Folder ID">
+                📁 {masterRef}
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-300 font-bold" title="Active Export File Name">
+                📄 {currentFileName}.pdf
               </span>
             </div>
             <div className="text-[10px] text-slate-500 font-medium">
-              {quotation.system.capacityKw} kWp Rooftop System • Net: ₹{formatINR(
+              USC: {quotation.customer?.consumerNo || quotation.refNo} • {quotation.system.capacityKw} kWp • Net: ₹{formatINR(
                 formatMode === 'bank' 
                   ? (quotation.pricing?.bankNetCost || ((quotation.pricing?.bankCost || quotation.pricing?.totalCost || 0) - (quotation.pricing?.subsidyAmount || 0)))
                   : (quotation.pricing?.afterSubsidyCost || 0)
@@ -486,6 +497,7 @@ M/s. SRIMAAN SOLAR SOLUTIONS
           {/* Print / Save as PDF Button */}
           <button
             onClick={handlePrint}
+            title={`Print or Save as ${currentFileName}.pdf`}
             className={`flex items-center space-x-1.5 px-4 py-1.5 text-white rounded-lg text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer ${
               formatMode === 'bank' 
                 ? 'bg-[#0b132b] hover:bg-slate-800' 
@@ -499,7 +511,7 @@ M/s. SRIMAAN SOLAR SOLUTIONS
             }`}
           >
             <Printer size={15} />
-            <span>Print / PDF ({formatMode === 'bank' ? '7P' : formatMode === 'customer' ? '5P' : formatMode === 'receipt' ? '1P Receipt' : formatMode === 'invoice' ? '1P Invoice' : '3P DISCOM'})</span>
+            <span>Save PDF ({currentFileName}.pdf)</span>
           </button>
         </div>
       </div>

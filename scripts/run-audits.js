@@ -22,7 +22,8 @@ function assert(condition, testName, details = '') {
 import {
   formatINR, formatINRDecimal, calculateSubsidy, isDomesticCategory,
   calculateEnergyMetrics, calculateArea, calculatePayback,
-  calculateGSTBreakdown, generateRefNo, numberToWordsINR
+  calculateGSTBreakdown, generateRefNo, numberToWordsINR,
+  getFinancialYearString, extractSequenceNumber, generateMasterRefNo, getExportFileName
 } from '../src/utils/calculations.js';
 
 console.log('\n--- 1. AUDITING CALCULATION ENGINE ---');
@@ -263,6 +264,39 @@ assert(firebaseContent.includes('saveQuotationToCloud'), 'Cloud quotation save e
 assert(firebaseContent.includes('deleteQuotationFromCloud'), 'Cloud quotation deletion engine exported');
 assert(firebaseContent.includes('saveSettingsToCloud'), 'Cloud master settings save engine exported');
 assert(firebaseContent.includes('subscribeSettings'), 'Cloud master settings subscription engine exported');
+
+// 11. Reference ID & Standardized File Naming Scheme Audit
+console.log('\n--- 11. AUDITING STANDARDIZED REFERENCE & EXPORT FILE NAMES ---');
+const nov2026 = new Date('2026-11-26T12:00:00Z');
+const jan2027 = new Date('2027-01-15T12:00:00Z');
+assert(getFinancialYearString(nov2026) === '2026-27', 'Financial Year for Nov 2026 is 2026-27');
+assert(getFinancialYearString(jan2027) === '2026-27', 'Financial Year for Jan 2027 is 2026-27');
+
+assert(extractSequenceNumber(1) === '001', 'Sequence 1 padded to 001');
+assert(extractSequenceNumber(25) === '025', 'Sequence 25 padded to 025');
+assert(extractSequenceNumber({ id: 'quote-1' }) === '001', 'Extracts 001 from id quote-1');
+assert(extractSequenceNumber({ id: 'quote-2' }) === '002', 'Extracts 002 from id quote-2');
+assert(extractSequenceNumber({ masterRefNo: 'SSS-2026-27-003' }) === '003', 'Extracts 003 from masterRefNo');
+
+assert(generateMasterRefNo(1, nov2026) === 'SSS-2026-27-001', 'Master Ref No 1 is SSS-2026-27-001');
+assert(generateMasterRefNo(2, nov2026) === 'SSS-2026-27-002', 'Master Ref No 2 is SSS-2026-27-002');
+assert(generateMasterRefNo(10, nov2026) === 'SSS-2026-27-010', 'Master Ref No 10 is SSS-2026-27-010');
+
+// Audit 5 Document Export Filename types for Quote #1
+const q1 = { id: 'quote-1', sequenceNumber: 1, masterRefNo: 'SSS-2026-27-001' };
+assert(getExportFileName('bank', q1) === 'SSS-BPO-001', 'Bank PO filename is SSS-BPO-001');
+assert(getExportFileName('customer', q1) === 'SSS-CPO-001', 'Customer PO filename is SSS-CPO-001');
+assert(getExportFileName('receipt', q1) === 'SSS-REC-001', 'Payment Receipt filename is SSS-REC-001');
+assert(getExportFileName('invoice', q1) === 'SSS-GST-001', 'GST Invoice filename is SSS-GST-001');
+assert(getExportFileName('discom', q1) === 'SSS-DIS-001', 'DISCOM Package filename is SSS-DIS-001');
+
+// Audit Quote #2
+const q2 = { id: 'quote-2', sequenceNumber: 2, masterRefNo: 'SSS-2026-27-002' };
+assert(getExportFileName('bank', q2) === 'SSS-BPO-002', 'Quote 2 Bank PO filename is SSS-BPO-002');
+assert(getExportFileName('customer', q2) === 'SSS-CPO-002', 'Quote 2 Customer PO filename is SSS-CPO-002');
+assert(getExportFileName('receipt', q2) === 'SSS-REC-002', 'Quote 2 Payment Receipt filename is SSS-REC-002');
+assert(getExportFileName('invoice', q2) === 'SSS-GST-002', 'Quote 2 GST Invoice filename is SSS-GST-002');
+assert(getExportFileName('discom', q2) === 'SSS-DIS-002', 'Quote 2 DISCOM Package filename is SSS-DIS-002');
 
 console.log('\n========================================');
 console.log(`TOTAL TESTS: ${passCount + failCount} | PASSED: ${passCount} | FAILED: ${failCount}`);

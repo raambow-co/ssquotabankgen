@@ -34,7 +34,7 @@ export default function CustomerPage2SystemSpec({ quotation, settings }) {
   const minArea = Math.round(dcKw * 70);
   const maxArea = Math.round(dcKw * 100);
 
-  const rawRef = quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-SOL-2026-1048';
+  const rawRef = quotation?.masterRefNo || quotation?.quotationNumber || customer?.consumerServiceNumber || 'SSS-2026-27-001';
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
   const formatCustomerName = (cust) => {

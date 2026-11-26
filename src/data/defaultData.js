@@ -187,6 +187,8 @@ export const DEFAULT_BANK2 = {
 
 export const INITIAL_QUOTATION_DATA = {
   id: "quote-1",
+  sequenceNumber: 1,
+  masterRefNo: "SSS-2026-27-001",
   refNo: "TSNPDCL-04829104",
   date: "09-OCT-2025",
   status: "Approved",
@@ -259,6 +261,8 @@ export const INITIAL_SAVED_QUOTATIONS = [
   INITIAL_QUOTATION_DATA,
   {
     id: "quote-2",
+    sequenceNumber: 2,
+    masterRefNo: "SSS-2026-27-002",
     refNo: "TSSPDCL-09182371",
     date: "05 Nov 2026",
     status: "Approved",
@@ -312,6 +316,8 @@ export const INITIAL_SAVED_QUOTATIONS = [
   },
   {
     id: "quote-3",
+    sequenceNumber: 3,
+    masterRefNo: "SSS-2026-27-003",
     refNo: "APEPDCL-4410293",
     date: "06 Nov 2026",
     status: "Sent",

@@ -1,4 +1,4 @@
-import { calculateSubsidy, isDomesticCategory, calculateEnergyMetrics, calculatePayback, calculateGSTBreakdown } from './calculations.js';
+import { calculateSubsidy, isDomesticCategory, calculateEnergyMetrics, calculatePayback, calculateGSTBreakdown, generateMasterRefNo, extractSequenceNumber } from './calculations.js';
 
 export const srimaanCustomerSettings = {
   company: {
@@ -182,12 +182,16 @@ export function convertToCustomerFormat(data) {
 
   const ratePerKw = parseFloat(data.pricing?.ratePerKw) || (dcKw > 0 ? Math.round(totalCost / dcKw) : 52000);
 
-  // Quotation number is ALWAYS the electricity consumer number (UNC / USC)
+  // Quotation number and Master Reference ID
   const consumerNo = data.customer?.consumerNo || data.refNo || "TSNPDCL-04829104";
+  const seqNum = extractSequenceNumber(data);
+  const masterRefNo = data.masterRefNo || generateMasterRefNo(seqNum);
 
   const quotation = {
     id: data.id || `quote-${consumerNo}`,
-    quotationNumber: consumerNo,
+    quotationNumber: masterRefNo || consumerNo,
+    masterRefNo: masterRefNo,
+    sequenceNumber: seqNum,
     date: data.date || new Date().toISOString().split('T')[0],
     validityDays: data.validityDays || 30,
     status: data.status || "Approved",

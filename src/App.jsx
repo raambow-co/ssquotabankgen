@@ -13,7 +13,7 @@ import {
   DEFAULT_BOM,
   DEFAULT_TERMS
 } from './data/defaultData';
-import { generateRefNo, formatDateToPDFStyle, calculateSubsidy, calculateEnergyMetrics, calculateArea } from './utils/calculations';
+import { generateRefNo, generateMasterRefNo, formatDateToPDFStyle, calculateSubsidy, calculateEnergyMetrics, calculateArea } from './utils/calculations';
 import { AlertTriangle } from 'lucide-react';
 import { 
   saveQuotationToCloud, 
@@ -188,6 +188,8 @@ export function AppContent() {
 
   // Handler: Start New Quotation
   const handleStartNewQuotation = () => {
+    const nextSeq = quotations.length + 1;
+    const masterRef = generateMasterRefNo(nextSeq);
     const randomSeq = Math.floor(Math.random() * 8999999) + 1000000;
     const initialConsumerNo = `TSNPDCL-${randomSeq}`;
     const initialKw = 5;
@@ -202,6 +204,8 @@ export function AppContent() {
 
     const newQuote = {
       id: `quote-${Date.now()}`,
+      sequenceNumber: nextSeq,
+      masterRefNo: masterRef,
       refNo: initialConsumerNo,
       date: formatDateToPDFStyle(new Date()),
       status: "Draft",
@@ -299,11 +303,15 @@ export function AppContent() {
 
   // Handler: Duplicate Quotation
   const handleDuplicateQuotation = (quote) => {
+    const nextSeq = quotations.length + 1;
+    const masterRef = generateMasterRefNo(nextSeq);
     const randomSeq = Math.floor(Math.random() * 8999999) + 1000000;
     const newConsumerNo = `TSNPDCL-${randomSeq}`;
     const duplicated = {
       ...JSON.parse(JSON.stringify(quote)),
       id: `quote-${Date.now()}`,
+      sequenceNumber: nextSeq,
+      masterRefNo: masterRef,
       refNo: newConsumerNo,
       date: formatDateToPDFStyle(new Date()),
       status: "Draft",

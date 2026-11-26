@@ -1,7 +1,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { calculateGSTBreakdown, calculateSubsidy, isDomesticCategory, numberToWordsINR, formatINR } from '../src/utils/calculations.js';
+import { calculateGSTBreakdown, calculateSubsidy, isDomesticCategory, numberToWordsINR, formatINR, generateMasterRefNo, getExportFileName, extractSequenceNumber } from '../src/utils/calculations.js';
 import { convertToCustomerFormat } from '../src/utils/quotationAdapter.js';
 
 console.log('========================================');
@@ -222,6 +222,25 @@ assert(fs.existsSync(firestoreRulesPath), 'firestore.rules exists');
 const fbRc = JSON.parse(fs.readFileSync(fbRcPath, 'utf8'));
 assert(fbRc.projects.default === 'srimaanquotationgen', '.firebaserc default project is srimaanquotationgen');
 console.log('✅ [PASS] Firebase Cloud Firestore infrastructure verified for project: srimaanquotationgen');
+
+// 12. Audit Standardized Reference IDs and Download Filename Formats
+console.log('\n--- 12. AUDITING STANDARDIZED REFERENCE IDS AND EXPORT FILENAMES ---');
+const testDate = new Date('2026-11-26');
+assert(generateMasterRefNo(1, testDate) === 'SSS-2026-27-001', 'Master Ref 1 is SSS-2026-27-001');
+assert(generateMasterRefNo(2, testDate) === 'SSS-2026-27-002', 'Master Ref 2 is SSS-2026-27-002');
+assert(generateMasterRefNo(3, testDate) === 'SSS-2026-27-003', 'Master Ref 3 is SSS-2026-27-003');
+
+const testQuote1 = { id: 'quote-1', sequenceNumber: 1, masterRefNo: 'SSS-2026-27-001' };
+assert(getExportFileName('bank', testQuote1) === 'SSS-BPO-001', 'Bank PO file is SSS-BPO-001');
+assert(getExportFileName('customer', testQuote1) === 'SSS-CPO-001', 'Customer PO file is SSS-CPO-001');
+assert(getExportFileName('receipt', testQuote1) === 'SSS-REC-001', 'Receipt file is SSS-REC-001');
+assert(getExportFileName('invoice', testQuote1) === 'SSS-GST-001', 'GST Invoice file is SSS-GST-001');
+assert(getExportFileName('discom', testQuote1) === 'SSS-DIS-001', 'DISCOM file is SSS-DIS-001');
+
+const { quotation: adaptedQuotation } = convertToCustomerFormat(testQuote1);
+assert(adaptedQuotation.masterRefNo === 'SSS-2026-27-001', 'Adapter carries masterRefNo');
+assert(adaptedQuotation.sequenceNumber === '001', 'Adapter carries sequenceNumber');
+console.log('✅ [PASS] All 5 export filenames and Master Folder reference verified!');
 
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');

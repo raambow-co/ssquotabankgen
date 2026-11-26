@@ -15,7 +15,7 @@ export default function CustomerPageHeader({
   const dcKw = capacityKw || quotation?.technical?.systemCapacityKw || quotation?.technical?.actualDcCapacityKw || 5.0;
 
   // Format clean reference number without redundant company prefix
-  const rawRef = quotation?.quotationNumber || 'SSS-SOL-2026-0001';
+  const rawRef = quotation?.masterRefNo || quotation?.quotationNumber || 'SSS-2026-27-001';
   const cleanRef = rawRef.replace(/^SRIMAAN\s+SOLAR\s+SOLUTIONS-?/i, 'SSS-');
 
   return (
