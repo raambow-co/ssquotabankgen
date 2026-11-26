@@ -382,6 +382,23 @@ export function AppContent() {
     }
   };
 
+  // Handler: Update active quotation and sync immediately to Cloud Firestore
+  const handleUpdateActiveQuotation = (updated) => {
+    setActiveQuotation(updated);
+    setQuotations(prevQuotes => {
+      const existingIndex = prevQuotes.findIndex(q => q.id === updated.id);
+      let updatedList;
+      if (existingIndex >= 0) {
+        updatedList = [...prevQuotes];
+        updatedList[existingIndex] = updated;
+      } else {
+        updatedList = [updated, ...prevQuotes];
+      }
+      return updatedList;
+    });
+    saveQuotationToCloud(updated).catch(err => console.warn('Cloud update error:', err));
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans flex flex-col antialiased">
       {/* Top Navigation Bar */}
@@ -434,7 +451,7 @@ export function AppContent() {
             initialFormat={previewFormat}
             onBack={() => setCurrentView('form')}
             onEdit={() => setCurrentView('form')}
-            onUpdateQuotation={(updated) => setActiveQuotation(updated)}
+            onUpdateQuotation={handleUpdateActiveQuotation}
           />
         )}
       </main>
