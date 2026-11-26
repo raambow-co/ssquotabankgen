@@ -211,6 +211,18 @@ assert(convertedQuotation.commercials.subsidyAmount === 0, 'Converted commercial
 assert(convertedQuotation.commercials.netPayable === convertedQuotation.commercials.totalGrossCost, 'Commercial net payable equals 100% gross cost');
 console.log('✅ [PASS] Commercial & Industrial zero-subsidy and 100% net turnkey cost verified');
 
+// 11. Audit Firebase Cloud Database Integration
+console.log('\n--- 11. AUDITING FIREBASE CLOUD DATABASE INTEGRATION ---');
+const fbRcPath = path.join(process.cwd(), '.firebaserc');
+const fbJsonPath = path.join(process.cwd(), 'firebase.json');
+const firestoreRulesPath = path.join(process.cwd(), 'firestore.rules');
+assert(fs.existsSync(fbRcPath), '.firebaserc exists');
+assert(fs.existsSync(fbJsonPath), 'firebase.json exists');
+assert(fs.existsSync(firestoreRulesPath), 'firestore.rules exists');
+const fbRc = JSON.parse(fs.readFileSync(fbRcPath, 'utf8'));
+assert(fbRc.projects.default === 'srimaanquotationgen', '.firebaserc default project is srimaanquotationgen');
+console.log('✅ [PASS] Firebase Cloud Firestore infrastructure verified for project: srimaanquotationgen');
+
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');
 console.log('========================================');

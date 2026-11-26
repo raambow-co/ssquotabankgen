@@ -24,7 +24,11 @@ import {
   Layers,
   Zap,
   PenTool,
-  BadgeCheck 
+  BadgeCheck,
+  Cloud,
+  Database,
+  Server,
+  RefreshCw
 } from 'lucide-react';
 import { DEFAULT_COMPANY, DEFAULT_BANK, DEFAULT_BANK2 } from '../data/defaultData';
 import { srimaanCustomerSettings } from '../utils/quotationAdapter';
@@ -35,7 +39,11 @@ export const SettingsModal = ({
   onSaveSettings, 
   currentCompany, 
   currentBank, 
-  currentBank2 
+  currentBank2,
+  cloudStatus = 'connected',
+  lastSyncedAt,
+  isCloudSyncing = false,
+  onSyncAllToCloud
 }) => {
   const [activeTab, setActiveTab] = useState('company'); // 'company' | 'qr' | 'cover' | 'technical' | 'pricing' | 'warranties' | 'portfolio'
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -597,6 +605,7 @@ export const SettingsModal = ({
 
   const tabs = [
     { id: 'company', label: 'Company & Statutory', icon: Building2 },
+    { id: 'cloud', label: 'Firebase Cloud DB', icon: Database },
     { id: 'qr', label: 'QR Portals & Connect', icon: QrCode },
     { id: 'cover', label: 'Cover Page & Hero', icon: FileText },
     { id: 'technical', label: 'Technical & Hardware', icon: Cpu },
@@ -975,6 +984,86 @@ export const SettingsModal = ({
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ------------------------------------------------------------ */}
+          {/* TAB: FIREBASE CLOUD DATABASE                                 */}
+          {/* ------------------------------------------------------------ */}
+          {activeTab === 'cloud' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                      <Database size={18} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">Google Cloud Firebase Database</h3>
+                      <p className="text-[11px] text-slate-500">Live cloud database integration for quotation synchronization across all devices.</p>
+                    </div>
+                  </div>
+                  <div className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 ${
+                    cloudStatus === 'connected' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'
+                  }`}>
+                    <span className={`w-2 h-2 rounded-full ${cloudStatus === 'connected' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                    <span>{cloudStatus === 'connected' ? 'Connected & Live' : 'Connecting...'}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Firebase Project ID</span>
+                    <span className="font-mono font-bold text-slate-900 text-sm">srimaanquotationgen</span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Database Platform</span>
+                    <span className="font-bold text-slate-900 text-sm flex items-center gap-1">
+                      <Server size={14} className="text-blue-600" />
+                      <span>Google Cloud Firestore</span>
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Live Collections Synced</span>
+                    <span className="font-mono text-slate-800 font-semibold">/quotations &bull; /settings</span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Real-time Status</span>
+                    <span className="font-mono text-emerald-700 font-semibold flex items-center gap-1">
+                      <Cloud size={13} />
+                      <span>{cloudStatus === 'connected' ? 'Active Bi-directional Sync' : 'Connecting to Cloud...'}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-blue-50/60 border border-blue-200 rounded-lg text-xs text-blue-900 space-y-1">
+                  <p className="font-semibold">⚡ Real-Time Cloud Synchronization Active</p>
+                  <p className="text-[11px] text-blue-800">
+                    Any quotation created, updated, or deleted on your laptop or phone is automatically pushed to Firestore and synced across all your browsers in real time.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                  <span className="text-xs text-slate-500">Need to manually force sync all local records to Cloud Firestore?</span>
+                  <button
+                    type="button"
+                    disabled={isCloudSyncing}
+                    onClick={async () => {
+                      if (onSyncAllToCloud) {
+                        const res = await onSyncAllToCloud();
+                        if (res?.success) alert("All quotations and settings successfully synced to Firebase Firestore!");
+                      }
+                    }}
+                    className="flex items-center justify-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition disabled:opacity-50 cursor-pointer"
+                  >
+                    <RefreshCw size={14} className={isCloudSyncing ? 'animate-spin' : ''} />
+                    <span>{isCloudSyncing ? 'Syncing to Cloud...' : 'Force Sync All to Cloud'}</span>
+                  </button>
                 </div>
               </div>
             </div>

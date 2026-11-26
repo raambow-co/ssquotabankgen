@@ -15,6 +15,14 @@ import {
 } from './data/defaultData';
 import { generateRefNo, formatDateToPDFStyle, calculateSubsidy, calculateEnergyMetrics, calculateArea } from './utils/calculations';
 import { AlertTriangle } from 'lucide-react';
+import { 
+  saveQuotationToCloud, 
+  deleteQuotationFromCloud, 
+  subscribeQuotations, 
+  saveSettingsToCloud, 
+  subscribeSettings, 
+  seedInitialQuotationsIfEmpty 
+} from './services/firebase';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -122,6 +130,10 @@ export function AppContent() {
     }
   });
 
+  const [cloudStatus, setCloudStatus] = useState('connecting'); // 'connecting' | 'connected' | 'offline'
+  const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const [isCloudSyncing, setIsCloudSyncing] = useState(false);
+
   // Sync quotations to localStorage
   useEffect(() => {
     try {
@@ -130,6 +142,49 @@ export function AppContent() {
       console.error(e);
     }
   }, [quotations]);
+
+  // Subscribe to real-time Cloud Firestore updates
+  useEffect(() => {
+    let isInitial = true;
+    const unsubscribeQuotes = subscribeQuotations(
+      (cloudQuotes) => {
+        if (cloudQuotes && cloudQuotes.length > 0) {
+          setQuotations(cloudQuotes);
+          setCloudStatus('connected');
+          setLastSyncedAt(new Date());
+        } else if (isInitial) {
+          seedInitialQuotationsIfEmpty(quotations);
+          setCloudStatus('connected');
+          setLastSyncedAt(new Date());
+        }
+        isInitial = false;
+      },
+      (err) => {
+        console.warn('Firestore offline or unreachable, using local storage cache:', err);
+        setCloudStatus('offline');
+      }
+    );
+
+    const unsubscribeSettings = subscribeSettings(
+      (cloudSettings) => {
+        if (cloudSettings) {
+          if (cloudSettings.company) setCompanySettings(cloudSettings.company);
+          if (cloudSettings.bank) setBankSettings(cloudSettings.bank);
+          if (cloudSettings.bank2) setBank2Settings(cloudSettings.bank2);
+          setCloudStatus('connected');
+          setLastSyncedAt(new Date());
+        }
+      },
+      (err) => {
+        console.warn('Firestore settings listener error:', err);
+      }
+    );
+
+    return () => {
+      unsubscribeQuotes();
+      unsubscribeSettings();
+    };
+  }, []);
 
   // Handler: Start New Quotation
   const handleStartNewQuotation = () => {
@@ -238,6 +293,8 @@ export function AppContent() {
     }
     setQuotations(updated);
     setActiveQuotation(savedQuote);
+    // Real-time Cloud Firestore save
+    saveQuotationToCloud(savedQuote).catch(err => console.warn('Cloud save error:', err));
   };
 
   // Handler: Duplicate Quotation
@@ -257,6 +314,8 @@ export function AppContent() {
       }
     };
     setQuotations([duplicated, ...quotations]);
+    // Real-time Cloud Firestore save
+    saveQuotationToCloud(duplicated).catch(err => console.warn('Cloud duplicate error:', err));
   };
 
   // Handler: Delete Quotation
@@ -264,6 +323,8 @@ export function AppContent() {
     if (window.confirm("Are you sure you want to delete this quotation?")) {
       const updated = quotations.filter(q => q.id !== id);
       setQuotations(updated);
+      // Real-time Cloud Firestore delete
+      deleteQuotationFromCloud(id).catch(err => console.warn('Cloud delete error:', err));
     }
   };
 
@@ -277,6 +338,9 @@ export function AppContent() {
     if (bank2) localStorage.setItem('srimaan_bank2_settings', JSON.stringify(bank2));
     if (masterSettings) localStorage.setItem('srimaan_master_settings', JSON.stringify(masterSettings));
 
+    // Save to Cloud Firestore
+    saveSettingsToCloud({ company, bank, bank2, masterSettings }).catch(err => console.warn('Cloud settings save error:', err));
+
     // Update active quotation company & bank if present
     setActiveQuotation(prev => ({
       ...prev,
@@ -285,6 +349,37 @@ export function AppContent() {
       bank2: bank2 || prev.bank2 || DEFAULT_BANK2,
       masterSettings: masterSettings || prev.masterSettings
     }));
+  };
+
+  // Handler: Manual Force Sync All Data to Cloud Firestore
+  const handleManualSyncAllToCloud = async () => {
+    setIsCloudSyncing(true);
+    try {
+      for (const q of quotations) {
+        await saveQuotationToCloud(q);
+      }
+      let master = {};
+      try {
+        const raw = localStorage.getItem('srimaan_master_settings');
+        if (raw) master = JSON.parse(raw);
+      } catch (e) {
+        // ignore
+      }
+      await saveSettingsToCloud({
+        company: companySettings,
+        bank: bankSettings,
+        bank2: bank2Settings,
+        masterSettings: master
+      });
+      setCloudStatus('connected');
+      setLastSyncedAt(new Date());
+      return { success: true };
+    } catch (error) {
+      console.error('Manual sync all error:', error);
+      return { success: false, error };
+    } finally {
+      setIsCloudSyncing(false);
+    }
   };
 
   return (
@@ -301,6 +396,8 @@ export function AppContent() {
             }
           }}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          cloudStatus={cloudStatus}
+          lastSyncedAt={lastSyncedAt}
         />
       )}
 
@@ -350,6 +447,10 @@ export function AppContent() {
         currentCompany={companySettings}
         currentBank={bankSettings}
         currentBank2={bank2Settings}
+        cloudStatus={cloudStatus}
+        lastSyncedAt={lastSyncedAt}
+        isCloudSyncing={isCloudSyncing}
+        onSyncAllToCloud={handleManualSyncAllToCloud}
       />
     </div>
   );

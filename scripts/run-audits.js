@@ -251,6 +251,19 @@ for (const file of allJsx) {
   }
 }
 
+// 10. Firebase Cloud Database Integration Audit
+console.log('\n--- 10. AUDITING FIREBASE CLOUD DATABASE INTEGRATION ---');
+const firebaseServicePath = path.join(process.cwd(), 'src', 'services', 'firebase.js');
+assert(fs.existsSync(firebaseServicePath), 'src/services/firebase.js exists on disk');
+const firebaseContent = fs.readFileSync(firebaseServicePath, 'utf8');
+assert(firebaseContent.includes('srimaanquotationgen'), 'Firebase configuration specifies project srimaanquotationgen');
+assert(firebaseContent.includes('getFirestore'), 'Firestore database is initialized');
+assert(firebaseContent.includes('subscribeQuotations'), 'Real-time quotation subscription engine exported');
+assert(firebaseContent.includes('saveQuotationToCloud'), 'Cloud quotation save engine exported');
+assert(firebaseContent.includes('deleteQuotationFromCloud'), 'Cloud quotation deletion engine exported');
+assert(firebaseContent.includes('saveSettingsToCloud'), 'Cloud master settings save engine exported');
+assert(firebaseContent.includes('subscribeSettings'), 'Cloud master settings subscription engine exported');
+
 console.log('\n========================================');
 console.log(`TOTAL TESTS: ${passCount + failCount} | PASSED: ${passCount} | FAILED: ${failCount}`);
 console.log('========================================');

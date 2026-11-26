@@ -1,8 +1,8 @@
 import React from 'react';
-import { LayoutDashboard, PlusCircle, Settings } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Settings, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import ASSETS from '../assets/assetsData';
 
-export const Navbar = ({ currentView, onNavigate, onOpenSettings }) => {
+export const Navbar = ({ currentView, onNavigate, onOpenSettings, cloudStatus = 'connected', lastSyncedAt }) => {
   return (
     <header className="no-print bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -34,6 +34,43 @@ export const Navbar = ({ currentView, onNavigate, onOpenSettings }) => {
 
         {/* Navigation Action Buttons */}
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Cloud Database Sync Pill */}
+          <div 
+            onClick={onOpenSettings}
+            className={`hidden md:flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border cursor-pointer transition-all ${
+              cloudStatus === 'connected'
+                ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+                : cloudStatus === 'connecting'
+                ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+            }`}
+            title={
+              cloudStatus === 'connected' 
+                ? 'Connected to Firebase: srimaanquotationgen (Real-time Cloud Sync)' 
+                : cloudStatus === 'connecting' 
+                ? 'Connecting to Firebase...' 
+                : 'Working offline (Local cache active)'
+            }
+          >
+            <span className={`w-2 h-2 rounded-full ${
+              cloudStatus === 'connected' 
+                ? 'bg-emerald-500 animate-pulse' 
+                : cloudStatus === 'connecting' 
+                ? 'bg-amber-500 animate-ping' 
+                : 'bg-slate-400'
+            }`} />
+            {cloudStatus === 'connected' ? (
+              <Cloud size={13} className="text-emerald-600 shrink-0" />
+            ) : cloudStatus === 'connecting' ? (
+              <RefreshCw size={13} className="text-amber-600 animate-spin shrink-0" />
+            ) : (
+              <CloudOff size={13} className="text-slate-400 shrink-0" />
+            )}
+            <span className="truncate max-w-[140px]">
+              {cloudStatus === 'connected' ? 'Cloud: srimaan' : cloudStatus === 'connecting' ? 'Connecting...' : 'Offline'}
+            </span>
+          </div>
+
           <button
             onClick={() => onNavigate('dashboard')}
             className={`flex items-center space-x-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all ${
