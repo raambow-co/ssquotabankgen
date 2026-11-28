@@ -71,26 +71,57 @@ export const generateMasterRefNo = (sequence = 1, date = new Date()) => {
   return `SSS-${fy}-${seqStr}`;
 };
 
+export const extractUscNo = (quotation, fallback = '') => {
+  if (!quotation) return fallback;
+  if (typeof quotation === 'string') {
+    const trimmed = quotation.trim().replace(/[/\\?%*:|"<>]/g, '-');
+    return trimmed || fallback;
+  }
+  const rawUsc = 
+    quotation.customer?.consumerNo ||
+    quotation.customer?.consumerServiceNumber ||
+    quotation.customer?.consumerNumber ||
+    quotation.discom?.uscNo ||
+    quotation.receipt?.consumerNo ||
+    quotation.invoice?.consumerNo ||
+    quotation.uscNo ||
+    quotation.consumerNo ||
+    quotation.refNo ||
+    quotation.quotationNumber ||
+    (quotation.id ? String(quotation.id).replace(/^quote-/, '') : '') ||
+    fallback;
+
+  const cleanUsc = String(rawUsc).trim().replace(/[/\\?%*:|"<>]/g, '-');
+  return cleanUsc || fallback;
+};
+
 export const getExportFileName = (formatMode = 'bank', quotation = null, fallbackIndex = 1) => {
-  const seqStr = extractSequenceNumber(quotation, fallbackIndex);
+  const fallbackUsc = extractSequenceNumber(quotation, fallbackIndex);
+  const uscNo = extractUscNo(quotation, fallbackUsc);
   const mode = String(formatMode).toLowerCase();
 
-  if (mode === 'bank' || mode === 'bpo') {
-    return `SSS-BPO-${seqStr}`;
+  // po-uscno: Bank PO / Purchase Order proposal
+  if (mode === 'bank' || mode === 'bpo' || mode === 'po') {
+    return `po-${uscNo}`;
   }
-  if (mode === 'customer' || mode === 'cpo') {
-    return `SSS-CPO-${seqStr}`;
+  // c-uscno: Customer quotation / proposal
+  if (mode === 'customer' || mode === 'cpo' || mode === 'c') {
+    return `c-${uscNo}`;
   }
-  if (mode === 'receipt' || mode === 'rec') {
-    return `SSS-REC-${seqStr}`;
+  // r-uscno: Advance Payment Receipt
+  if (mode === 'receipt' || mode === 'rec' || mode === 'r') {
+    return `r-${uscNo}`;
   }
+  // gst-USCno: GST Tax Invoice
   if (mode === 'invoice' || mode === 'gst') {
-    return `SSS-GST-${seqStr}`;
+    return `gst-${uscNo}`;
   }
+  // discom-uscno: DISCOM Synchronization Package
   if (mode === 'discom' || mode === 'dis') {
-    return `SSS-DIS-${seqStr}`;
+    return `discom-${uscNo}`;
   }
-  return `SSS-DOC-${seqStr}`;
+  // File name save as uscno (generic / default)
+  return `${uscNo}`;
 };
 
 export const generateRefNo = (sequence = 1, date = new Date()) => {

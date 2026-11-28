@@ -201,6 +201,7 @@ export function convertToCustomerFormat(data) {
       phone: data.customer?.mobile || data.customer?.phone || "+91 94948 22356",
       email: data.customer?.email || "customer@example.com",
       location: location,
+      consumerNo: consumerNo,
       consumerNumber: consumerNo,
       consumerServiceNumber: consumerNo,
       sanctionedLoad: `${dcKw} kW`,

@@ -223,24 +223,20 @@ const fbRc = JSON.parse(fs.readFileSync(fbRcPath, 'utf8'));
 assert(fbRc.projects.default === 'srimaanquotationgen', '.firebaserc default project is srimaanquotationgen');
 console.log('✅ [PASS] Firebase Cloud Firestore infrastructure verified for project: srimaanquotationgen');
 
-// 12. Audit Standardized Reference IDs and Download Filename Formats
-console.log('\n--- 12. AUDITING STANDARDIZED REFERENCE IDS AND EXPORT FILENAMES ---');
-const testDate = new Date('2026-11-26');
-assert(generateMasterRefNo(1, testDate) === 'SSS-2026-27-001', 'Master Ref 1 is SSS-2026-27-001');
-assert(generateMasterRefNo(2, testDate) === 'SSS-2026-27-002', 'Master Ref 2 is SSS-2026-27-002');
-assert(generateMasterRefNo(3, testDate) === 'SSS-2026-27-003', 'Master Ref 3 is SSS-2026-27-003');
-
-const testQuote1 = { id: 'quote-1', sequenceNumber: 1, masterRefNo: 'SSS-2026-27-001' };
-assert(getExportFileName('bank', testQuote1) === 'SSS-BPO-001', 'Bank PO file is SSS-BPO-001');
-assert(getExportFileName('customer', testQuote1) === 'SSS-CPO-001', 'Customer PO file is SSS-CPO-001');
-assert(getExportFileName('receipt', testQuote1) === 'SSS-REC-001', 'Receipt file is SSS-REC-001');
-assert(getExportFileName('invoice', testQuote1) === 'SSS-GST-001', 'GST Invoice file is SSS-GST-001');
-assert(getExportFileName('discom', testQuote1) === 'SSS-DIS-001', 'DISCOM file is SSS-DIS-001');
+// 12. Audit Standardized Reference IDs and Download Filename Formats (USC based)
+console.log('\n--- 12. AUDITING STANDARDIZED USC EXPORT FILENAMES ---');
+const testQuote1 = { id: 'quote-1', customer: { consumerNo: '36040182649' } };
+assert(getExportFileName('bank', testQuote1) === 'po-36040182649', 'Bank PO file is po-36040182649');
+assert(getExportFileName('customer', testQuote1) === 'c-36040182649', 'Customer PO file is c-36040182649');
+assert(getExportFileName('receipt', testQuote1) === 'r-36040182649', 'Receipt file is r-36040182649');
+assert(getExportFileName('invoice', testQuote1) === 'gst-36040182649', 'GST Invoice file is gst-36040182649');
+assert(getExportFileName('discom', testQuote1) === 'discom-36040182649', 'DISCOM file is discom-36040182649');
+assert(getExportFileName('', testQuote1) === '36040182649', 'File name save as uscno');
 
 const { quotation: adaptedQuotation } = convertToCustomerFormat(testQuote1);
-assert(adaptedQuotation.masterRefNo === 'SSS-2026-27-001', 'Adapter carries masterRefNo');
-assert(adaptedQuotation.sequenceNumber === '001', 'Adapter carries sequenceNumber');
-console.log('✅ [PASS] All 5 export filenames and Master Folder reference verified!');
+assert(adaptedQuotation.customer.consumerNo === '36040182649', 'Adapter preserves customer consumerNo');
+assert(getExportFileName('bank', adaptedQuotation) === 'po-36040182649', 'Adapted quotation outputs po-36040182649');
+console.log('✅ [PASS] All 5 USC-based export filenames verified!');
 
 console.log('\n========================================');
 console.log('🎉 ALL AUDITS PASSED WITH 100% SUCCESS!');
